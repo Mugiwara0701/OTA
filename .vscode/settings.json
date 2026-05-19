@@ -1,0 +1,4 @@
+{
+  "git.ignoreLimitWarning": true,
+  "sqlfluff.excludeRules": ["CP03"]
+}
