@@ -13,6 +13,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@duffel/api": "^4.25.0",
     "@supabase/supabase-js": "^2.105.4",
     "amadeus": "^9.0.0",
     "axios": "^1.6.0",

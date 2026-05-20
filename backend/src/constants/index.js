@@ -27,10 +27,17 @@ const BOOKING_TYPE = Object.freeze({
 
 const PAYMENT_STATUS = Object.freeze({
   PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
   COMPLETED: "COMPLETED",
   REFUNDED: "REFUNDED",
   FAILED: "FAILED",
   PARTIALLY_REFUNDED: "PARTIALLY_REFUNDED",
+  REFUND_PROCESSING: "REFUND_PROCESSING",
+});
+
+const PAYMENT_PROVIDER = Object.freeze({
+  STRIPE: "stripe",
+  DUFFEL: "duffel",
 });
 
 const TICKET_STATUS = Object.freeze({
@@ -85,14 +92,30 @@ const PAGINATION = Object.freeze({
   MAX_LIMIT: 100,
 });
 
+const CABIN_CLASS = Object.freeze({
+  ECONOMY: "economy",
+  PREMIUM_ECONOMY: "premium_economy",
+  BUSINESS: "business",
+  FIRST: "first",
+});
+
+const TRIP_TYPE = Object.freeze({
+  ONE_WAY: "ONE_WAY",
+  ROUND_TRIP: "ROUND_TRIP",
+  MULTI_CITY: "MULTI_CITY",
+});
+
 module.exports = {
   ROLES,
   BOOKINGS,
   BOOKING_TYPE,
   PAYMENT_STATUS,
+  PAYMENT_PROVIDER,
   TICKET_STATUS,
   NOTIFICATION_TYPES,
   ACTIVITY_LOGS,
   HTTP,
   PAGINATION,
+  CABIN_CLASS,
+  TRIP_TYPE,
 };

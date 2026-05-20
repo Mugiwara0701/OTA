@@ -21,14 +21,16 @@ function optionalEnv(keys, defaultValue = "") {
 
 // Validate and export the configuration object
 
+const NODE_ENV = optionalEnv("NODE_ENV", "development");
+
 const config = {
   // ── Server ──────────────────────
   server: {
-    env: optionalEnv("NODE_ENV", "development"),
+    env: NODE_ENV,
     port: parseInt(optionalEnv("PORT", "5000"), 10),
     apiVersion: optionalEnv("API_VERSION", "v1"),
-    isDev: optionalEnv("NODE_ENV", "development") === "development",
-    isProd: optionalEnv("NODE_ENV", "production") === "production",
+    isDev: NODE_ENV === "development",
+    isProd: NODE_ENV === "production",
   },
   // ── SUPABASE ──────────────────────
   supabase: {
@@ -43,17 +45,23 @@ const config = {
     refreshTokenExpiresIn: optionalEnv("JWT_REFRESH_TOKEN_EXPIRES_IN", "30d"),
   },
 
-  // ── stripe ──────────────────────
-  stripe: {
-    secretKey: requiredEnv("STRIPE_SECRET_KEY"),
-    publishableKey: requiredEnv("STRIPE_PUBLISHABLE_KEY"),
-    webhookSecret: requiredEnv("STRIPE_WEBHOOK_SECRET"),
+  // ── DUFFEL ──────────────────────
+  duffel: {
+    accessToken: requiredEnv("DUFFEL_ACCESS_TOKEN"),
+    webhookSecret: optionalEnv("DUFFEL_WEBHOOK_SECRET", ""),
   },
-  // ── Amadeus ──────────────────────
-  amadeus: {
-    clientId: requiredEnv("AMADEUS_CLIENT_ID"),
-    clientSecret: requiredEnv("AMADEUS_CLIENT_SECRET"),
-    hostname: optionalEnv("AMADEUS_HOSTNAME", "test"),
+
+  // ── PAYMENT ──────────────────────
+  payment: {
+    provider: optionalEnv(
+      "PAYMENT_PROVIDER",
+      NODE_ENV === "production" ? "duffel" : "stripe",
+    ),
+    stripe: {
+      secretKey: requiredEnv("STRIPE_SECRET_KEY"),
+      publishableKey: requiredEnv("STRIPE_PUBLISHABLE_KEY"),
+      webhookSecret: requiredEnv("STRIPE_WEBHOOK_SECRET"),
+    },
   },
   // ── Cors ──────────────────────
   cors: {
