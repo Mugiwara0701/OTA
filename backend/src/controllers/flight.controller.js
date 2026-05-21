@@ -1,0 +1,170 @@
+"use strict";
+
+const flightService = require("../services/flight.services");
+const flightIntegration = require("../integrations/duffel/flight.integration");
+const { asyncHandler } = require("../utils/AppError");
+const { sendSuccess, paginationMeta } = require("../helpers/helper.response");
+const { HTTP, PAGINATION } = require("../constants/index");
+
+// POST /api/v1/flights/search
+const searchFlights = asyncHandler(async (req, res) => {
+  const {
+    origin,
+    destination,
+    departureDate,
+    returnDate,
+    adults = 1,
+    children = 0,
+    infants = 0,
+    cabinClass = "economy",
+    maxConnections,
+  } = req.body;
+
+  const result = await flightService.searchFlights({
+    origin: origin.toUpperCase(),
+    destination: destination.toUpperCase(),
+    departureDate,
+    returnDate,
+    adults,
+    children,
+    infants,
+    cabinClass,
+    maxConnections,
+  });
+
+  return sendSuccess(res, HTTP.OK, "Flight retrieved successfully", result, {
+    total: result.totalOffers,
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// GET /api/v1/flights/offers/:offerId
+const getOffer = asyncHandler(async (req, res) => {
+  const { offerId } = req.params;
+  const result = await flightService.getOfferDetails(offerId);
+  return sendSuccess(res, HTTP.OK, "offer details retrieved", result);
+});
+
+// GET /api/v1/flights/offers/:offerId/seat-map
+const getSeatMap = asyncHandler(async (req, res) => {
+  const { offerId } = req.params;
+  const seatMaps = await flightIntegration.getSeatMap(offerId);
+  return sendSuccess(res, HTTP.OK, "Seat map retrieved", seatMaps);
+});
+
+// POST /api/v1/flights/book
+const initBooking = asyncHandler(async (req, res) => {
+  const { offerId, passengers, tripType } = req.body;
+  const userId = req.user.id;
+
+  const result = await flightService.initFlightBooking({
+    userId,
+    offerId,
+    passengers,
+    tripType,
+  });
+  return sendSuccess(
+    res,
+    HTTP.CREATED,
+    "Booking initiated. Proceed to payment.",
+    result,
+  );
+});
+
+// POST /api/v1/flights/bookings/:bookingId/confirm
+const confirmBooking = asyncHandler(async (req, res) => {
+  const { bookingId } = req.params;
+  const userId = req.user.id;
+  const { paymentProvider } = req.body;
+
+  const result = await flightService.confirmFlightBooking({
+    bookingId,
+    userId,
+    paymentProvider,
+  });
+
+  return sendSuccess(res, HTTP.OK, "Flight booking confirmed", result);
+});
+
+// GET /api/v1/flights/bookings
+const listBookings = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const page = parseInt(req.query.page) || PAGINATION.DEFAULT_PAGE;
+  const limit = Math.min(
+    parseInt(req.query.limit) || PAGINATION.DEFAULT_LIMIT,
+    PAGINATION.MAX_LIMIT,
+  );
+  const { status } = req.query;
+  const { bookings, total } = await flightService.listUserBookings(userId, {
+    page,
+    limit,
+    status,
+  });
+  return sendSuccess(
+    res,
+    HTTP.OK,
+    "Bookings retrieved",
+    bookings,
+    paginationMeta(page, limit, total),
+  );
+});
+
+// GET /api/v1/flights/bookings/:bookingId
+const getBooking = asyncHandler(async (req, res) => {
+  const { bookingId } = req.params;
+  const userId = req.user.id;
+  const result = await flightService.getBooking(bookingId, userId);
+  return sendSuccess(res, HTTP.OK, "Booking details retrieved", result);
+});
+
+// POST /api/v1/flights/bookings/:bookingId/cancel
+const cancelBooking = asyncHandler(async (req, res) => {
+  const { bookingId } = req.params;
+  const userId = req.user.id;
+  const result = await flightService.cancelFlightBooking(bookingId, userId);
+  return sendSuccess(res, HTTP.OK, "Booking cancelled successfully", result);
+});
+
+// POST /api/v1/flights/bookings/:bookingId/change-request
+const createChangeRequest = asyncHandler(async (req, res) => {
+  const { bookingId } = req.params;
+  const userId = req.user.id;
+  const { slices } = req.body;
+  const result = await flightService.createChangeRequest({
+    bookingId,
+    userId,
+    slices,
+  });
+  return sendSuccess(res, HTTP.CREATED, "Change request created", result);
+});
+
+// GET /api/v1/flights/bookings/:bookingId/change-offers
+const listChangeOffers = asyncHandler(async (req, res) => {
+  const { orderChangeRequestId } = req.query;
+  const offers =
+    await flightIntegration.listOrderChangeOffers(orderChangeRequestId);
+  return sendSuccess(res, HTTP.OK, "Change offers retrieved", offers);
+});
+
+// POST /api/v1/flights/bookings/:bookingId/change/confirm
+const confirmChange = asyncHandler(async (req, res) => {
+  const { orderChangeOfferId } = req.body;
+  const orderChange =
+    await flightIntegration.createOrderChange(orderChangeOfferId);
+  const confirmed = await flightIntegration.confirmOrderChange(orderChange.id);
+  return sendSuccess(res, HTTP.OK, "Flight change confirmed", confirmed);
+});
+
+module.exports = {
+  searchFlights,
+  getOffer,
+  getSeatMap,
+  initBooking,
+  confirmBooking,
+  listBookings,
+  getBooking,
+  cancelBooking,
+  createChangeRequest,
+  listChangeOffers,
+  confirmChange,
+};
