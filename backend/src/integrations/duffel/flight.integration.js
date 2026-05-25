@@ -11,23 +11,25 @@ async function createOfferRequest({
   maxConnections,
 }) {
   try {
-    const response = await duffel.offerRequests.create({
-      slices: clices.map((s) => ({
+    const payload = {
+      slices: slices.map((s) => ({
         origin: s.origin,
         destination: s.destination,
         departure_date: s.departureDate,
       })),
       passengers: passengers.map((p) => {
         const base = { type: p.type };
-        if (page !== undefined) base.age = p.age;
+        if (p.age !== undefined) base.age = p.age;
         return base;
       }),
       cabin_class: cabinClass || "economy",
-      ...arguments(
-        maxConnections !== undefined && { maxConnections: maxConnections },
-      ),
       return_offers: true,
-    });
+    };
+    if (maxConnections !== undefined) {
+      payload.max_connections = maxConnections;
+    }
+    const response = await duffel.offerRequests.create(payload);
+    return response.data;
   } catch (err) {
     throw normalizeDuffelError(err);
   }
@@ -215,6 +217,8 @@ async function confirmOrderChange(orderChangeId) {
   try {
     const response = await duffel.orderChanges.confirm(orderChangeId, {
       payment: { type: "balance" },
+      amount: String(parseFloat(amount).toFixed(2)),
+      currency,
     });
     return response.data;
   } catch (err) {

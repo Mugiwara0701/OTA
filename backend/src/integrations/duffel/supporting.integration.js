@@ -135,10 +135,10 @@ async function listCities({ iataCountryCode } = {}) {
 }
 
 // ── Loyalty Programmes
-async function listLoyaltyPrograms() {
+async function listLoyaltyProgrammes() {
   return withCache("loyalty:all", async () => {
     try {
-      return collectAll(await duffel.listLoyaltyPrograms.list());
+      return collectAll(await duffel.loyaltyProgrammes.list());
     } catch (err) {
       throw normalizeDuffelError(err);
     }

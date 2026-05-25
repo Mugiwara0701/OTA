@@ -3,8 +3,8 @@
 require("dotenv").config();
 
 // Function that check all the keys that are required before the server starts are there in the .env file
-function requiredEnv(keys) {
-  const value = process.env[keys];
+function requiredEnv(key) {
+  const value = process.env[key];
   if (!value || value.trim() === "") {
     throw new Error(
       `[Config] Missing required environment variable: "${key}". ` +
@@ -15,8 +15,8 @@ function requiredEnv(keys) {
 }
 
 // Read the env variables and returns the fallback if absent
-function optionalEnv(keys, defaultValue = "") {
-  return (process.env[keys] || defaultValue).trim();
+function optionalEnv(key, defaultValue = "") {
+  return (process.env[key] || defaultValue).trim();
 }
 
 // Validate and export the configuration object
@@ -31,6 +31,7 @@ const config = {
     apiVersion: optionalEnv("API_VERSION", "v1"),
     isDev: NODE_ENV === "development",
     isProd: NODE_ENV === "production",
+    frontendUrl: optionalEnv("FRONTEND_URL", "http://localhost:3000"),
   },
   // ── SUPABASE ──────────────────────
   supabase: {

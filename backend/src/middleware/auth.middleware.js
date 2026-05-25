@@ -23,7 +23,7 @@ const authenticate = (req, res, next) => {
     const decode = jwt.verify(token, config.jwt.secret);
 
     req.user = {
-      id: decode.id,
+      id: decode.sub,
       email: decode.email,
       roles: decode.roles || [],
     };
@@ -72,7 +72,7 @@ const optionalAuthentication = (req, res, next) => {
   try {
     const decode = jwt.verify(token, config.jwt.secret);
     req.user({
-      sub: decode.id,
+      id: decode.sub,
       email: decode.email,
       roles: decode.roles || [],
     });

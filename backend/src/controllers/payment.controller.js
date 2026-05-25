@@ -34,7 +34,7 @@ const refundPayment = asyncHandler(async (req, res) => {
   const { reason, amount } = req.body;
   const userId = req.user.id;
 
-  const result = await paymentService.initiatePayment({
+  const result = await paymentService.initiateRefund({
     bookingId,
     userId,
     reason,

@@ -89,7 +89,8 @@ async function initiatePayment({ bookingId, userId }) {
     };
   } else {
     const intent = await client.payments.intents.create({
-      amount: String(Math.round(parseFloat(booking.total_amount) * 100)),
+      amount: parseFloat(booking.total_amount).toFixed(2),
+      currency: booking.currency,
     });
 
     paymentRecord = {
@@ -186,7 +187,7 @@ async function confirmPayment({
       .eq("booking_id", bookingId);
   }
 
-  await _confirmPRoviderBooking(booking, provider);
+  await confirmProviderBooking(booking, provider);
 
   await supabaseAdmin
     .from("bookings")

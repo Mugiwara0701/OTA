@@ -36,9 +36,9 @@ app.use(
   }),
 );
 
-// Raw body parser
+// ── Raw body for webhook signature verification ───────────────────────────────\
 app.use(
-  "/api/v1/webhooks/stripe",
+  `/api/${config.server.apiVersion}/webhooks`,
   express.raw({ type: "application/json" }),
   (req, res, next) => {
     req.rawBody = req.body;
@@ -46,7 +46,7 @@ app.use(
   },
 );
 
-// JSON + URL-encoded body parsers
+// ── JSON + URL-encoded body parsers ───────────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 

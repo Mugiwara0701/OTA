@@ -148,7 +148,7 @@ const handleDuffelWebhook = asyncHandler(async (req, res) => {
       }
       case "order.airline_initiated_change": {
         logger.warn(`[Webhook] Airline-initiated change received`, {
-          orderId: date?.id,
+          orderId: data?.id,
         });
         break;
       }

@@ -49,7 +49,7 @@ async function searchFlights({
     maxConnections,
   });
 
-  const offers = (offerRequest.offers | []).map(mapDuffelOffer);
+  const offers = (offerRequest.offers || []).map(mapDuffelOffer);
 
   return {
     offerRequestId: offerRequest.id,
@@ -150,7 +150,7 @@ async function initFlightBooking({
       destination: lastSlice.destination,
       departure_time: firstSlice.departureAt,
       return_date:
-        mapped.sliced.length > 1 ? mapped.slices[1].departureAt : null,
+        mapped.slices.length > 1 ? mapped.slices[1].departureAt : null,
       trip_type: tripType,
       cabin_class: (mapped.cabinClass || "ECONOMY").toUpperCase(),
       carrier: firstSlice.segments?.[0]?.carrier || "XX",
@@ -209,7 +209,7 @@ async function confirmFlightBooking({
     .single();
 
   if (error || !booking)
-    throw new AppError("Booking not found.", HTTP_NOT_FOUND);
+    throw new AppError("Booking not found.", HTTP.NOT_FOUND);
   if (booking.user_id !== userId)
     throw new AppError("Forbidden", HTTP.FORBIDDEN);
   if (booking.status === BOOKINGS.CONFIRMED)
@@ -263,7 +263,7 @@ async function confirmFlightBooking({
 
   await supabaseAdmin.from("booking_logs").insert({
     booking_id: bookingId,
-    actions: ACTIVITY_LOGS.BOOKING_CONFIRMED,
+    action: ACTIVITY_LOGS.BOOKING_CONFIRMED,
     message: `Duffel order created: ${order.id}`,
     meta_data: { orderId: order.id, pnr: order.booking_reference },
     performed_by: userId,
@@ -287,7 +287,7 @@ async function confirmFlightBooking({
 async function cancelFlightBooking(bookingId, userId) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
-    .select("*, flight_booking(*")
+    .select("*, flight_booking(*)")
     .eq("id", bookingId)
     .single();
 
@@ -350,6 +350,7 @@ async function getBooking(bookingId, userId) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
     .select("*, flight(*), travelers(*), payments(*)")
+    .eq("id", bookingId)
     .single();
 
   if (error || !booking)
@@ -400,7 +401,7 @@ async function createChangeRequest({ bookingId, userId, slices }) {
   if (booking.user_id !== userId)
     throw new AppError("Forbidden", HTTP.FORBIDDEN);
 
-  const orderID = booking.flight_booking?.[0]?.duffel_order_id;
+  const orderId = booking.flight_booking?.[0]?.duffel_order_id;
   if (!orderId)
     throw new AppError(
       "No Duffel order found for this booking",

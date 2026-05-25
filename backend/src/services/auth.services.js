@@ -21,7 +21,7 @@ function generateAccessToken(user, roles = []) {
 
 function generateRefreshToken(userId) {
   return jwt.sign({ sub: userId, type: "refresh" }, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn,
+    expiresIn: config.jwt.refreshTokenExpiresIn,
   });
 }
 
@@ -111,7 +111,7 @@ async function register(body, ipAddress) {
   }
 
   // Generate tokens
-  const token = generateAccessToken(userProfile.id, [ROLES.CUSTOMER]);
+  const token = generateAccessToken(userProfile, [ROLES.CUSTOMER]);
   const refreshToken = generateRefreshToken(userProfile.id);
 
   // Log activity
@@ -129,7 +129,7 @@ async function register(body, ipAddress) {
   logger.info(`[Auth] new user registered`, { userId: userProfile, email });
 
   return {
-    user: sanitizeUser,
+    user: sanitizeUser(userProfile),
     roles: [ROLES.CUSTOMER],
     token,
     refreshToken,
