@@ -71,11 +71,11 @@ const optionalAuthentication = (req, res, next) => {
 
   try {
     const decode = jwt.verify(token, config.jwt.secret);
-    req.user({
+    req.user = {
       id: decode.sub,
       email: decode.email,
       roles: decode.roles || [],
-    });
+    };
   } catch (err) {
     req.user = null;
   }

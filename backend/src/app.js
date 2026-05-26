@@ -6,13 +6,13 @@ const cors = require("cors");
 const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 const config = require("./config/app.config");
-const logger = require("./config/logger.config");
-const apiRoutes = require("./routes/api.routes");
-const requestLogger = require("./middlewares/requestLogger.middleware");
+const logger = require("./config/logger");
+const apiRoutes = require("./routes/index");
+const requestLogger = require("./middleware/requestLogger.middleware");
 const {
   errorHandler,
   notFoundHandler,
-} = require("./middlewares/errorHandler.middleware");
+} = require("./middleware/errorHandler.middleware");
 
 const app = express();
 

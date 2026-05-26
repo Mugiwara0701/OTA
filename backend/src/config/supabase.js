@@ -32,4 +32,6 @@ logger.info("[SUPABASE] client initilaized", {
   project: config.supabase.url,
 });
 
+console.log("SERVICE ROLE:", config.supabase.serviceRoleKey);
+
 module.exports = { supabaseClient, supabaseAdmin };

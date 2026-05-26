@@ -114,7 +114,7 @@ async function initHotelBooking({
 
   if (quote.expires_at && new Date(quote.expires_at) < new Date()) {
     throw new AppError(
-      "THis hotel rate has expired. Please search again.",
+      "This hotel rate has expired. Please search again.",
       HTTP.UNPROCESSABLE,
     );
   }
@@ -128,7 +128,7 @@ async function initHotelBooking({
       status: BOOKINGS.PENDING_PAYMENT,
       total_amount: parseFloat(quote.total_amount),
       currency: quote.total_currency,
-      booking_Ref: bookingRef,
+      booking_ref: bookingRef,
     })
     .select()
     .single();
@@ -225,7 +225,7 @@ async function confirmHotelBooking({
       duffel_order_id: duffelBooking.id,
       provider_order_id: duffelBooking.id,
     })
-    .eq("id", bookingId);
+    .eq("booking_id", bookingId);
 
   await supabaseAdmin
     .from("bookings")
@@ -256,7 +256,7 @@ async function confirmHotelBooking({
     bookingId,
     bookingRef: booking.booking_ref,
     duffelBookingId: duffelBooking.id,
-    status: BOOKING.CONFIRMED,
+    status: BOOKINGS.CONFIRMED,
     paymentInstructions,
   };
 }
@@ -289,9 +289,9 @@ async function cancelHotelBooking(bookingId, userId) {
     })
     .eq("id", bookingId);
 
-  await supabaseAdmin.from("bookin_logs").insert({
+  await supabaseAdmin.from("booking_logs").insert({
     booking_id: bookingId,
-    actions: ACTIVITY_LOGS.BOOKING_CANCELLED,
+    action: ACTIVITY_LOGS.BOOKING_CANCELLED,
     old_status: booking.status,
     new_status: BOOKINGS.CANCELLED,
     performed_by: userId,

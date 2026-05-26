@@ -1,7 +1,7 @@
 "use strict";
 
 const duffel = require("../../config/duffel");
-const { normalizeDuffelError } = require("../../helpers/helper.helper");
+const { normalizeDuffelError } = require("../../helpers/booking.helper");
 
 // ── SEARCH ─────────────────────────────────────────────────────────────
 async function createSearch({

@@ -37,15 +37,12 @@ const searchCars = asyncHandler(async (req, res) => {
 });
 
 // POST /api/v1/cars/quotes
-const getQuote = asyncHandler(async (req, res) => {
+const createQuoteHandler = asyncHandler(async (req, res) => {
   const { rateId } = req.body;
+
   const result = await carServices.getQuoteDetail(rateId);
-  return sendSuccess(
-    ResizeObserver,
-    HTTP.CREATED,
-    "Car quote retrieved",
-    result,
-  );
+
+  return sendSuccess(res, HTTP.CREATED, "Car quote retrieved", result);
 });
 
 // GET /api/v1/cars/quotes/:quoteId

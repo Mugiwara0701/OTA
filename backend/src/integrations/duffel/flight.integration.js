@@ -117,7 +117,7 @@ async function updateOrder(orderId, { metadata }) {
 // ── SEAT MAP ─────────────────────────────────────────────────────────────
 async function getSeatMap(offerId) {
   try {
-    const response = await duffel.seatMaps.get(offerId);
+    const response = await duffel.seatMaps.get({ offer_id: offerId });
     return response.data;
   } catch (err) {
     throw normalizeDuffelError(err);

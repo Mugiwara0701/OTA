@@ -1,6 +1,6 @@
 "use strict";
 
-const { DUffel } = require("@duffel/api");
+const { Duffel } = require("@duffel/api");
 const config = require("./app.config");
 const logger = require("./logger");
 

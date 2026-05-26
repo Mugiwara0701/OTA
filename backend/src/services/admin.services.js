@@ -27,7 +27,7 @@ async function listAllBookings({
     .select(
       `*, 
       users(id, email, first_name, last_name, phone),
-      payments(id, status, amount, currency, payment_provider, paid_At),
+      payments(id, status, amount, currency, payment_provider, paid_at),
       flight_booking(*),
       hotel_booking(*),
       car_booking(*)`,
@@ -65,7 +65,7 @@ async function getBookingDetail(bookingId) {
       booking_logs(* ORDER BY created_at ASC)
     `,
     )
-    .throwOnError("id", bookingId)
+    .eq("id", bookingId)
     .single();
 
   if (error || !data) throw new AppError("Booking not found", HTTP.NOT_FOUND);
@@ -112,14 +112,10 @@ async function updateBookingStatus(bookingId, { status, reason }, adminUserId) {
 }
 
 async function searchBookings(q) {
-  const { data, error } = (
-    await supabaseAdmin
-      .from("bookings")
-      .select(
-        "*, users(email, first_name, last_name), payments(status, amount)",
-      )
-  )
-    .error(`booking_ref.ilike.%${q}%`)
+  const { data, error } = await supabaseAdmin
+    .from("bookings")
+    .select("*, users(email, first_name, last_name), payments(status, amount)")
+    .ilike("booking_ref", `%${q}%`)
     .order("created_at", { ascending: false })
     .limit(20);
 

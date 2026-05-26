@@ -1,14 +1,16 @@
 "use strict";
 
-const { body, validationResult } = require("express-validator");
+const { body, query, validationResult } = require("express-validator");
 const { sendError } = require("../helpers/helper.response");
 const { HTTP } = require("../constants/index");
+const { AppError } = require("../utils/AppError");
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return sendError;
-    (res, HTTP.UNPROCESSABLE, "Validation failed", errors.array());
+    return next(
+      new AppError("Validation failed", HTTP.UNPROCESSABLE, errors.array()),
+    );
   }
   next();
 };
@@ -23,40 +25,44 @@ const registerValidator = [
 
   body("password")
     .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 character.")
+    .withMessage("Password must be at least 8 characters.")
     .matches(/[A-Z]/)
-    .withMessage("Password must contains at least on Uppercase.")
+    .withMessage("Password must contain at least one uppercase letter.")
     .matches(/[0-9]/)
-    .withMessage("Password must contains at least one number."),
+    .withMessage("Password must contain at least one number.")
+    .matches(/[^A-Za-z0-9]/)
+    .withMessage("Password must contain at least one special character."),
 
   body("firstName")
     .trim()
     .notEmpty()
-    .withMessage("First name required.")
+    .withMessage("First name is required.")
     .isLength({ max: 50 })
-    .withMessage("First name must be under 50 characters."),
+    .escape(),
 
   body("lastName")
     .trim()
     .notEmpty()
-    .withMessage("Last name required.")
+    .withMessage("Last name is required.")
     .isLength({ max: 50 })
-    .withMessage("Last name must be under 50 characters."),
+    .escape(),
 
   body("phone").trim().notEmpty().withMessage("Phone number is required."),
 
   body("dateOfBirth")
     .notEmpty()
-    .withMessage("Date of Birth required")
+    .withMessage("Date of birth is required.")
     .isISO8601()
-    .withMessage("Date of birth must be a valid date (YYYY-MM-DD)."),
+    .withMessage("Date of birth must be YYYY-MM-DD."),
 
   body("nationality").trim().notEmpty().withMessage("Nationality is required."),
 
   body("passportNumber")
     .trim()
     .notEmpty()
-    .withMessage("Passport number required."),
+    .withMessage("Passport number is required.")
+    .isLength({ max: 20 }),
+
   validate,
 ];
 
@@ -65,7 +71,7 @@ const loginValidator = [
   body("email")
     .trim()
     .isEmail()
-    .withMessage("Valid email address is required")
+    .withMessage("A valid email address is required.")
     .normalizeEmail(),
 
   body("password").notEmpty().withMessage("Password is required"),
@@ -81,14 +87,16 @@ const updateProfileValidator = [
     .trim()
     .notEmpty()
     .withMessage("First name cannot be empty.")
-    .isLength({ max: 50 }),
+    .isLength({ max: 50 })
+    .escape(),
 
   body("lastName")
     .optional()
     .trim()
     .notEmpty()
     .withMessage("Last name cannot be empty.")
-    .isLength({ max: 50 }),
+    .isLength({ max: 50 })
+    .escape(),
 
   body("phone")
     .optional()
@@ -99,7 +107,7 @@ const updateProfileValidator = [
   body("dateOfBirth")
     .optional()
     .isISO8601()
-    .withMessage("Date of birth cannot be empty."),
+    .withMessage("Date of birth must be YYYY-MM-DD."),
 
   body("nationality")
     .optional()
@@ -111,8 +119,41 @@ const updateProfileValidator = [
     .optional()
     .trim()
     .notEmpty()
-    .withMessage("Passport number cannot be empty"),
+    .withMessage("Passport number cannot be empty")
+    .isLength({ max: 20 }),
   validate,
 ];
 
-module.exports = { registerValidator, loginValidator, updateProfileValidator };
+// ── Forgot Password ───────────────────────────────────────────────────────────
+const forgotPasswordValidator = [
+  body("email")
+    .trim()
+    .isEmail()
+    .withMessage("A valid email address is required")
+    .normalizeEmail(),
+  validate,
+];
+
+// ── Reset Password ────────────────────────────────────────────────────────────
+const resetPasswordValidator = [
+  body("token").notEmpty().withMessage("Token is required"),
+
+  body("newPassword")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters")
+    .matches(/[A-Z]/)
+    .withMessage("Password must contain at least one uppercase letter.")
+    .matches(/[0-9]/)
+    .withMessage("Password must contain at least one number.")
+    .matches(/[^A-Za-z0-9]/)
+    .withMessage("Password must contain at least one special character."),
+  validate,
+];
+
+module.exports = {
+  registerValidator,
+  loginValidator,
+  updateProfileValidator,
+  forgotPasswordValidator,
+  resetPasswordValidator,
+};

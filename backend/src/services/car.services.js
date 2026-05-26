@@ -88,7 +88,7 @@ async function initCarBooking({
 }) {
   const quote = await carsIntegration.createQuote(rateId);
 
-  if (quote.expires_At && new Date(quote.expires_at) < new Date()) {
+  if (quote.expires_at && new Date(quote.expires_at) < new Date()) {
     throw new AppError(
       "This car rental rate has expired. Please search again.",
       HTTP.UNPROCESSABLE,
@@ -175,7 +175,7 @@ async function confirmCarBooking({
     .single();
 
   if (error || !booking)
-    throw new AppError("BOoking not found", HTTP.NOT_FOUND);
+    throw new AppError("Booking not found", HTTP.NOT_FOUND);
   if (booking.user_id !== userId)
     throw new AppError("Forbidden", HTTP.FORBIDDEN);
   if (booking.status === BOOKINGS.CONFIRMED) return { alreadyConfirmed: true };
@@ -247,7 +247,7 @@ async function cancelCarBooking(bookingId, userId) {
     .from("bookings")
     .update({
       status: BOOKINGS.CANCELLED,
-      cancelled_at: new Date().toISOString,
+      cancelled_at: new Date().toISOString(),
     })
     .eq("id", bookingId);
 

@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "E:\\git clone\\OTA\\backend\\src\\logs\\.71d2852efa11e10b63de7e35b5220598c8435313-audit.json",
+    "files": [
+        {
+            "date": 1779783636909,
+            "name": "E:\\git clone\\OTA\\backend\\src\\logs\\combined-2026-05-26.log",
+            "hash": "2d10024def9e5cd4f7fd8157ab3beea0bd13875fee364730c25c72cc549960cd"
+        }
+    ],
+    "hashType": "sha256"
+}

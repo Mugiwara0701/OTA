@@ -138,6 +138,21 @@ const createChangeRequest = asyncHandler(async (req, res) => {
   return sendSuccess(res, HTTP.CREATED, "Change request created", result);
 });
 
+// GET /api/v1/flights/offers
+const listOffers = asyncHandler(async (req, res) => {
+  const { offerRequestId, sortBy, maxPrice, maxStops, airlines } = req.query;
+
+  const result = await flightService.listOffers({
+    offerRequestId,
+    sortBy,
+    maxPrice,
+    maxStops,
+    airlines,
+  });
+
+  return sendSuccess(res, HTTP.OK, "Offers retrieved successfully", result);
+});
+
 // GET /api/v1/flights/bookings/:bookingId/change-offers
 const listChangeOffers = asyncHandler(async (req, res) => {
   const { orderChangeRequestId } = req.query;
@@ -157,6 +172,7 @@ const confirmChange = asyncHandler(async (req, res) => {
 
 module.exports = {
   searchFlights,
+  listOffers,
   getOffer,
   getSeatMap,
   initBooking,

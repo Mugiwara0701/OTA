@@ -1,0 +1,457 @@
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T08:54:03.497Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T08:54:03.562Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T08:54:03.601Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T08:54:03.612Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T08:54:40.668Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T08:54:40.733Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T08:54:40.772Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T08:54:40.781Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T09:39:01.240Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T09:39:01.348Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T09:39:01.420Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T09:39:01.432Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T09:41:18.084Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T09:41:18.193Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T09:41:18.267Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T09:41:18.278Z"}
+{"level":"http","message":"POST /api/v1/auth/register 500 - - 2289.587 ms","timestamp":"2026-05-26T09:42:48.155Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T09:43:38.091Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T09:43:38.206Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T09:43:38.287Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T09:43:38.299Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T09:43:40.460Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T09:43:40.530Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T09:43:40.571Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T09:43:40.580Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register An account with this email already exists.","statusCode":409,"timestamp":"2026-05-26T09:43:45.377Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 409 424 - 834.544 ms","timestamp":"2026-05-26T09:43:45.383Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register An account with this email already exists.","statusCode":409,"timestamp":"2026-05-26T09:44:25.323Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 409 424 - 750.760 ms","timestamp":"2026-05-26T09:44:25.324Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T09:44:42.114Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T09:44:42.178Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T09:44:42.219Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T09:44:42.227Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register An account with this email already exists.","statusCode":409,"timestamp":"2026-05-26T09:44:46.501Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 409 424 - 496.331 ms","timestamp":"2026-05-26T09:44:46.505Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register supabaseAdmin.from(...).insert(...).catch is not a function","timestamp":"2026-05-26T09:44:57.612Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 500 463 - 1342.503 ms","timestamp":"2026-05-26T09:44:57.614Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T09:48:13.931Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T09:48:13.996Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T09:48:14.037Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T09:48:14.046Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T09:48:29.348Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T09:48:29.419Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T09:48:29.459Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T09:48:29.467Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register An account with this email already exists.","statusCode":409,"timestamp":"2026-05-26T09:48:35.367Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 409 424 - 563.902 ms","timestamp":"2026-05-26T09:48:35.370Z"}
+{"email":"test@example.com","err":"Cannot find module '@sendgrid/mail'\nRequire stack:\n- E:\\git clone\\OTA\\backend\\src\\config\\email.config.js\n- E:\\git clone\\OTA\\backend\\src\\services\\email.services.js\n- E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js\n- E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\auth.routes.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\index.js\n- E:\\git clone\\OTA\\backend\\src\\app.js\n- E:\\git clone\\OTA\\backend\\src\\server.js","level":"error","message":"[EmailService] emailVerification failed","timestamp":"2026-05-26T09:49:20.751Z"}
+{"error":"Could not find the 'id_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T09:49:20.951Z"}
+{"email":"test@example.com","level":"info","message":"[Auth] New user registered","timestamp":"2026-05-26T09:49:20.952Z","userId":"ce7761fc-022b-46ae-95c1-879e64f35400"}
+{"level":"http","message":"POST /api/v1/auth/register 201 - - 1559.111 ms","timestamp":"2026-05-26T09:49:20.955Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register An account with this email already exists.","statusCode":409,"timestamp":"2026-05-26T09:50:02.153Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 409 424 - 229.976 ms","timestamp":"2026-05-26T09:50:02.154Z"}
+{"email":"testuser@example.com","err":"Cannot find module '@sendgrid/mail'\nRequire stack:\n- E:\\git clone\\OTA\\backend\\src\\config\\email.config.js\n- E:\\git clone\\OTA\\backend\\src\\services\\email.services.js\n- E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js\n- E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\auth.routes.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\index.js\n- E:\\git clone\\OTA\\backend\\src\\app.js\n- E:\\git clone\\OTA\\backend\\src\\server.js","level":"error","message":"[EmailService] emailVerification failed","timestamp":"2026-05-26T09:56:36.435Z"}
+{"error":"Could not find the 'id_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T09:56:36.742Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] New user registered","timestamp":"2026-05-26T09:56:36.743Z","userId":"500f7e99-8727-47bc-bd78-d2bd73b0713c"}
+{"level":"http","message":"POST /api/v1/auth/register 201 - - 2546.242 ms","timestamp":"2026-05-26T09:56:36.744Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T09:58:13.844Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw 400 420 - 512.970 ms","timestamp":"2026-05-26T09:58:13.845Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:00:28.882Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw 400 420 - 568.132 ms","timestamp":"2026-05-26T10:00:28.883Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:07:32.176Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:07:32.244Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:07:32.286Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:07:32.303Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:10:32.823Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:10:32.883Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:10:32.921Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:10:32.929Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:10:37.355Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw 400 420 - 1286.326 ms","timestamp":"2026-05-26T10:10:37.358Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:11:17.617Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:11:17.685Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:11:17.733Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:11:17.742Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:13:09.201Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:13:09.295Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:13:09.341Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:13:09.350Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:13:12.655Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MDBmN2U5OS04NzI3LTQ3YmMtYmQ3OC1kMmJkNzNiMDcxM2MiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5Nzg5Mzk2LCJleHAiOjE3ODAzOTQxOTZ9.hFLswWf4TxnonRfOlVJ2JoGl55qeGOPiaZ9VyUktgiw 400 420 - 426.352 ms","timestamp":"2026-05-26T10:13:12.663Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:14:13.513Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:14:13.581Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:14:13.620Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:14:13.630Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:17:51.627Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:17:51.687Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:17:51.724Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:17:51.732Z"}
+{"email":"testuser@example.com","err":"Cannot find module '@sendgrid/mail'\nRequire stack:\n- E:\\git clone\\OTA\\backend\\src\\config\\email.config.js\n- E:\\git clone\\OTA\\backend\\src\\services\\email.services.js\n- E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js\n- E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\auth.routes.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\index.js\n- E:\\git clone\\OTA\\backend\\src\\app.js\n- E:\\git clone\\OTA\\backend\\src\\server.js","level":"error","message":"[EmailService] emailVerification failed","timestamp":"2026-05-26T10:17:57.871Z"}
+{"error":"Could not find the 'id_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T10:17:58.069Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] New user registered","timestamp":"2026-05-26T10:17:58.070Z","userId":"2494fd38-2386-4a5e-b92f-1b62f4acd4c0"}
+{"level":"http","message":"POST /api/v1/auth/register 201 - - 1719.032 ms","timestamp":"2026-05-26T10:17:58.075Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:18:21.343Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU 400 420 - 241.090 ms","timestamp":"2026-05-26T10:18:21.345Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:18:29.506Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU 400 420 - 390.046 ms","timestamp":"2026-05-26T10:18:29.506Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:18:51.522Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU 400 420 - 482.031 ms","timestamp":"2026-05-26T10:18:51.522Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:19:53.371Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU 400 420 - 314.084 ms","timestamp":"2026-05-26T10:19:53.372Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T10:20:08.283Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNDk0ZmQzOC0yMzg2LTRhNWUtYjkyZi0xYjYyZjRhY2Q0YzAiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwicm9sZXMiOlsiQ1VTVE9NRVIiXSwiaWF0IjoxNzc5NzkwNjc3LCJleHAiOjE3ODAzOTU0Nzd9.h4dTYzPTcYPpl5q3W3GkjTmvhNwjcRHolMw845KR9HU 400 420 - 166.471 ms","timestamp":"2026-05-26T10:20:08.283Z"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=testtoken123 200 82 - 1536.515 ms","timestamp":"2026-05-26T10:25:44.559Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/login Route not found: GET /api/v1/auth/login","statusCode":404,"timestamp":"2026-05-26T10:27:44.158Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/login 404 - - 0.912 ms","timestamp":"2026-05-26T10:27:44.161Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login supabaseAdmin.from(...).insert(...).catch is not a function","timestamp":"2026-05-26T10:28:41.277Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 460 - 1066.930 ms","timestamp":"2026-05-26T10:28:41.278Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:31:23.311Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:31:23.377Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:31:23.418Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:31:23.428Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:31:25.846Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:31:25.914Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:31:25.954Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:31:25.963Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:31:40.190Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:31:40.258Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:31:40.295Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:31:40.303Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:31:42.937Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:31:43.003Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:31:43.041Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:31:43.050Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:32:38.898Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:32:38.962Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:32:38.999Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:32:39.008Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:32:45.834Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:32:45.911Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:32:45.950Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:32:45.959Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:32:47.391Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:32:47.457Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:32:47.495Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:32:47.505Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:32:57.576Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:32:57.649Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:32:57.692Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:32:57.701Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:33:01.077Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:33:01.145Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:33:01.191Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:33:01.202Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:33:07.421Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:33:07.492Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:33:07.532Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:33:07.541Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:33:09.282Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:33:09.347Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:33:09.387Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:33:09.396Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:33:21.952Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:33:22.021Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:33:22.058Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:33:22.067Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:33:26.540Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:33:26.605Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:33:26.642Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:33:26.652Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:34:25.267Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:34:25.347Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:34:25.389Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:34:25.401Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:34:25.660Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:34:25.733Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:34:25.776Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:34:25.786Z"}
+{"error":"Could not find the 'id_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T10:34:30.512Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache","stack":"Error: Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T10:34:30.513Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T10:34:30.513Z","userId":"2494fd38-2386-4a5e-b92f-1b62f4acd4c0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 - - 1810.227 ms","timestamp":"2026-05-26T10:34:30.520Z"}
+{"error":"Could not find the 'id_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T10:34:52.445Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache","stack":"Error: Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T10:34:52.445Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T10:34:52.445Z","userId":"2494fd38-2386-4a5e-b92f-1b62f4acd4c0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 - - 2197.877 ms","timestamp":"2026-05-26T10:34:52.447Z"}
+{"level":"http","message":"GET /api/v1/auth/me 200 551 - 322.136 ms","timestamp":"2026-05-26T10:35:15.188Z"}
+{"ip":"::1","level":"error","message":"[PATCH] /api/v1/auth/me query.eq is not a function","timestamp":"2026-05-26T10:35:44.973Z","userId":"2494fd38-2386-4a5e-b92f-1b62f4acd4c0"}
+{"level":"http","message":"PATCH /api/v1/auth/me 500 588 - 442.585 ms","timestamp":"2026-05-26T10:35:44.974Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:37:02.772Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:37:02.836Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:37:02.875Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:37:02.884Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:37:13.225Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:37:13.291Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:37:13.334Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:37:13.343Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:38:00.612Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:38:00.678Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:38:00.717Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:38:00.726Z"}
+{"level":"http","message":"PATCH /api/v1/auth/me 200 544 - 1114.826 ms","timestamp":"2026-05-26T10:38:04.656Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/refresh Refresh token has been revoked. Please login again","statusCode":401,"timestamp":"2026-05-26T10:38:44.435Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/refresh 401 445 - 231.431 ms","timestamp":"2026-05-26T10:38:44.436Z"}
+{"error":"Could not find the 'id_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T10:39:05.061Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache","stack":"Error: Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T10:39:05.062Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T10:39:05.062Z","userId":"2494fd38-2386-4a5e-b92f-1b62f4acd4c0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 - - 1098.559 ms","timestamp":"2026-05-26T10:39:05.066Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/refresh Refresh token has been revoked. Please login again","statusCode":401,"timestamp":"2026-05-26T10:39:18.066Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/refresh 401 445 - 208.249 ms","timestamp":"2026-05-26T10:39:18.066Z"}
+{"error":"Could not find the 'id_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T10:42:32.022Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache","stack":"Error: Failed to create new activity_logs record: Could not find the 'id_address' column of 'activity_logs' in the schema cache\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T10:42:32.023Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T10:42:32.023Z","userId":"2494fd38-2386-4a5e-b92f-1b62f4acd4c0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 - - 1900.962 ms","timestamp":"2026-05-26T10:42:32.025Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/refresh Unexpected token 'e', ...\"shToken\": eyJhbGciOi\"... is not valid JSON","statusCode":400,"timestamp":"2026-05-26T10:42:43.469Z","userId":"unauthenticated"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/refresh Refresh token has been revoked. Please login again","statusCode":401,"timestamp":"2026-05-26T10:43:47.686Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/refresh 401 445 - 356.169 ms","timestamp":"2026-05-26T10:43:47.686Z"}
+{"error":"permission denied for table users","filter":{"auth_user_id":"f9dd50b2-daa3-4178-8902-a9fa6b7744fb"},"level":"error","message":"[DB] findOne error on users","timestamp":"2026-05-26T10:47:27.129Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Database query failed: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T10:47:27.129Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 537 - 1480.109 ms","timestamp":"2026-05-26T10:47:27.130Z"}
+{"error":"permission denied for table users","filter":{"auth_user_id":"f9dd50b2-daa3-4178-8902-a9fa6b7744fb"},"level":"error","message":"[DB] findOne error on users","timestamp":"2026-05-26T10:47:37.571Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Database query failed: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T10:47:37.572Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 537 - 624.374 ms","timestamp":"2026-05-26T10:47:37.573Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:47:49.576Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:47:49.651Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:47:49.700Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:47:49.709Z"}
+{"error":"permission denied for table users","filter":{"auth_user_id":"f9dd50b2-daa3-4178-8902-a9fa6b7744fb"},"level":"error","message":"[DB] findOne error on users","timestamp":"2026-05-26T10:47:56.104Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Database query failed: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T10:47:56.105Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 537 - 1184.687 ms","timestamp":"2026-05-26T10:47:56.112Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:50:17.290Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:50:17.353Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:50:17.389Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:50:17.398Z"}
+{"error":"permission denied for table users","filter":{"auth_user_id":"f9dd50b2-daa3-4178-8902-a9fa6b7744fb"},"level":"error","message":"[DB] findOne error on users","timestamp":"2026-05-26T10:51:49.783Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Database query failed: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T10:51:49.785Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 537 - 1082.630 ms","timestamp":"2026-05-26T10:51:49.791Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T10:51:57.699Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T10:51:57.759Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T10:51:57.795Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T10:51:57.804Z"}
+{"error":"permission denied for table users","filter":{"auth_user_id":"f9dd50b2-daa3-4178-8902-a9fa6b7744fb"},"level":"error","message":"[DB] findOne error on users","timestamp":"2026-05-26T10:52:03.197Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Database query failed: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T10:52:03.198Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 537 - 566.811 ms","timestamp":"2026-05-26T10:52:03.201Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:06:30.882Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:06:30.950Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:06:30.992Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:06:31.003Z"}
+{"error":"permission denied for table users","filter":{"auth_user_id":"f9dd50b2-daa3-4178-8902-a9fa6b7744fb"},"level":"error","message":"[DB] findOne error on users","timestamp":"2026-05-26T11:06:34.337Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Database query failed: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T11:06:34.338Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 537 - 1028.075 ms","timestamp":"2026-05-26T11:06:34.343Z"}
+{"error":"permission denied for table users","filter":{"auth_user_id":"f9dd50b2-daa3-4178-8902-a9fa6b7744fb"},"level":"error","message":"[DB] findOne error on users","timestamp":"2026-05-26T11:06:37.775Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Database query failed: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T11:06:37.776Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 500 537 - 434.055 ms","timestamp":"2026-05-26T11:06:37.778Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:15:10.609Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:15:10.680Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:15:10.720Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:15:10.735Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register An account with this email already exists.","statusCode":409,"timestamp":"2026-05-26T11:15:21.290Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 409 424 - 659.165 ms","timestamp":"2026-05-26T11:15:21.294Z"}
+{"error":"permission denied for table users","level":"error","message":"[DB] insert error on users","timestamp":"2026-05-26T11:16:16.045Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/register Failed to create new users record: permission denied for table users","statusCode":500,"timestamp":"2026-05-26T11:16:16.231Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/register 500 562 - 1287.335 ms","timestamp":"2026-05-26T11:16:16.232Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:20:01.553Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:20:01.616Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:20:01.656Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:20:01.664Z"}
+{"email":"testuser@example.com","err":"Cannot find module '@sendgrid/mail'\nRequire stack:\n- E:\\git clone\\OTA\\backend\\src\\config\\email.config.js\n- E:\\git clone\\OTA\\backend\\src\\services\\email.services.js\n- E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js\n- E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\auth.routes.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\index.js\n- E:\\git clone\\OTA\\backend\\src\\app.js\n- E:\\git clone\\OTA\\backend\\src\\server.js","level":"error","message":"[EmailService] emailVerification failed","timestamp":"2026-05-26T11:20:08.643Z"}
+{"error":"Could not find the 'ip_address' column of 'activity_logs' in the schema cache","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T11:20:09.035Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: Could not find the 'ip_address' column of 'activity_logs' in the schema cache","stack":"Error: Failed to create new activity_logs record: Could not find the 'ip_address' column of 'activity_logs' in the schema cache\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.register (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:146:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:10:18","statusCode":500,"timestamp":"2026-05-26T11:20:09.036Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] New user registered","timestamp":"2026-05-26T11:20:09.036Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/auth/register 201 - - 2202.864 ms","timestamp":"2026-05-26T11:20:09.046Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/auth/verify-email?token=testtoken123 Invalid or expired verification token.","statusCode":400,"timestamp":"2026-05-26T11:20:13.724Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=testtoken123 400 420 - 421.119 ms","timestamp":"2026-05-26T11:20:13.725Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Invalid email or password","statusCode":401,"timestamp":"2026-05-26T11:20:25.393Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 401 388 - 637.914 ms","timestamp":"2026-05-26T11:20:25.395Z"}
+{"level":"http","message":"GET /api/v1/auth/verify-email?token=testtoken123 200 82 - 1455.813 ms","timestamp":"2026-05-26T11:26:57.366Z"}
+{"error":"permission denied for table activity_logs","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T11:27:02.004Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: permission denied for table activity_logs","stack":"Error: Failed to create new activity_logs record: permission denied for table activity_logs\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T11:27:02.005Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T11:27:02.005Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 1015 - 1143.141 ms","timestamp":"2026-05-26T11:27:02.006Z"}
+{"level":"http","message":"GET /api/v1/auth/me 200 517 - 414.036 ms","timestamp":"2026-05-26T11:27:06.518Z"}
+{"level":"http","message":"PATCH /api/v1/auth/me 200 501 - 216.568 ms","timestamp":"2026-05-26T11:27:12.067Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/refresh Refresh token has been revoked. Please login again","statusCode":401,"timestamp":"2026-05-26T11:27:17.548Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/refresh 401 445 - 239.916 ms","timestamp":"2026-05-26T11:27:17.548Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/refresh Refresh token has been revoked. Please login again","statusCode":401,"timestamp":"2026-05-26T11:29:31.770Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/refresh 401 445 - 618.392 ms","timestamp":"2026-05-26T11:29:31.770Z"}
+{"error":"permission denied for table activity_logs","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T11:29:36.606Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: permission denied for table activity_logs","stack":"Error: Failed to create new activity_logs record: permission denied for table activity_logs\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T11:29:36.607Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T11:29:36.607Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 1017 - 1178.016 ms","timestamp":"2026-05-26T11:29:36.607Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/refresh Refresh token has been revoked. Please login again","statusCode":401,"timestamp":"2026-05-26T11:29:42.751Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/refresh 401 445 - 316.098 ms","timestamp":"2026-05-26T11:29:42.752Z"}
+{"error":"permission denied for table activity_logs","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T11:31:53.720Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: permission denied for table activity_logs","stack":"Error: Failed to create new activity_logs record: permission denied for table activity_logs\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T11:31:53.721Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T11:31:53.721Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 1017 - 1689.144 ms","timestamp":"2026-05-26T11:31:53.722Z"}
+{"level":"http","message":"POST /api/v1/auth/logout 200 53 - 0.557 ms","timestamp":"2026-05-26T11:32:33.359Z"}
+{"error":"permission denied for table activity_logs","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-26T11:32:39.196Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: permission denied for table activity_logs","stack":"Error: Failed to create new activity_logs record: permission denied for table activity_logs\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-26T11:32:39.197Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-26T11:32:39.197Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 1017 - 1297.651 ms","timestamp":"2026-05-26T11:32:39.197Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 2920.091 ms","timestamp":"2026-05-26T11:33:25.038Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 7332.562 ms","timestamp":"2026-05-26T11:35:44.076Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 2676.047 ms","timestamp":"2026-05-26T11:37:39.546Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers?offerRequestId=orq_0000B6gfw09mA7UmwV2SC8&sortBy=total_amount response is not async iterable","statusCode":502,"timestamp":"2026-05-26T11:38:20.638Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers?offerRequestId=orq_0000B6gfw09mA7UmwV2SC8&sortBy=total_amount 502 623 - 557.326 ms","timestamp":"2026-05-26T11:38:20.639Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG Validation failed","statusCode":422,"timestamp":"2026-05-26T11:40:51.107Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG 422 700 - 5.086 ms","timestamp":"2026-05-26T11:40:51.111Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:43:07.883Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:43:07.952Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:43:07.993Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:43:08.001Z"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG 200 - - 537.369 ms","timestamp":"2026-05-26T11:43:11.273Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG/seat-map Field 'offer_id' can't be blank","statusCode":502,"timestamp":"2026-05-26T11:44:00.293Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG/seat-map 502 792 - 437.391 ms","timestamp":"2026-05-26T11:44:00.294Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:45:48.555Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:45:48.623Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:45:48.665Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:45:48.673Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG/seat-map duffel.seatMaps.list is not a function","statusCode":502,"timestamp":"2026-05-26T11:45:54.487Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG/seat-map 502 - - 2.978 ms","timestamp":"2026-05-26T11:45:54.493Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:47:01.773Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:47:01.843Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:47:01.883Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:47:01.893Z"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gfw0NbKiYRdNVUkG/seat-map 200 - - 603.102 ms","timestamp":"2026-05-26T11:47:05.608Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/flights/book Validation failed","statusCode":422,"timestamp":"2026-05-26T11:47:48.424Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/flights/book 422 720 - 9.524 ms","timestamp":"2026-05-26T11:47:48.426Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:48:45.764Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:48:45.838Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:48:45.880Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:48:45.889Z"}
+{"bookingId":"61683fc3-a89f-43dc-8248-b10408d77960","level":"info","message":"[FlightService] Booking initiated: OTA-FLT-20260526-4QJV","timestamp":"2026-05-26T11:48:50.853Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/flights/book 201 372 - 2243.269 ms","timestamp":"2026-05-26T11:48:50.856Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?page=1&limit=10 200 - - 574.070 ms","timestamp":"2026-05-26T11:49:37.970Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?status=PENDING_PAYMENT 200 - - 508.665 ms","timestamp":"2026-05-26T11:49:58.955Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/initiate Validation failed","statusCode":422,"timestamp":"2026-05-26T11:51:00.425Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/initiate 422 729 - 1.824 ms","timestamp":"2026-05-26T11:51:00.426Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?page=1&limit=10 200 - - 915.523 ms","timestamp":"2026-05-26T11:52:11.153Z"}
+{"level":"info","message":"[PaymentService] Payment initiated for OTA-FLT-20260526-4QJV via stripe","timestamp":"2026-05-26T11:53:57.285Z"}
+{"level":"http","message":"POST /api/v1/payments/initiate 201 772 - 3144.758 ms","timestamp":"2026-05-26T11:53:57.286Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/initiate Cannot initiate payment for booking with status: PAYMENT_PROCESSING","statusCode":422,"timestamp":"2026-05-26T11:54:23.251Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/initiate 422 487 - 203.702 ms","timestamp":"2026-05-26T11:54:23.252Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm No such checkout.session: cs_test_bypass_manual","statusCode":404,"timestamp":"2026-05-26T11:58:00.232Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 404 497 - 1395.247 ms","timestamp":"2026-05-26T11:58:00.233Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm No such checkout.session: dev_bypass","statusCode":404,"timestamp":"2026-05-26T11:58:50.509Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 404 475 - 860.402 ms","timestamp":"2026-05-26T11:58:50.510Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T11:59:54.649Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T11:59:54.718Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T11:59:54.762Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T11:59:54.772Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:00:05.478Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:00:05.590Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:00:05.639Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:00:05.650Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:00:15.561Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:00:15.629Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:00:15.671Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:00:15.681Z"}
+{"level":"http","message":"POST /api/v1/payments/confirm 200 164 - 575.839 ms","timestamp":"2026-05-26T12:00:20.097Z"}
+{"level":"http","message":"GET /api/v1/payments/61683fc3-a89f-43dc-8248-b10408d77960/status 200 204 - 493.611 ms","timestamp":"2026-05-26T12:01:02.716Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 1770.272 ms","timestamp":"2026-05-26T12:03:59.165Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers?offerRequestId=orq_0000B6gfw09mA7UmwV2SC8&sortBy=total_amount response is not async iterable","statusCode":502,"timestamp":"2026-05-26T12:04:04.427Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers?offerRequestId=orq_0000B6gfw09mA7UmwV2SC8&sortBy=total_amount 502 623 - 449.681 ms","timestamp":"2026-05-26T12:04:04.429Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/null The resource you are trying to access does not exist.","statusCode":502,"timestamp":"2026-05-26T12:04:10.798Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/null 502 945 - 639.291 ms","timestamp":"2026-05-26T12:04:10.799Z"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gifKIyz28eZ0EqGY 200 - - 3983.593 ms","timestamp":"2026-05-26T12:04:41.966Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/off_0000B6gifKIyz28eZ0EqGY/seat-map No seat map is available for this flight.","statusCode":502,"timestamp":"2026-05-26T12:04:48.912Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gifKIyz28eZ0EqGY/seat-map 502 796 - 1732.987 ms","timestamp":"2026-05-26T12:04:48.913Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/off_0000B6gifKIyz28eZ0EqGY/seat-map No seat map is available for this flight.","statusCode":502,"timestamp":"2026-05-26T12:04:59.046Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gifKIyz28eZ0EqGY/seat-map 502 796 - 1701.046 ms","timestamp":"2026-05-26T12:04:59.047Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/off_0000B6gifKIyz28eZ0EqGY/seat-map No seat map is available for this flight.","statusCode":502,"timestamp":"2026-05-26T12:05:24.037Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gifKIyz28eZ0EqGY/seat-map 502 796 - 1577.395 ms","timestamp":"2026-05-26T12:05:24.038Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/flights/book Failed to save the traveler details","statusCode":500,"timestamp":"2026-05-26T12:05:31.917Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/flights/book 500 602 - 2918.901 ms","timestamp":"2026-05-26T12:05:31.917Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/flights/book Failed to save the traveler details","statusCode":500,"timestamp":"2026-05-26T12:05:45.119Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/flights/book 500 602 - 2516.979 ms","timestamp":"2026-05-26T12:05:45.119Z"}
+{"bookingId":"7e80f109-d57e-496d-b527-c1ccf0e0a832","level":"info","message":"[FlightService] Booking initiated: OTA-FLT-20260526-WSVS","timestamp":"2026-05-26T12:05:56.302Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/flights/book 201 365 - 2498.708 ms","timestamp":"2026-05-26T12:05:56.303Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?page=1&limit=10 200 - - 154.181 ms","timestamp":"2026-05-26T12:06:00.386Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?page=1&limit=10 200 - - 197.675 ms","timestamp":"2026-05-26T12:06:25.902Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?status=PENDING_PAYMENT 200 - - 162.637 ms","timestamp":"2026-05-26T12:06:30.095Z"}
+{"level":"info","message":"[PaymentService] Payment initiated for OTA-FLT-20260526-WSVS via stripe","timestamp":"2026-05-26T12:06:45.274Z"}
+{"level":"http","message":"POST /api/v1/payments/initiate 201 772 - 1586.699 ms","timestamp":"2026-05-26T12:06:45.274Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm Field 'title' can't be blank","statusCode":502,"timestamp":"2026-05-26T12:09:41.049Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 502 - - 2635.710 ms","timestamp":"2026-05-26T12:09:41.051Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:11:14.658Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:11:14.723Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:11:14.763Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:11:14.771Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:12:04.094Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:12:04.211Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:12:04.270Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:12:04.283Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:12:33.346Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:12:33.414Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:12:33.454Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:12:33.463Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:12:36.153Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:12:36.234Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:12:36.279Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:12:36.291Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm offerPassengerIds is not defined","timestamp":"2026-05-26T12:13:03.468Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 500 757 - 2016.082 ms","timestamp":"2026-05-26T12:13:03.471Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:13:57.441Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:13:57.552Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:13:57.593Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:13:57.602Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm Field 'payments' can't be blank","statusCode":502,"timestamp":"2026-05-26T12:14:05.029Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 502 - - 3181.630 ms","timestamp":"2026-05-26T12:14:05.033Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:15:44.733Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:15:44.805Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:15:44.847Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:15:44.857Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm Field 'gender' must be one of \"m\", \"f\"","statusCode":502,"timestamp":"2026-05-26T12:16:05.363Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 502 - - 4036.750 ms","timestamp":"2026-05-26T12:16:05.368Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:16:59.294Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:16:59.372Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:16:59.417Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:16:59.427Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:17:06.364Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:17:06.435Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:17:06.498Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:17:06.514Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:17:19.012Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:17:19.078Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:17:19.124Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:17:19.134Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm Please select another offer, or create a new offer request to get the latest availability.","statusCode":502,"timestamp":"2026-05-26T12:17:30.252Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 502 - - 7810.558 ms","timestamp":"2026-05-26T12:17:30.257Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 1793.305 ms","timestamp":"2026-05-26T12:18:05.580Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers?offerRequestId=orq_0000B6gfw09mA7UmwV2SC8&sortBy=total_amount response is not async iterable","statusCode":502,"timestamp":"2026-05-26T12:18:26.791Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers?offerRequestId=orq_0000B6gfw09mA7UmwV2SC8&sortBy=total_amount 502 623 - 582.030 ms","timestamp":"2026-05-26T12:18:26.792Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/null The resource you are trying to access does not exist.","statusCode":502,"timestamp":"2026-05-26T12:18:30.169Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/null 502 945 - 603.264 ms","timestamp":"2026-05-26T12:18:30.170Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/orq_0000B6gjvIeOJhzVpLHOWu The resource you are trying to access does not exist.","statusCode":502,"timestamp":"2026-05-26T12:18:46.758Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/orq_0000B6gjvIeOJhzVpLHOWu 502 945 - 744.933 ms","timestamp":"2026-05-26T12:18:46.758Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/orq_0000B6gjvIeOJhzVpLHOWu The resource you are trying to access does not exist.","statusCode":502,"timestamp":"2026-05-26T12:18:55.550Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/orq_0000B6gjvIeOJhzVpLHOWu 502 945 - 703.373 ms","timestamp":"2026-05-26T12:18:55.550Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 2465.135 ms","timestamp":"2026-05-26T12:19:07.507Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/flights/offers/off_0000B6gk11PSjGGwWTwDQ4 Please select another offer, or create a new offer request to get the latest availability.","statusCode":502,"timestamp":"2026-05-26T12:19:43.278Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gk11PSjGGwWTwDQ4 502 - - 3386.237 ms","timestamp":"2026-05-26T12:19:43.279Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-26T12:19:57.808Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-26T12:19:57.871Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-26T12:19:57.911Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-26T12:19:57.920Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 7339.143 ms","timestamp":"2026-05-26T12:20:12.095Z"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gk6piiOIqBlhxFH3 200 - - 5361.860 ms","timestamp":"2026-05-26T12:21:04.838Z"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6gk6piiOIqBlhxFH3/seat-map 200 - - 2762.238 ms","timestamp":"2026-05-26T12:21:27.935Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/flights/book Failed to save the traveler details","statusCode":500,"timestamp":"2026-05-26T12:21:43.795Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/flights/book 500 602 - 3685.124 ms","timestamp":"2026-05-26T12:21:43.797Z"}
+{"bookingId":"06af9377-4f15-47e7-9f74-090cf76328d8","level":"info","message":"[FlightService] Booking initiated: OTA-FLT-20260526-RGRJ","timestamp":"2026-05-26T12:21:54.442Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/flights/book 201 362 - 2882.278 ms","timestamp":"2026-05-26T12:21:54.443Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?page=1&limit=10 200 - - 171.405 ms","timestamp":"2026-05-26T12:22:09.544Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?status=PENDING_PAYMENT 200 - - 183.940 ms","timestamp":"2026-05-26T12:22:15.976Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/initiate Cannot initiate payment for booking with status: PAYMENT_PROCESSING","statusCode":422,"timestamp":"2026-05-26T12:22:31.923Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/initiate 422 487 - 365.484 ms","timestamp":"2026-05-26T12:22:31.924Z"}
+{"level":"http","message":"GET /api/v1/flights/bookings?status=PENDING_PAYMENT 200 - - 449.696 ms","timestamp":"2026-05-26T12:23:06.023Z"}
+{"level":"info","message":"[PaymentService] Payment initiated for OTA-FLT-20260526-RGRJ via stripe","timestamp":"2026-05-26T12:23:21.514Z"}
+{"level":"http","message":"POST /api/v1/payments/initiate 201 772 - 2215.782 ms","timestamp":"2026-05-26T12:23:21.516Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/payments/confirm Field 'passengers' should have 2 item(s)","statusCode":502,"timestamp":"2026-05-26T12:24:33.472Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/payments/confirm 502 - - 3782.885 ms","timestamp":"2026-05-26T12:24:33.474Z"}
+{"level":"info","message":"[FlightService] Booking confirmed: OTA-FLT-20260526-RGRJ","orderId":"ord_0000B6gkpvMkFObKJFBBCq","timestamp":"2026-05-26T12:28:19.076Z"}
+{"level":"info","message":"[PaymentService] Payment confirmed for booking: OTA-FLT-20260526-RGRJ","timestamp":"2026-05-26T12:28:19.883Z"}
+{"level":"http","message":"POST /api/v1/payments/confirm 200 164 - 25354.057 ms","timestamp":"2026-05-26T12:28:19.884Z"}
+{"bookingRef":"OTA-FLT-20260526-RGRJ","err":"Cannot find module '@sendgrid/mail'\nRequire stack:\n- E:\\git clone\\OTA\\backend\\src\\config\\email.config.js\n- E:\\git clone\\OTA\\backend\\src\\services\\email.services.js\n- E:\\git clone\\OTA\\backend\\src\\services\\payment.services.js\n- E:\\git clone\\OTA\\backend\\src\\controllers\\payment.controller.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\payment-webhook.routes.js\n- E:\\git clone\\OTA\\backend\\src\\routes\\index.js\n- E:\\git clone\\OTA\\backend\\src\\app.js\n- E:\\git clone\\OTA\\backend\\src\\server.js","level":"error","message":"[EmailService] paymentReceived failed","timestamp":"2026-05-26T12:28:20.009Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}

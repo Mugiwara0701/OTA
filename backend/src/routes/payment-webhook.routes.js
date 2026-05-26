@@ -37,7 +37,8 @@ paymentRouter.post(
 );
 
 paymentRouter.post(
-  "/:bookingId/refund".authenticate,
+  "/:bookingId/refund",
+  authenticate,
   [param("bookingId").isUUID(), validate],
   paymentController.refundPayment,
 );

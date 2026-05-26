@@ -4,17 +4,26 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/flight.controller");
 const { authenticate } = require("../middleware/auth.middleware");
+const { searchLimiter } = require("../middleware/rateLimiter.middleware");
 const {
   searchFlightRules,
   initBookingRules,
   bookingIdParamRules,
-  offerIParamsRules,
+  offerIdParamRules,
   changeRequestRules,
+  listOffersRules,
 } = require("../validators/flight.validators");
 
 // ── PUBLIC SEARCH ─────────────────────────────────────────────────────────────
-router.post("/search", searchFlightRules, controller.searchFlights);
-router.get("/offers/:offerId", offerIParamsRules, controller.getOffer);
+router.post(
+  "/search",
+  searchLimiter,
+  searchFlightRules,
+  controller.searchFlights,
+);
+router.get("/offers", searchLimiter, listOffersRules, controller.listOffers);
+
+router.get("/offers/:offerId", offerIdParamRules, controller.getOffer);
 router.get("/offers/:offerId/seat-map", controller.getSeatMap);
 
 // ── AUTHENTICATED ─────────────────────────────────────────────────────────────

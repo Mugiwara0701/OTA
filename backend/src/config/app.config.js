@@ -49,7 +49,10 @@ const config = {
   // ── DUFFEL ──────────────────────
   duffel: {
     accessToken: requiredEnv("DUFFEL_ACCESS_TOKEN"),
-    webhookSecret: optionalEnv("DUFFEL_WEBHOOK_SECRET", ""),
+    webhookSecret:
+      NODE_ENV === "production"
+        ? requiredEnv("DUFFEL_WEBHOOK_SECRET")
+        : optionalEnv("DUFFEL_WEBHOOK_SECRET", ""),
   },
 
   // ── PAYMENT ──────────────────────
@@ -59,19 +62,42 @@ const config = {
       NODE_ENV === "production" ? "duffel" : "stripe",
     ),
     stripe: {
-      secretKey: requiredEnv("STRIPE_SECRET_KEY"),
-      publishableKey: requiredEnv("STRIPE_PUBLISHABLE_KEY"),
-      webhookSecret: requiredEnv("STRIPE_WEBHOOK_SECRET"),
+      secretKey: optionalEnv("STRIPE_SECRET_KEY", ""),
+      publishableKey: optionalEnv("STRIPE_PUBLISHABLE_KEY", ""),
+      webhookSecret: optionalEnv("STRIPE_WEBHOOK_SECRET", ""),
     },
   },
   // ── Cors ──────────────────────
   cors: {
-    allowedOrigins: optionalEnv("CORS_ALLOWED_ORIGINS", "*").split(","),
+    allowedOrigins: optionalEnv(
+      "CORS_ALLOWED_ORIGINS",
+      NODE_ENV === "production" ? "" : "http://localhost:3000",
+    )
+      .split(",")
+      .map((o) => o.trim())
+      .filter(Boolean),
   },
   // ── Rate Limiting ──────────────────────
   rateLimit: {
     windowMs: parseInt(optionalEnv("RATE_LIMIT_WINDOW_MS", "900000"), 10),
-    maxRequests: parseInt(optionalEnv("RATE_LIMIT_MAX_REQUESTS", "100"), 10),
+    max: parseInt(optionalEnv("RATE_LIMIT_MAX_REQUESTS", "100"), 10),
+    // Per-endpoint tighter limits (Phase 2)
+    searchWindowMs: parseInt(
+      optionalEnv("SEARCH_RATE_LIMIT_WINDOW_MS", "60000"),
+      10,
+    ),
+    searchMax: parseInt(optionalEnv("SEARCH_RATE_LIMIT_MAX", "20"), 10),
+    authWindowMs: parseInt(
+      optionalEnv("AUTH_RATE_LIMIT_WINDOW_MS", "900000"),
+      10,
+    ),
+    authMax: parseInt(optionalEnv("AUTH_RATE_LIMIT_MAX", "10"), 10),
+  },
+  email: {
+    provider: optionalEnv("EMAIL_PROVIDER", "sendgrid"),
+    sendgridKey: optionalEnv("SENDGRID_API_KEY", ""),
+    fromEmail: optionalEnv("EMAIL_FROM", "noreply@yourtravelapp.com"),
+    fromName: optionalEnv("EMAIL_FROM_NAME", "OTA Travel"),
   },
   // ── Logging ──────────────────────
   logging: {

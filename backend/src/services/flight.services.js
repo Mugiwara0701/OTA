@@ -27,6 +27,10 @@ async function searchFlights({
   infants = 0,
   cabinClass = "economy",
   maxConnections,
+  sortBy = "total_amount",
+  maxPrice,
+  maxStops,
+  airlines,
 }) {
   const passengers = [];
   for (let i = 0; i < adults; i++) passengers.push({ type: "adult" });
@@ -49,15 +53,86 @@ async function searchFlights({
     maxConnections,
   });
 
-  const offers = (offerRequest.offers || []).map(mapDuffelOffer);
+  let offers = (offerRequest.offers || []).map(mapDuffelOffer);
 
+  // ── client-side filtering ──────────────────────────────────────────
+  if (maxPrice !== undefined) {
+    offers = offers.filter((o) => parseFloat(o.totalAmount) <= maxPrice);
+  }
+  if (maxStops !== undefined) {
+    offers = offers.filter((o) => o.slices.every((s) => s.stops <= maxStops));
+  }
+  if (airlines && Array.isArray(airlines) && airlines.length > 0) {
+    const upperAirlines = airlines.map((a) => a.toUpperCase());
+    offers = offers.filter((o) => upperAirlines.includes(o.owner?.iataCode));
+  }
+  // ── Phase 3: sorting ─────────────────────────────────────────────────────────
+  if (sortBy === "total_amount") {
+    offers.sort(
+      (a, b) => parseFloat(a.totalAmount) - parseFloat(b.totalAmount),
+    );
+  } else if (sortBy === "stops") {
+    offers.sort((a, b) => {
+      const stopsA = a.slices.reduce((acc, s) => acc + s.stops, 0);
+      const stopsB = b.slices.reduce((acc, s) => acc + s.stops, 0);
+      return stopsA - stopsB;
+    });
+  } else if (sortBy === "duration") {
+    offers.sort((a, b) => {
+      const durA = a.slices[0]?.duration || "";
+      const durB = b.slices[0]?.duration || "";
+      return durA.localeCompare(durB);
+    });
+  }
+
+  // ── Phase 3: filter metadata ─────────────────────────────────────────────────
+  const allAirlines = [
+    ...new Set(offers.map((o) => o.owner?.iataCode).filter(Boolean)),
+  ];
+
+  const priceRange = offers.length
+    ? {
+        min: Math.min(...offers.map((o) => parseFloat(o.totalAmount))),
+        max: Math.max(...offers.map((o) => parseFloat(o.totalAmount))),
+      }
+    : null;
   return {
     offerRequestId: offerRequest.id,
     totalOffers: offers.length,
     slices,
     cabinClass,
+    filters: { availableAirlines: allAirlines, priceRange },
     offers,
   };
+}
+
+// ── LIST OFFERS (with filtering, for paginated FE use) ────────────────────────
+async function listOffers({
+  offerRequestId,
+  sortBy,
+  maxPrice,
+  maxStops,
+  airlines,
+}) {
+  let offers = await flightIntegration.listOffers({
+    offerRequestId,
+    sort: sortBy,
+  });
+  offers = offers.map(mapDuffelOffer);
+  if (maxPrice !== undefined)
+    offers = offers.filter((o) => parseFloat(o.totalAmount) <= maxPrice);
+  if (maxStops !== undefined)
+    offers = offers.filter((o) => o.slices.every((s) => s.stops <= maxStops));
+  if (airlines?.length) {
+    const upper = airlines.map((a) => a.toUpperCase());
+    offers = offers.filter((o) => upper.includes(o.owner?.iataCode));
+  }
+  if (sortBy === "total_amount") {
+    offers.sort(
+      (a, b) => parseFloat(a.totalAmount) - parseFloat(b.totalAmount),
+    );
+  }
+  return { totalOffers: offers.length, offers };
 }
 
 // ── GET OFFER DETAILS WITH SEAT MAP ─────────────────────────────────────────────────────────────
@@ -95,7 +170,7 @@ async function initFlightBooking({
   const lastSlice = mapped.slices[mapped.slices.length - 1];
 
   const { data: booking, error: bookingError } = await supabaseAdmin
-    .from("booking")
+    .from("bookings")
     .insert({
       user_id: userId,
       booking_type: BOOKING_TYPE.FLIGHT,
@@ -219,12 +294,16 @@ async function confirmFlightBooking({
   if (!flightBooking?.duffel_offer_id)
     throw new AppError("Flight booking data missing", HTTP.INTERNAL_ERROR);
 
+  const offer = await flightIntegration.getOffer(flightBooking.duffel_offer_id);
+  const offerPassengerIds = offer.passengers.map((p) => p.id);
+  const genderMap = { male: "m", female: "f", other: "m" };
   const duffelPassengers = booking.travelers.map((t, idx) => ({
-    id: `pass_${idx}`,
+    id: offerPassengerIds[idx],
+    title: t.gender?.toLowerCase() === "female" ? "ms" : "mr",
     given_name: t.first_name,
     family_name: t.last_name,
     born_on: t.date_of_birth,
-    gender: t.gender.toLowerCase(),
+    gender: genderMap[t.gender?.toLowerCase()] || "m", // ← "m" or "f"
     email: t.email || `traveler${idx}@placeholder.com`,
     phone_number: t.phone || "+10000000000",
     passport: {
@@ -234,16 +313,13 @@ async function confirmFlightBooking({
     },
   }));
 
-  const payments =
-    paymentProvider === "duffel"
-      ? [
-          {
-            type: "balance",
-            currency: booking.currency,
-            amount: String(booking.total_amount),
-          },
-        ]
-      : [];
+  const payments = [
+    {
+      type: "balance",
+      currency: booking.currency,
+      amount: String(booking.total_amount),
+    },
+  ];
 
   const order = await flightIntegration.createOrder({
     selectedOfferId: flightBooking.duffel_offer_id,
@@ -319,7 +395,7 @@ async function cancelFlightBooking(bookingId, userId) {
     .from("bookings")
     .update({
       status: BOOKINGS.CANCELLED,
-      cancelled_At: new Date().toISOString(),
+      cancelled_at: new Date().toISOString(),
       cancellation_reason: "Customer requested cancellation",
     })
     .eq("id", bookingId);
@@ -333,6 +409,16 @@ async function cancelFlightBooking(bookingId, userId) {
     meta_data: { refundAmount, refundCurrency },
     performed_by: userId,
   });
+
+  const emailService = require("./email.services");
+  emailService
+    .sendBookingCancellation({
+      userId: booking.user_id,
+      bookingRef: booking.booking_ref,
+      refundAmount,
+      currency: refundCurrency,
+    })
+    .catch(() => {});
 
   logger.info(`[FlightServices] Booking cancelled: ${booking.booking_ref}`);
 
@@ -349,7 +435,7 @@ async function cancelFlightBooking(bookingId, userId) {
 async function getBooking(bookingId, userId) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
-    .select("*, flight(*), travelers(*), payments(*)")
+    .select("*, flight_booking(*), travelers(*), payments(*)")
     .eq("id", bookingId)
     .single();
 
@@ -413,6 +499,7 @@ async function createChangeRequest({ bookingId, userId, slices }) {
 
 module.exports = {
   searchFlights,
+  listOffers,
   getOfferDetails,
   initFlightBooking,
   confirmFlightBooking,

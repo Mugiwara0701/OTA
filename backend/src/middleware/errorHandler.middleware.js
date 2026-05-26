@@ -1,6 +1,6 @@
 "use strict";
 
-const logger = require("../config/app.config");
+const logger = require("../config/logger");
 const { AppError } = require("../utils/AppError");
 const { HTTP } = require("../constants/index");
 
@@ -46,7 +46,7 @@ function sendProdError(err, res) {
       errors: err.errors || null,
     });
   } else {
-    logger.errors("[UNHANDLED ERROR]", {
+    logger.error("[UNHANDLED ERROR]", {
       message: err.message,
       stack: err.stack,
     });
@@ -63,10 +63,8 @@ function errorHandler(err, req, res, next) {
 
   if (err.name === "JSONWebTokenError") error = handleJWTError();
   if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
-  if (err.code && /^[0-9A-Z]{5}$/.test(err.code)) {
-    error = handleSupabaseError();
-  }
-
+  if (err.code && /^[0-9A-Z]{5}$/.test(err.code))
+    error = handleSupabaseError(err);
   if (err.array && typeof err.array === "function") {
     error = new AppError("Validation failed", HTTP.UNPROCESSABLE, err.array());
   }

@@ -82,7 +82,7 @@ async function insert(table, payload) {
 }
 
 async function update(table, filter = {}, payload = {}) {
-  let query = await supabaseAdmin.from(table).update(payload);
+  let query = supabaseAdmin.from(table).update(payload);
   Object.entries(filter).forEach(([key, value]) => {
     query = query.eq(key, value);
   });
@@ -104,7 +104,7 @@ async function update(table, filter = {}, payload = {}) {
 }
 
 async function remove(table, filter) {
-  let query = await supabaseAdmin.from(table).delete();
+  let query = supabaseAdmin.from(table).delete();
   Object.entries(filter).forEach(([key, value]) => {
     query = query.eq(key, value);
   });

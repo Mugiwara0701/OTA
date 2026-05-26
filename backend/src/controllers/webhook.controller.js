@@ -6,7 +6,7 @@ const config = require("../config/app.config");
 const logger = require("../config/logger");
 const paymentService = require("../services/payment.services");
 const { asyncHandler } = require("../utils/AppError");
-const { error } = require("console");
+const { supabaseAdmin } = require("../config/supabase");
 
 // ── STRIPE WEBHOOK ─────────────────────────────────────────────────────────────
 
@@ -147,9 +147,34 @@ const handleDuffelWebhook = asyncHandler(async (req, res) => {
         break;
       }
       case "order.airline_initiated_change": {
+        const orderId = data?.id;
         logger.warn(`[Webhook] Airline-initiated change received`, {
-          orderId: data?.id,
+          orderId,
         });
+        if (orderId) {
+          const { data: flightBooking } = await supabaseAdmin
+            .from("flight_booking")
+            .select("booking_id, bookings(user_id, booking_ref)")
+            .eq("duffel_order_id", orderId)
+            .maybeSingle();
+          if (flightBooking?.bookings) {
+            const emailService = require("../services/email.services");
+            emailService
+              .sendAirlineChangeAlert({
+                userId: flightBooking.bookings.user_id,
+                bookingRef: flightBooking.bookings.booking_ref,
+                orderId,
+              })
+              .catch(() => {});
+
+            await supabaseAdmin.from("booking_logs").insert({
+              booking_id: flightBooking.booking_id,
+              action: "AIRLINE_INITIATED_CHANGE",
+              message: `Airline initiated a schedule change for order ${orderId}`,
+              meta_data: { orderId },
+            });
+          }
+        }
         break;
       }
       case "stays.booking.updated": {

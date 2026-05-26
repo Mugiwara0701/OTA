@@ -15,7 +15,7 @@ const validate = (req, res, next) => {
 };
 
 const IATA_REGEX = /^[A-Z]{3}$/;
-const DATE_REGEX = /^\d{4}-\d{2}-d{2}$/;
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 const searchFlightRules = [
   body("origin")
@@ -62,11 +62,27 @@ const searchFlightRules = [
 
   body("maxConnections").optional().isInt({ min: 0, max: 2 }),
 
+  body("sortBy")
+    .optional()
+    .isIn(["total_amount", "duration", "stops"])
+    .withMessage("sortBy must be total_amount, duration, or stops."),
+
+  body("maxPrice")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("maxPrice must be a positive number.")
+    .toFloat(),
+
+  body("maxStops").optional().isInt({ min: 0, max: 2 }).toInt(),
+
+  body("airlines").optional().isArray(),
+
   validate,
 ];
 
+// ── Init Booking ──────────────────────────────────────────────────────────────
 const initBookingRules = [
-  body("offerId").notEmpty().withMessage().withMessage("OfferId is required"),
+  body("offerId").notEmpty().withMessage("OfferId is required"),
 
   body("passengers")
     .isArray({ min: 1 })
@@ -85,8 +101,15 @@ const initBookingRules = [
     .withMessage("Passenger bornOn must be YYYY-MM-DD"),
 
   body("passengers.*.gender")
+    .toUpperCase()
     .isIn(["MALE", "FEMALE", "OTHER"])
     .withMessage("Invalid gender"),
+
+  body("passengers.*.title")
+    .optional()
+    .toLowerCase()
+    .isIn(["mr", "ms", "mrs", "dr"])
+    .withMessage("Title must be mr, ms, mrs, or dr"),
 
   body("passengers.*.passportNumber")
     .notEmpty()
@@ -109,15 +132,15 @@ const initBookingRules = [
   validate,
 ];
 
+// ── Params ────────────────────────────────────────────────────────────────────
 const bookingIdParamRules = [
   param("bookingId").isUUID().withMessage("Invalid booking ID"),
 
   validate,
 ];
 
-const offerIParamsRules = [
-  param("bookingId").isUUID().withMessage("OfferId is required"),
-
+const offerIdParamRules = [
+  param("offerId").notEmpty().withMessage("Invalid offer ID"), // ← offerId, not UUID since Duffel offer IDs are not UUIDs
   validate,
 ];
 
@@ -131,10 +154,22 @@ const changeRequestRules = [
   validate,
 ];
 
+// ── List Offers (Phase 3 filter rules) ───────────────────────────────────────
+const listOffersRules = [
+  query("offerRequestId").notEmpty().withMessage("OfferRequestId is required."),
+  query("sortBy").optional().isIn(["total_amount", "duration", "stops"]),
+  query("maxPrice").optional().isFloat({ min: 0 }).toFloat(),
+  query("maxStops").optional().isInt({ min: 0, max: 2 }).toInt(),
+  query("airlines").optional(),
+  validate,
+];
+
 module.exports = {
   searchFlightRules,
   initBookingRules,
   bookingIdParamRules,
-  offerIParamsRules,
+  offerIdParamRules,
+  offerIParamsRules: offerIdParamRules, // alias for backward compat
   changeRequestRules,
+  listOffersRules,
 };

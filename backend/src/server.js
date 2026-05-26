@@ -1,8 +1,8 @@
 "use strict";
 
-const app = require("./src/app");
-const config = require("./src/config/app.config");
-const logger = require("./src/config/logger");
+const app = require("./app");
+const config = require("./config/app.config");
+const logger = require("./config/logger");
 
 const PORT = config.server.port || 5000;
 

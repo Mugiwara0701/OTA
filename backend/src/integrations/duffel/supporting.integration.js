@@ -163,7 +163,7 @@ module.exports = {
   getAirline,
   listAircraft,
   listCities,
-  listLoyaltyPrograms,
+  listLoyaltyProgrammes,
   clearCache,
   getCacheStats,
 };
