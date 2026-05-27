@@ -48,8 +48,28 @@ const getOffer = asyncHandler(async (req, res) => {
 // GET /api/v1/flights/offers/:offerId/seat-map
 const getSeatMap = asyncHandler(async (req, res) => {
   const { offerId } = req.params;
-  const seatMaps = await flightIntegration.getSeatMap(offerId);
-  return sendSuccess(res, HTTP.OK, "Seat map retrieved", seatMaps);
+  let seatMaps = [];
+  let available = false;
+  let reason = null;
+
+  try {
+    seatMaps = await flightIntegration.getSeatMap(offerId);
+    available = seatMaps.length > 0;
+    if (!available) {
+      reason =
+        "This airline or flight does not provide seat map data via Duffel. " +
+        "In test mode, only specific Duffel test carriers (e.g. ZZ airlines) support seat maps.";
+    }
+  } catch (err) {
+    // Duffel 422 seat_map_not_available — degrade gracefully
+    reason = err.message || "Seat map not available for this offer.";
+  }
+
+  return sendSuccess(res, HTTP.OK, "Seat map retrieved", {
+    available,
+    seatMaps,
+    ...(reason && { reason }),
+  });
 });
 
 // POST /api/v1/flights/book

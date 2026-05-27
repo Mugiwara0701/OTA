@@ -72,6 +72,7 @@ function mapDuffelOffer(offer) {
 // ── DUFFEL STAYS (HOTEL) OFFER MAPPER ─────────────────────────────────────────────────────────────
 function mapDuffelHotelResult(result) {
   return {
+    resultId: result.id, // ← add this! needed for fetchAllRates
     accommodationsId: result.accommodation?.id,
     name: result.accommodation?.name,
     starRating: result.accommodation?.rating,
@@ -82,10 +83,15 @@ function mapDuffelHotelResult(result) {
     amenities: result.accommodation?.amenities || [],
     checkInDate: result.check_in_date,
     checkOutDate: result.check_out_date,
-    rooms: (result.cheapest_rate_plan
-      ? [result.cheapest_rate_plan]
-      : result.rate_plans || []
-    ).map(mapDuffelRatePlan),
+    // Cheapest rate summary from search — flat fields, not nested
+    cheapestRate: result.cheapest_rate_total_amount
+      ? {
+          totalAmount: result.cheapest_rate_total_amount,
+          currency: result.cheapest_rate_currency,
+        }
+      : null,
+    // rates array is empty at search stage — call /stays/search_results/{resultId}/actions/fetch_all_rates to get them
+    rooms: [],
   };
 }
 

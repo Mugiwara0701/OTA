@@ -46,6 +46,18 @@ const createQuote = asyncHandler(async (req, res) => {
   return sendSuccess(res, HTTP.CREATED, "Quote created", result);
 });
 
+// GET /api/v1/stays/results/:resultId/rates
+const getHotelRates = asyncHandler(async (req, res) => {
+  const { resultId } = req.params;
+  const result = await staysService.getHotelRates(resultId);
+  return sendSuccess(
+    res,
+    HTTP.OK,
+    "Hotel rates retrieved successfully",
+    result,
+  );
+});
+
 // POST /api/v1/stays/book
 const initBooking = asyncHandler(async (req, res) => {
   const {
@@ -134,6 +146,7 @@ const cancelBooking = asyncHandler(async (req, res) => {
 
 module.exports = {
   searchHotels,
+  getHotelRates,
   getAccommodation,
   createQuote,
   initBooking,

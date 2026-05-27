@@ -6,6 +6,7 @@ const staysIntegration = require("../integrations/duffel/stays.integration");
 const {
   generateBookingRef,
   mapDuffelHotelResult,
+  mapDuffelRatePlan,
 } = require("../helpers/booking.helper");
 const { AppError } = require("../utils/AppError");
 const {
@@ -29,6 +30,7 @@ async function searchHotels({
   guests = 1,
   radius = 10,
 }) {
+  // search() returns all results directly — no polling needed
   const search = await staysIntegration.createSearch({
     latitude,
     longitude,
@@ -39,19 +41,10 @@ async function searchHotels({
     radius,
   });
 
-  let result = search;
-  let attempts = 0;
-
-  while (result.status !== "completed" && attempts < POLL_MAX_ATTEMPTS) {
-    await new Promise((r) => setTimeout(r, POLL_INTERNAL_MS));
-    result = await staysIntegration.getSearchResult(search.id);
-    attempts++;
-  }
-  const hotels = (result.results || []).map(mapDuffelHotelResult);
+  const hotels = (search.results || []).map(mapDuffelHotelResult);
 
   return {
-    searchId: search.id,
-    status: result.status,
+    status: "completed",
     checkInDate,
     checkOutDate,
     rooms,
@@ -96,6 +89,32 @@ async function createQuote(rateId) {
     paymentRequired: quote.payment_required_by,
     boardType: quote.board_type,
     expiresAt: quote.expires_at,
+  };
+}
+
+async function getHotelRates(resultId) {
+  const data = await staysIntegration.getSearchResult(resultId);
+
+  const rooms = (data.accommodation?.rooms || []).map((room) => ({
+    name: room.name,
+    beds: room.beds || [],
+    photos: room.photos || [],
+    rates: (room.rates || []).map((rate) => ({
+      rateId: rate.id, // ← this is what you pass to /quotes and /book
+      totalAmount: rate.total_amount,
+      currency: rate.total_currency,
+      boardType: rate.board_type,
+      cancellationTimeline: rate.cancellation_timeline,
+      availableQuantity: rate.quantity_available,
+      paymentType: rate.payment_option_type,
+    })),
+  }));
+
+  return {
+    resultId: data.id,
+    accommodationsId: data.accommodation?.id,
+    name: data.accommodation?.name,
+    rooms,
   };
 }
 
@@ -350,4 +369,5 @@ module.exports = {
   cancelHotelBooking,
   getBooking,
   listUserBookings,
+  getHotelRates,
 };

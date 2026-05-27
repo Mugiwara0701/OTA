@@ -14,6 +14,7 @@ const {
 
 // ── PUBLIC ─────────────────────────────────────────────────────────────
 router.post("/search", searchHotelRules, controller.searchHotels);
+router.get("/results/:resultId/rates", controller.getHotelRates);
 router.get("/accommodations/:accommodationId", controller.getAccommodation);
 
 // ── AUTHENTICATED ─────────────────────────────────────────────────────────────

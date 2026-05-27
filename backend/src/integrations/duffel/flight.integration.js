@@ -53,12 +53,14 @@ async function listOffers({
   try {
     const params = {
       offer_request_id: offerRequestId,
+      sort,
     };
     if (maxConnections !== undefined) params.max_connections = maxConnections;
-    const response = await duffel.offers.list(params);
+
+    // ✅ listWithGenerator() returns the async iterable
     const offers = [];
-    for await (const offer of response) {
-      offers.push(offer);
+    for await (const offer of duffel.offers.listWithGenerator(params)) {
+      offers.push(offer.data); // each yielded value has a .data property
     }
     return offers;
   } catch (err) {
@@ -118,8 +120,33 @@ async function updateOrder(orderId, { metadata }) {
 async function getSeatMap(offerId) {
   try {
     const response = await duffel.seatMaps.get({ offer_id: offerId });
-    return response.data;
+
+    // Duffel SDK returns { data: [...], meta: {...}, status: 200 }
+    // response.data is the array of seat map objects
+    const seatMaps = Array.isArray(response.data) ? response.data : [];
+
+    if (seatMaps.length === 0) {
+      // This is normal — most airlines don't expose seat maps via Duffel,
+      // and Duffel sandbox only supports seat maps for specific test carriers.
+      // Log a warning so it's visible in server logs, but DO NOT throw.
+      const logger = require("../../config/logger");
+      logger.warn(
+        `[SeatMap] Duffel returned empty seat map for offer ${offerId}. ` +
+          `The airline may not support seat map data, or this offer uses a ` +
+          `carrier not enabled for seat maps in ${process.env.NODE_ENV} mode.`,
+      );
+    }
+
+    return seatMaps;
   } catch (err) {
+    // Duffel returns 422 with code "seat_map_not_available" for unsupported airlines.
+    // We normalise and rethrow so the caller (service layer) can decide whether
+    // to surface this as an error or degrade gracefully.
+    const logger = require("../config/logger");
+    logger.warn(`[SeatMap] Duffel error for offer ${offerId}:`, {
+      message: err.message,
+      errors: err.errors,
+    });
     throw normalizeDuffelError(err);
   }
 }
@@ -179,12 +206,11 @@ async function getOrderChangeRequest(id) {
 // ── ORDER CHANGE OFFERS ─────────────────────────────────────────────────────────────
 async function listOrderChangeOffers(orderChangeRequestId) {
   try {
-    const response = await duffel.orderChangeOffers.list({
-      order_change_request_id: orderChangeRequestId,
-    });
     const offers = [];
-    for await (const offer of response) {
-      offers.push(offer);
+    for await (const offer of duffel.orderChangeOffers.listWithGenerator({
+      order_change_request_id: orderChangeRequestId,
+    })) {
+      offers.push(offer.data);
     }
     return offers;
   } catch (err) {

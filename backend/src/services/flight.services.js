@@ -144,9 +144,27 @@ async function getOfferDetails(offerId) {
 
   if (offer.status === "rejected") throw offer.reason;
 
+  let seatMapData = [];
+  let seatMapStatus = "available";
+
+  if (seatMaps.status === "fulfilled") {
+    seatMapData = seatMaps.value;
+    if (seatMapData.length === 0) {
+      seatMapStatus = "not_available";
+    }
+  } else {
+    // Log the actual Duffel error so it's visible in server logs
+    logger.warn(`[FlightService] Seat map fetch failed for offer ${offerId}:`, {
+      error: seatMaps.reason?.message,
+      duffelErrors: seatMaps.reason?.errors,
+    });
+    seatMapStatus = "error";
+  }
+
   return {
     ...mapDuffelOffer(offer.value),
-    seatMaps: seatMaps.status === "fulfilled" ? seatMaps.value : [],
+    seatMaps: seatMapData,
+    seatMapStatus, // "available" | "not_available" | "error"
   };
 }
 
@@ -295,6 +313,34 @@ async function confirmFlightBooking({
     throw new AppError("Flight booking data missing", HTTP.INTERNAL_ERROR);
 
   const offer = await flightIntegration.getOffer(flightBooking.duffel_offer_id);
+
+  // ✅ 1. Check offer hasn't expired
+  if (new Date(offer.expires_at) < new Date()) {
+    throw new AppError(
+      "Flight offer has expired. Please search again.",
+      HTTP.UNPROCESSABLE,
+    );
+  }
+
+  // ✅ 2. Always use Duffel's live price — never the stale DB amount
+  const liveAmount = String(parseFloat(offer.total_amount).toFixed(2));
+  const liveCurrency = offer.total_currency;
+
+  // ✅ 3. If price changed, update DB to keep records in sync
+  if (parseFloat(offer.total_amount) !== parseFloat(booking.total_amount)) {
+    logger.warn(
+      `[FlightService] Price changed for booking ${booking.booking_ref}: ` +
+        `stored=${booking.total_amount}, live=${offer.total_amount}`,
+    );
+    await supabaseAdmin
+      .from("bookings")
+      .update({
+        total_amount: parseFloat(offer.total_amount),
+        currency: liveCurrency,
+      })
+      .eq("id", bookingId);
+  }
+
   const offerPassengerIds = offer.passengers.map((p) => p.id);
   const genderMap = { male: "m", female: "f", other: "m" };
   const duffelPassengers = booking.travelers.map((t, idx) => ({
@@ -303,7 +349,7 @@ async function confirmFlightBooking({
     given_name: t.first_name,
     family_name: t.last_name,
     born_on: t.date_of_birth,
-    gender: genderMap[t.gender?.toLowerCase()] || "m", // ← "m" or "f"
+    gender: genderMap[t.gender?.toLowerCase()] || "m",
     email: t.email || `traveler${idx}@placeholder.com`,
     phone_number: t.phone || "+10000000000",
     passport: {
@@ -316,8 +362,8 @@ async function confirmFlightBooking({
   const payments = [
     {
       type: "balance",
-      currency: booking.currency,
-      amount: String(booking.total_amount),
+      currency: liveCurrency,
+      amount: liveAmount,
     },
   ];
 
