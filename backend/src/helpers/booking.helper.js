@@ -71,27 +71,40 @@ function mapDuffelOffer(offer) {
 
 // ── DUFFEL STAYS (HOTEL) OFFER MAPPER ─────────────────────────────────────────────────────────────
 function mapDuffelHotelResult(result) {
+  const acc = result.accommodation;
   return {
-    resultId: result.id, // ← add this! needed for fetchAllRates
-    accommodationsId: result.accommodation?.id,
-    name: result.accommodation?.name,
-    starRating: result.accommodation?.rating,
-    reviewScore: result.accommodation?.review_score,
-    address: result.accommodation?.address,
-    location: result.accommodation?.geolocation,
-    thumbnail: result.accommodation?.photos?.[0]?.url,
-    amenities: result.accommodation?.amenities || [],
+    resultId: result.id,
+    expiresAt: result.expires_at,
+    accommodationsId: acc?.id,
+    name: acc?.name,
+    description: acc?.description || null,
+    starRating: acc?.rating,
+    reviewScore: acc?.review_score,
+    reviewCount: acc?.review_count || null,
+    brand: acc?.brand?.name || null,
+    phone: acc?.phone_number || null,
+    email: acc?.email || null,
+    address: acc?.location?.address || null,
+    coordinates: acc?.location?.geographic_coordinates || null,
+    checkInInfo: acc?.check_in_information || null,
+    amenities: acc?.amenities || [],
+    photos: acc?.photos || [],
     checkInDate: result.check_in_date,
     checkOutDate: result.check_out_date,
-    // Cheapest rate summary from search — flat fields, not nested
+    rooms: result.rooms,
+    guests: result.guests,
     cheapestRate: result.cheapest_rate_total_amount
       ? {
           totalAmount: result.cheapest_rate_total_amount,
           currency: result.cheapest_rate_currency,
+          baseAmount: result.cheapest_rate_base_amount,
+          baseCurrency: result.cheapest_rate_base_currency,
+          dueAtAccommodation: result.cheapest_rate_due_at_accommodation_amount,
+          dueAtAccommodationCurrency:
+            result.cheapest_rate_due_at_accommodation_currency,
         }
       : null,
-    // rates array is empty at search stage — call /stays/search_results/{resultId}/actions/fetch_all_rates to get them
-    rooms: [],
+    roomRates: [],
   };
 }
 

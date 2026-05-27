@@ -348,3 +348,16 @@
 {"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: permission denied for table activity_logs","stack":"Error: Failed to create new activity_logs record: permission denied for table activity_logs\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-27T09:46:25.989Z"}
 {"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-27T09:46:25.990Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
 {"level":"http","message":"POST /api/v1/auth/login 200 1017 - 1736.070 ms","timestamp":"2026-05-27T09:46:25.991Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T10:34:58.313Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T10:34:58.426Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T10:34:58.503Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T10:34:58.517Z"}
+{"level":"http","message":"POST /api/v1/stays/search 200 - - 566.669 ms","timestamp":"2026-05-27T10:35:03.071Z"}
+{"level":"http","message":"POST /api/v1/stays/search 200 - - 697.693 ms","timestamp":"2026-05-27T10:38:06.864Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T10:40:19.927Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T10:40:19.991Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T10:40:20.029Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T10:40:20.037Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/stays/search Validation failed","statusCode":422,"timestamp":"2026-05-27T10:40:39.683Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/stays/search 422 985 - 7.293 ms","timestamp":"2026-05-27T10:40:39.689Z"}
+{"level":"http","message":"POST /api/v1/stays/search 200 - - 806.228 ms","timestamp":"2026-05-27T10:40:44.564Z"}
