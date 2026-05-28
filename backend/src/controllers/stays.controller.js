@@ -140,8 +140,9 @@ const cancelBooking = asyncHandler(async (req, res) => {
   const result = await staysService.cancelHotelBooking(
     req.params.bookingId,
     req.user.id,
+    req.body.reason || null, // ← add this
   );
-  return sendSuccess(res, HTTP.OK, "hotel booking cancelled", result);
+  return sendSuccess(res, HTTP.OK, "Hotel booking cancelled", result);
 });
 
 module.exports = {

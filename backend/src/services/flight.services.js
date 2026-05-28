@@ -294,6 +294,7 @@ async function confirmFlightBooking({
   bookingId,
   userId,
   paymentProvider = "stripe",
+  selectedServices = [],
 }) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
@@ -372,6 +373,7 @@ async function confirmFlightBooking({
     passengers: duffelPassengers,
     payments,
     metadata: { booking_id: bookingId, booking_ref: booking.booking_ref },
+    services: selectedServices,
   });
 
   await supabaseAdmin

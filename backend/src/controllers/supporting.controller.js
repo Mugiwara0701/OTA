@@ -2,7 +2,7 @@
 
 const rateLimit = require("express-rate-limit");
 const supportingService = require("../services/supporting.services");
-const { asyncHandler } = require("../utils/AppError");
+const { asyncHandler, AppError } = require("../utils/AppError");
 const { sendSuccess } = require("../helpers/helper.response");
 const { HTTP } = require("../constants/index");
 
@@ -61,8 +61,8 @@ const listAirlines = asyncHandler(async (req, res) => {
   const airlines = await supportingService.listAirlines({
     iataCode: iata?.toUpperCase(),
   });
-  return sendSuccess(res, HTTP.OK, "Airlines retrieved", airline, {
-    total: airline.length,
+  return sendSuccess(res, HTTP.OK, "Airlines retrieved", airlines, {
+    total: airlines.length,
   });
 });
 

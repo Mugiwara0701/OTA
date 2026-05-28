@@ -1,6 +1,8 @@
 "use strict";
 
 const NodeCache = require("node-cache");
+const axios = require("axios");
+const config = require("../../config/app.config");
 const duffel = require("../../config/duffel");
 const {
   normalization,
@@ -45,7 +47,7 @@ async function collectAll(iterator) {
 async function searchPlaces(query) {
   try {
     const response = await duffel.suggestions.list({ query });
-    return response;
+    return response.data;
   } catch (err) {
     throw normalizeDuffelError(err);
   }
@@ -67,7 +69,8 @@ async function listAirports({ iataCode, iataCountryCode } = {}) {
         params.iata_country_code = iataCountryCode;
       }
 
-      return collectAll(await duffel.airports.list(params));
+      const response = await duffel.airports.list(params);
+      return response.data;
     } catch (err) {
       throw normalizeDuffelError(err);
     }
@@ -92,7 +95,8 @@ async function listAirlines({ iataCode } = {}) {
     try {
       const params = {};
       if (iataCode) params.iata_code = iataCode;
-      return collectAll(await duffel.airlines.list(params));
+      const response = await duffel.airlines.list(params);
+      return response.data;
     } catch (err) {
       throw normalizeDuffelError(err);
     }
@@ -113,7 +117,8 @@ async function getAirline(id) {
 async function listAircraft() {
   return withCache("aircraft:all", async () => {
     try {
-      return collectAll(await duffel.aircraft.list());
+      const response = await duffel.aircraft.list();
+      return response.data;
     } catch (err) {
       throw normalizeDuffelError(err);
     }
@@ -121,13 +126,18 @@ async function listAircraft() {
 }
 
 // ── Cities
-async function listCities({ iataCountryCode } = {}) {
-  const key = `cities:${iataCountryCode || "all"}`;
-  return withCache(key, async () => {
+async function listCities() {
+  return withCache("cities:all", async () => {
     try {
-      const params = {};
-      if (iataCountryCode) params.iata_country_code = iataCountryCode;
-      return collectAll(await duffel.cities.list(params));
+      const res = await fetch("https://api.duffel.com/air/cities", {
+        headers: {
+          Authorization: `Bearer ${config.duffel.accessToken}`,
+          "Duffel-Version": "v2",
+          Accept: "application/json",
+        },
+      });
+      const json = await res.json();
+      return json.data ?? [];
     } catch (err) {
       throw normalizeDuffelError(err);
     }
@@ -138,7 +148,15 @@ async function listCities({ iataCountryCode } = {}) {
 async function listLoyaltyProgrammes() {
   return withCache("loyalty:all", async () => {
     try {
-      return collectAll(await duffel.loyaltyProgrammes.list());
+      const res = await fetch(`https://api.duffel.com/air/loyalty_programmes`, {
+        headers: {
+          Authorization: `Bearer ${config.duffel.accessToken}`,
+          "Duffel-Version": "v2",
+          Accept: "application/json",
+        },
+      });
+      const json = await res.json();
+      return json.data;
     } catch (err) {
       throw normalizeDuffelError(err);
     }

@@ -24,7 +24,7 @@ router.use("/webhooks", webhookRouter); // raw body applied in app.js for this p
 // router.use("/support", require("./support.routes"));
 
 // // ── Meta / Reference Data (public) ───────────────────────────────────────────
-// router.use("/meta", require("./supporting.routes"));
+router.use("/meta", require("./supporting.routes"));
 
 // // ── Admin ─────────────────────────────────────────────────────────────────────
 // router.use("/admin", require("./admin/index.routes"));

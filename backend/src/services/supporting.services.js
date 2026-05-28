@@ -81,14 +81,23 @@ async function listAircraft() {
 
 // ──── CITIES ──────────────────────────────────────────────────────────────
 async function listCities({ iataCountryCode } = {}) {
-  const raw = await supporting.listCities({ iataCountryCode });
-  return raw.map((c) => ({
+  const raw = await supporting.listCities(); // always fetch all, cache handles it
+  const mapped = raw.map((c) => ({
     id: c.id,
     iataCode: c.iata_code,
     name: c.name,
-    countryCode: c.country_code,
+    countryCode: c.iata_country_code,
     airports: (c.airports || []).map(mapAirport),
   }));
+
+  // filter after mapping if country was requested
+  if (iataCountryCode) {
+    return mapped.filter(
+      (c) => c.countryCode === iataCountryCode.toUpperCase(),
+    );
+  }
+
+  return mapped;
 }
 
 // ──── LOYALTY PROGRAMMES ──────────────────────────────────────────────────────────────

@@ -65,9 +65,54 @@ const getSeatMap = asyncHandler(async (req, res) => {
     reason = err.message || "Seat map not available for this offer.";
   }
 
+  // Shape each seat map so the frontend gets everything it needs to render
+  // the cabin layout and know which seats are available vs taken.
+  const shaped = seatMaps.map((sm) => ({
+    id: sm.id,
+    segment_id: sm.segment_id,
+    slice_id: sm.slice_id,
+    cabins: (sm.cabins || []).map((cabin) => ({
+      id: cabin.id,
+      deck: cabin.deck,
+      aisles: cabin.aisles,
+      wings: cabin.wings || null,
+      rows: (cabin.rows || []).map((row, rowIndex) => ({
+        row_index: rowIndex,
+        sections: (row.sections || []).map((section) => ({
+          elements: (section.elements || []).map((el) => {
+            if (el.type !== "seat") {
+              // Non-seat elements: exit_row, lavatory, galley, bassinet, empty
+              return { type: el.type };
+            }
+            const hasServices =
+              Array.isArray(el.available_services) &&
+              el.available_services.length > 0;
+            return {
+              type: "seat",
+              designator: el.designator,
+              name: el.name || null,
+              disclosures: el.disclosures || [],
+              // available = true means the passenger CAN select this seat
+              available: hasServices,
+              // services contains the id the frontend must send back at booking time
+              services: hasServices
+                ? el.available_services.map((s) => ({
+                    id: s.id,
+                    passenger_id: s.passenger_id,
+                    total_amount: s.total_amount,
+                    total_currency: s.total_currency,
+                  }))
+                : [],
+            };
+          }),
+        })),
+      })),
+    })),
+  }));
+
   return sendSuccess(res, HTTP.OK, "Seat map retrieved", {
     available,
-    seatMaps,
+    seatMaps: shaped,
     ...(reason && { reason }),
   });
 });
@@ -92,15 +137,18 @@ const initBooking = asyncHandler(async (req, res) => {
 });
 
 // POST /api/v1/flights/bookings/:bookingId/confirm
+// POST /api/v1/flights/bookings/:bookingId/confirm
 const confirmBooking = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;
   const userId = req.user.id;
-  const { paymentProvider } = req.body;
+  const { paymentProvider, selectedServices } = req.body;
+  // selectedServices shape (optional): [{ id: "ase_xxx", passenger_id: "pas_xxx" }]
 
   const result = await flightService.confirmFlightBooking({
     bookingId,
     userId,
     paymentProvider,
+    selectedServices: selectedServices || [],
   });
 
   return sendSuccess(res, HTTP.OK, "Flight booking confirmed", result);

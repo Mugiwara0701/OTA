@@ -361,3 +361,92 @@
 {"ip":"::1","level":"error","message":"[POST] /api/v1/stays/search Validation failed","statusCode":422,"timestamp":"2026-05-27T10:40:39.682Z","userId":"unauthenticated"}
 {"level":"http","message":"POST /api/v1/stays/search 422 985 - 7.293 ms","timestamp":"2026-05-27T10:40:39.689Z"}
 {"level":"http","message":"POST /api/v1/stays/search 200 - - 806.228 ms","timestamp":"2026-05-27T10:40:44.563Z"}
+{"level":"http","message":"GET /api/v1/stays/accommodations/acc_0000AWr2VsUNIF1Vl91xg0 200 - - 491.832 ms","timestamp":"2026-05-27T10:48:28.950Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/stays/results/srr_0000B6iL6g1PaFvHzIHqZM/rates The resource you are trying to access does not exist.","statusCode":502,"timestamp":"2026-05-27T10:48:49.346Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6iL6g1PaFvHzIHqZM/rates 502 903 - 691.044 ms","timestamp":"2026-05-27T10:48:49.347Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO Route not found: GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO","statusCode":404,"timestamp":"2026-05-27T10:49:26.356Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO 404 - - 1.087 ms","timestamp":"2026-05-27T10:49:26.358Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO Route not found: POST /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO","statusCode":404,"timestamp":"2026-05-27T10:49:34.891Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO 404 - - 0.738 ms","timestamp":"2026-05-27T10:49:34.893Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO Route not found: GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO","statusCode":404,"timestamp":"2026-05-27T10:49:40.880Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO 404 - - 0.752 ms","timestamp":"2026-05-27T10:49:40.883Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO Route not found: GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO","statusCode":404,"timestamp":"2026-05-27T10:49:53.611Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO 404 - - 0.544 ms","timestamp":"2026-05-27T10:49:53.612Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO Route not found: GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO","statusCode":404,"timestamp":"2026-05-27T10:50:47.295Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO 404 - - 0.539 ms","timestamp":"2026-05-27T10:50:47.296Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/stays/quotes Route not found: GET /api/v1/stays/quotes","statusCode":404,"timestamp":"2026-05-27T10:52:19.574Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/stays/quotes 404 - - 0.750 ms","timestamp":"2026-05-27T10:52:19.576Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/stays/quotes Something went wrong. Please contact our support team and attach the `request_id` to your message if the error persists. You should not retry this request.","statusCode":502,"timestamp":"2026-05-27T10:52:25.185Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/stays/quotes 502 - - 448.901 ms","timestamp":"2026-05-27T10:52:25.188Z"}
+{"level":"http","message":"GET /api/v1/stays/accommodations/acc_0000AWr2VsUNIF1Vl91xg0 200 - - 518.508 ms","timestamp":"2026-05-27T10:52:59.277Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/stays/quotes Something went wrong. Please contact our support team and attach the `request_id` to your message if the error persists. You should not retry this request.","statusCode":502,"timestamp":"2026-05-27T10:53:30.544Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/stays/quotes 502 - - 1330.924 ms","timestamp":"2026-05-27T10:53:30.545Z"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO/rates 200 - - 644.524 ms","timestamp":"2026-05-27T10:54:58.734Z"}
+{"level":"http","message":"POST /api/v1/stays/quotes 201 201 - 587.629 ms","timestamp":"2026-05-27T10:55:41.949Z"}
+{"bookingId":"8c0c0830-7f34-49be-b6cd-efffd8190648","level":"info","message":"[StayService] Booking initiated: OTA-HTL-20260527-BTSY","timestamp":"2026-05-27T10:55:58.782Z"}
+{"level":"http","message":"POST /api/v1/stays/book 201 245 - 2713.374 ms","timestamp":"2026-05-27T10:55:58.783Z"}
+{"level":"http","message":"POST /api/v1/stays/quotes 201 201 - 662.477 ms","timestamp":"2026-05-27T11:05:37.551Z"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO/rates 200 - - 541.775 ms","timestamp":"2026-05-27T11:05:43.282Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:09:06.953Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:09:07.017Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:09:07.056Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:09:07.064Z"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO/rates 200 - - 724.896 ms","timestamp":"2026-05-27T11:09:18.689Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:11:05.583Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:11:05.647Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:11:05.685Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:11:05.694Z"}
+{"level":"http","message":"POST /api/v1/stays/quotes 201 - - 696.621 ms","timestamp":"2026-05-27T11:11:10.031Z"}
+{"level":"http","message":"GET /api/v1/stays/results/srr_0000B6ifkecEMSDUMJzYKO/rates 200 - - 491.900 ms","timestamp":"2026-05-27T11:11:25.310Z"}
+{"level":"http","message":"POST /api/v1/stays/quotes 201 - - 600.732 ms","timestamp":"2026-05-27T11:13:54.480Z"}
+{"bookingId":"d7cc5098-2891-4e07-a621-16fcf7867bc6","level":"info","message":"[StayService] Booking initiated: OTA-HTL-20260527-ALDW","timestamp":"2026-05-27T11:17:02.788Z"}
+{"level":"http","message":"POST /api/v1/stays/book 201 245 - 2446.120 ms","timestamp":"2026-05-27T11:17:02.790Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:19:36.324Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:19:36.387Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:19:36.426Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:19:36.435Z"}
+{"bookingId":"15c4dd89-3ed4-4e73-a53a-04d5b824a9ff","level":"info","message":"[StayService] Booking initiated: OTA-HTL-20260527-LCQQ","timestamp":"2026-05-27T11:19:41.950Z"}
+{"level":"http","message":"POST /api/v1/stays/book 201 - - 1722.486 ms","timestamp":"2026-05-27T11:19:41.954Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:23:23.107Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:23:23.168Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:23:23.207Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:23:23.215Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:23:44.629Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:23:44.691Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:23:44.730Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:23:44.739Z"}
+{"bookingId":"10c4f8da-919c-4301-85da-ffca93fc5743","level":"info","message":"[StayService] Booking initiated: OTA-HTL-20260527-5DUF","timestamp":"2026-05-27T11:24:00.481Z"}
+{"level":"http","message":"POST /api/v1/stays/book 201 - - 1857.259 ms","timestamp":"2026-05-27T11:24:00.487Z"}
+{"bookingId":"cd4071ed-d137-4aa5-a8ab-e07f625043a4","level":"info","message":"[StayService] Booking initiated: OTA-HTL-20260527-ZOUH","timestamp":"2026-05-27T11:27:45.246Z"}
+{"level":"http","message":"POST /api/v1/stays/book 201 - - 1791.329 ms","timestamp":"2026-05-27T11:27:45.248Z"}
+{"level":"info","message":"[PaymentService] Payment initiated for OTA-HTL-20260527-ZOUH via stripe","timestamp":"2026-05-27T11:29:42.728Z"}
+{"level":"http","message":"POST /api/v1/payments/initiate 201 772 - 2343.302 ms","timestamp":"2026-05-27T11:29:42.730Z"}
+{"level":"info","message":"[StayServices] Booking confirmed: OTA-HTL-20260527-ZOUH","timestamp":"2026-05-27T11:32:03.497Z"}
+{"level":"http","message":"POST /api/v1/stays/booking/cd4071ed-d137-4aa5-a8ab-e07f625043a4/confirm 200 244 - 2037.264 ms","timestamp":"2026-05-27T11:32:03.498Z"}
+{"level":"http","message":"POST /api/v1/stays/booking/cd4071ed-d137-4aa5-a8ab-e07f625043a4/confirm 200 85 - 432.077 ms","timestamp":"2026-05-27T11:33:37.704Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 415.394 ms","timestamp":"2026-05-27T11:33:56.549Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:38:35.992Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:38:36.057Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:38:36.097Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:38:36.105Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 2457.224 ms","timestamp":"2026-05-27T11:38:40.816Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 1611.995 ms","timestamp":"2026-05-27T11:40:36.014Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 1393.797 ms","timestamp":"2026-05-27T11:45:39.328Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:45:47.335Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:45:47.400Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:45:47.436Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:45:47.444Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 793.134 ms","timestamp":"2026-05-27T11:45:51.398Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 967.381 ms","timestamp":"2026-05-27T11:46:43.942Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 1110.191 ms","timestamp":"2026-05-27T11:47:45.705Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T11:47:54.992Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T11:47:55.054Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T11:47:55.092Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T11:47:55.101Z"}
+{"level":"http","message":"GET /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4 200 - - 822.085 ms","timestamp":"2026-05-27T11:47:59.010Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-27T12:17:10.831Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-27T12:17:10.896Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-27T12:17:10.938Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-27T12:17:10.947Z"}
+{"bookingId":"cd4071ed-d137-4aa5-a8ab-e07f625043a4","isRefundable":true,"level":"info","message":"[StayService] Booking cancelled: OTA-HTL-20260527-ZOUH","refundAmount":1343.27,"timestamp":"2026-05-27T12:17:17.810Z"}
+{"level":"http","message":"POST /api/v1/stays/bookings/cd4071ed-d137-4aa5-a8ab-e07f625043a4/cancel 200 734 - 3109.310 ms","timestamp":"2026-05-27T12:17:17.814Z"}

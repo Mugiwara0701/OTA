@@ -31,6 +31,8 @@ const config = {
     apiVersion: optionalEnv("API_VERSION", "v1"),
     isDev: NODE_ENV === "development",
     isProd: NODE_ENV === "production",
+    apiUrl: optionalEnv("API_URL", "http://localhost:5000/api/v1"),
+    appScheme: optionalEnv("APP_SCHEME", "otaapp"),
     frontendUrl: optionalEnv("FRONTEND_URL", "http://localhost:3000"),
   },
   // ── SUPABASE ──────────────────────

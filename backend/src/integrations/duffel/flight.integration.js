@@ -85,14 +85,20 @@ async function createOrder({
   passengers,
   payments = [],
   metadata = {},
+  services = [],
 }) {
   try {
-    const response = await duffel.orders.create({
+    const payload = {
       selected_offers: [selectedOfferId],
       passengers,
       payments,
       metadata,
-    });
+    };
+    // Only include services if seats were selected — Duffel rejects an empty array
+    if (services.length > 0) {
+      payload.services = services.map((s) => ({ id: s.id, quantity: 1 }));
+    }
+    const response = await duffel.orders.create(payload);
     return response.data;
   } catch (err) {
     throw normalizeDuffelError(err);
@@ -142,7 +148,7 @@ async function getSeatMap(offerId) {
     // Duffel returns 422 with code "seat_map_not_available" for unsupported airlines.
     // We normalise and rethrow so the caller (service layer) can decide whether
     // to surface this as an error or degrade gracefully.
-    const logger = require("../config/logger");
+    const logger = require("../../config/logger");
     logger.warn(`[SeatMap] Duffel error for offer ${offerId}:`, {
       message: err.message,
       errors: err.errors,

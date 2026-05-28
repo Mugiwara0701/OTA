@@ -32,8 +32,18 @@ const refresh = asyncHandler(async (req, res) => {
 
 // GET /api/v1/auth/verify-email?token=...
 const verifyEmail = asyncHandler(async (req, res) => {
-  const result = await authService.verifyEmail(req.query.token);
-  sendSuccess(res, HTTP.OK, "Email verified successfully.", result);
+  try {
+    await authService.verifyEmail(req.query.token);
+
+    // Redirect to Flutter app via deep link
+    // Flutter app must register this scheme: otaapp://auth/verified
+    const deepLink = `${config.server.appScheme}://auth/verified?status=success`;
+    return res.redirect(deepLink);
+  } catch (err) {
+    // On failure redirect to app with error
+    const deepLink = `${config.server.appScheme}://auth/verified?status=error&message=${encodeURIComponent(err.message)}`;
+    return res.redirect(deepLink);
+  }
 });
 
 // POST /api/v1/auth/forgot-password

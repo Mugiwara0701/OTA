@@ -1,0 +1,156 @@
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:06:14.036Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:06:14.151Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:06:14.241Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:06:14.257Z"}
+{"error":"permission denied for table activity_logs","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-28T05:06:44.588Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: permission denied for table activity_logs","stack":"Error: Failed to create new activity_logs record: permission denied for table activity_logs\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:269:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-28T05:06:44.591Z"}
+{"email":"testuser@example.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-28T05:06:44.591Z","userId":"436fb210-e8e0-466b-bcdd-2eda883649b0"}
+{"level":"http","message":"POST /api/v1/auth/login 200 1017 - 2803.180 ms","timestamp":"2026-05-28T05:06:44.595Z"}
+{"level":"http","message":"GET /api/v1/auth/me 200 519 - 259.593 ms","timestamp":"2026-05-28T05:06:53.247Z"}
+{"level":"http","message":"POST /api/v1/flights/search 200 - - 2855.961 ms","timestamp":"2026-05-28T05:07:12.552Z"}
+{"level":"http","message":"GET /api/v1/flights/offers?offerRequestId=orq_0000B6kGUX7AizVbCY1Tg8&sortBy=total_amount 200 - - 2351.334 ms","timestamp":"2026-05-28T05:07:37.869Z"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6kGUXKAjz4RMnoUbK 200 - - 734.061 ms","timestamp":"2026-05-28T05:07:47.836Z"}
+{"level":"http","message":"GET /api/v1/flights/offers/off_0000B6kGUXKAjz4RMnoUbK/seat-map 200 - - 537.246 ms","timestamp":"2026-05-28T05:07:54.228Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:20:58.948Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:20:59.023Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:20:59.067Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:20:59.077Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:25:19.454Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:25:19.520Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:25:19.561Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:25:19.573Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/places/search?q=London (raw || []).map is not a function","timestamp":"2026-05-28T05:26:06.642Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/places/search?q=London 500 426 - 772.443 ms","timestamp":"2026-05-28T05:26:06.647Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:27:12.256Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:27:12.321Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:27:12.361Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:27:12.373Z"}
+{"level":"http","message":"GET /api/v1/meta/places/search?q=London 200 - - 965.492 ms","timestamp":"2026-05-28T05:27:17.289Z"}
+{"level":"http","message":"GET /api/v1/meta/places/search?q=DEL 200 - - 552.736 ms","timestamp":"2026-05-28T05:28:13.093Z"}
+{"level":"http","message":"GET /api/v1/meta/places/search?q=DE 200 - - 483.128 ms","timestamp":"2026-05-28T05:28:25.483Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/places/search?q=D Query params 'q' must be at least 2 characters","statusCode":400,"timestamp":"2026-05-28T05:28:42.898Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/places/search?q=D 400 816 - 1.133 ms","timestamp":"2026-05-28T05:28:42.898Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/airports?country=GB&iata=LHR iterator is not async iterable","timestamp":"2026-05-28T05:29:00.147Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/airports?country=GB&iata=LHR 500 745 - 463.581 ms","timestamp":"2026-05-28T05:29:00.148Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:30:23.349Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:30:23.445Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:30:23.500Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:30:23.514Z"}
+{"level":"debug","message":"[SupportingCache] SET → airport:GB:LHR","timestamp":"2026-05-28T05:30:28.164Z"}
+{"level":"http","message":"GET /api/v1/meta/airports?country=GB&iata=LHR 200 - - 519.937 ms","timestamp":"2026-05-28T05:30:28.171Z"}
+{"level":"debug","message":"[SupportingCache] SET → airport:arp_lhr_gb","timestamp":"2026-05-28T05:31:04.608Z"}
+{"level":"http","message":"GET /api/v1/meta/airports/arp_lhr_gb 200 217 - 591.179 ms","timestamp":"2026-05-28T05:31:04.610Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/airlines/arl_00001876ks0a96ywXhykvA The resource you are trying to access does not exist.","statusCode":502,"timestamp":"2026-05-28T05:31:16.078Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/airlines/arl_00001876ks0a96ywXhykvA 502 1006 - 672.397 ms","timestamp":"2026-05-28T05:31:16.079Z"}
+{"level":"debug","message":"[SupportingCache] HIT → airport:arp_lhr_gb","timestamp":"2026-05-28T05:31:38.608Z"}
+{"level":"http","message":"GET /api/v1/meta/airports/arp_lhr_gb 200 217 - 0.911 ms","timestamp":"2026-05-28T05:31:38.608Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/airlines?iata=AI iterator is not async iterable","timestamp":"2026-05-28T05:32:02.798Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/airlines?iata=AI 500 745 - 461.413 ms","timestamp":"2026-05-28T05:32:02.798Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:32:30.349Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:32:30.425Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:32:30.469Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:32:30.481Z"}
+{"level":"debug","message":"[SupportingCache] SET → airlines:AI","timestamp":"2026-05-28T05:32:34.436Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/airlines?iata=AI airline is not defined","timestamp":"2026-05-28T05:32:34.437Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/airlines?iata=AI 500 300 - 467.985 ms","timestamp":"2026-05-28T05:32:34.441Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:32:47.173Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:32:47.347Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:32:47.445Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:32:47.475Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:33:22.785Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:33:22.986Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:33:23.102Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:33:23.138Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:33:38.070Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:33:38.237Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:33:38.353Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:33:38.390Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:33:57.052Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:33:57.254Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:33:57.399Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:33:57.434Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:34:13.525Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:34:13.724Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:34:13.845Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:34:13.880Z"}
+{"level":"http","message":"GET /api/v1/meta/airlines?iata=AI - - - - ms","timestamp":"2026-05-28T05:34:26.481Z"}
+{"level":"debug","message":"[SupportingCache] SET → airlines:AI","timestamp":"2026-05-28T05:34:26.970Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/airlines?iata=AI airline is not defined","timestamp":"2026-05-28T05:34:26.973Z","userId":"unauthenticated"}
+{"level":"debug","message":"[SupportingCache] HIT → airlines:AI","timestamp":"2026-05-28T05:34:27.970Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/airlines?iata=AI airline is not defined","timestamp":"2026-05-28T05:34:27.973Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/airlines?iata=AI 500 300 - 7.135 ms","timestamp":"2026-05-28T05:34:27.977Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:35:36.567Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:35:36.732Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:35:36.840Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:35:36.872Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:35:54.758Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:35:54.957Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:35:55.056Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:35:55.090Z"}
+{"level":"debug","message":"[SupportingCache] SET → airlines:AI","timestamp":"2026-05-28T05:35:57.414Z"}
+{"level":"http","message":"GET /api/v1/meta/airlines?iata=AI 200 - - 510.685 ms","timestamp":"2026-05-28T05:35:57.430Z"}
+{"level":"debug","message":"[SupportingCache] SET → airline:arl_00009VME7DAGiJjwomhv3K","timestamp":"2026-05-28T05:37:15.919Z"}
+{"level":"http","message":"GET /api/v1/meta/airlines/arl_00009VME7DAGiJjwomhv3K 200 407 - 500.787 ms","timestamp":"2026-05-28T05:37:15.922Z"}
+{"level":"debug","message":"[SupportingCache] SET → aircraft:all","timestamp":"2026-05-28T05:37:30.471Z"}
+{"level":"http","message":"GET /api/v1/meta/aircraft 200 - - 469.361 ms","timestamp":"2026-05-28T05:37:30.477Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/cities Cannot read properties of undefined (reading 'list')","statusCode":502,"timestamp":"2026-05-28T05:37:41.386Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/cities 502 - - 6.467 ms","timestamp":"2026-05-28T05:37:41.392Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:39:22.866Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:39:23.105Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:39:23.245Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:39:23.378Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:39:43.945Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:39:44.189Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:39:44.327Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:39:44.434Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:39:58.947Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:39:59.128Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:39:59.263Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:39:59.361Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:40:11.601Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:40:11.751Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:40:11.847Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:40:11.919Z"}
+{"level":"debug","message":"[SupportingCache] SET → cities:all","timestamp":"2026-05-28T05:40:16.330Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/cities Cannot read properties of undefined (reading 'map')","timestamp":"2026-05-28T05:40:16.334Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/cities 500 460 - 617.784 ms","timestamp":"2026-05-28T05:40:16.344Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:41:07.125Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:41:07.375Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:41:07.530Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:41:07.633Z"}
+{"level":"debug","message":"[SupportingCache] SET → cities:all","timestamp":"2026-05-28T05:41:11.982Z"}
+{"level":"http","message":"GET /api/v1/meta/cities 200 - - 1179.943 ms","timestamp":"2026-05-28T05:41:12.004Z"}
+{"level":"debug","message":"[SupportingCache] SET → cities:US","timestamp":"2026-05-28T05:41:37.044Z"}
+{"level":"http","message":"GET /api/v1/meta/cities?country=US 200 - - 658.052 ms","timestamp":"2026-05-28T05:41:37.053Z"}
+{"level":"debug","message":"[SupportingCache] SET → cities:IN","timestamp":"2026-05-28T05:41:53.964Z"}
+{"level":"http","message":"GET /api/v1/meta/cities?country=IN 200 - - 526.760 ms","timestamp":"2026-05-28T05:41:53.972Z"}
+{"level":"debug","message":"[SupportingCache] HIT → cities:IN","timestamp":"2026-05-28T05:41:59.192Z"}
+{"level":"http","message":"GET /api/v1/meta/cities?country=IN 200 - - 3.023 ms","timestamp":"2026-05-28T05:41:59.199Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:43:17.981Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:43:18.163Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:43:18.275Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:43:18.357Z"}
+{"level":"debug","message":"[SupportingCache] SET → cities:all","timestamp":"2026-05-28T05:43:39.845Z"}
+{"level":"http","message":"GET /api/v1/meta/cities?country=IN 200 74 - 884.990 ms","timestamp":"2026-05-28T05:43:39.856Z"}
+{"level":"debug","message":"[SupportingCache] HIT → cities:all","timestamp":"2026-05-28T05:44:00.786Z"}
+{"level":"http","message":"GET /api/v1/meta/cities?country=Mumbai 200 74 - 4.683 ms","timestamp":"2026-05-28T05:44:00.789Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:44:26.010Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:44:26.185Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:44:26.287Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:44:26.364Z"}
+{"level":"debug","message":"[SupportingCache] SET → cities:all","timestamp":"2026-05-28T05:44:31.464Z"}
+{"level":"http","message":"GET /api/v1/meta/cities?country=Mumbai 200 74 - 806.641 ms","timestamp":"2026-05-28T05:44:31.482Z"}
+{"level":"http","message":"GET /api/v1/meta/places/search?q=Mumbai 200 299 - 954.640 ms","timestamp":"2026-05-28T05:45:07.888Z"}
+{"level":"debug","message":"[SupportingCache] SET → loyalty:all","timestamp":"2026-05-28T05:45:45.355Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/loyalty-programmes Cannot read properties of undefined (reading 'map')","timestamp":"2026-05-28T05:45:45.358Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/loyalty-programmes 500 472 - 623.786 ms","timestamp":"2026-05-28T05:45:45.362Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:46:43.746Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:46:43.934Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:46:44.067Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:46:44.165Z"}
+{"level":"debug","message":"[SupportingCache] SET → loyalty:all","timestamp":"2026-05-28T05:46:57.267Z"}
+{"level":"http","message":"GET /api/v1/meta/loyalty-programmes 200 - - 648.818 ms","timestamp":"2026-05-28T05:46:57.284Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-28T05:47:08.096Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-28T05:47:08.250Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-28T05:47:08.373Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-28T05:47:08.452Z"}
