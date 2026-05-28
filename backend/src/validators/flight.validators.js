@@ -140,16 +140,59 @@ const bookingIdParamRules = [
 ];
 
 const offerIdParamRules = [
-  param("offerId").notEmpty().withMessage("Invalid offer ID"), // ← offerId, not UUID since Duffel offer IDs are not UUIDs
+  param("offerId").notEmpty().withMessage("Invalid offer ID"),
   validate,
 ];
 
+// ── Change Request ─────────────────────────────────────────────────────────────
+// Accepts slices as an ARRAY of objects, each with slice_id, origin,
+// destination, departure_date. The service layer converts this into the
+// { add: [...], remove: [...] } shape that Duffel expects.
+//
+// Example body:
+// {
+//   "slices": [
+//     {
+//       "slice_id": "sli_00009htYpSCXrwaB9Dn123",
+//       "origin": "DEL",
+//       "destination": "BOM",
+//       "departure_date": "2026-09-01"
+//     }
+//   ]
+// }
 const changeRequestRules = [
-  param("bookingId").isUUID(),
+  param("bookingId").isUUID().withMessage("Invalid booking ID"),
 
   body("slices")
-    .isObject()
-    .withMessage("slices must be an object with add/remove array"),
+    .isArray({ min: 1 })
+    .withMessage("slices must be a non-empty array of slice objects"),
+
+  body("slices.*.slice_id")
+    .notEmpty()
+    .withMessage("Each slice must have a slice_id (from the original order)"),
+
+  body("slices.*.origin")
+    .trim()
+    .toUpperCase()
+    .matches(IATA_REGEX)
+    .withMessage("Each slice must have a valid 3-letter IATA origin code"),
+
+  body("slices.*.destination")
+    .trim()
+    .toUpperCase()
+    .matches(IATA_REGEX)
+    .withMessage("Each slice must have a valid 3-letter IATA destination code"),
+
+  body("slices.*.departure_date")
+    .matches(DATE_REGEX)
+    .withMessage("Each slice must have a departure_date in YYYY-MM-DD format"),
+
+  body("slices.*.cabin_class")
+    .optional()
+    .isIn(["economy", "premium_economy", "business", "first"])
+    .withMessage(
+      "cabin_class must be economy, premium_economy, business, or first",
+    ),
 
   validate,
 ];

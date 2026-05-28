@@ -142,6 +142,20 @@ async function register(body, ipAddress) {
   const token = generateAccessToken(userProfile, [ROLES.CUSTOMER]);
   const refreshToken = generateRefreshToken(userProfile.id);
 
+  // Store refresh token so /auth/refresh works immediately after registration
+  try {
+    await supabaseAdmin.from("refresh_tokens").insert({
+      user_id: userProfile.id,
+      token_hash: crypto
+        .createHash("sha256")
+        .update(refreshToken)
+        .digest("hex"),
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    });
+  } catch (err) {
+    logger.warn("Failed to store refresh token on register", err);
+  }
+
   try {
     await db.insert("activity_logs", {
       user_id: userProfile.id,
@@ -326,9 +340,22 @@ async function refreshToken(token) {
     .eq("token_hash", hash)
     .maybeSingle();
 
-  if (!stored || stored.revoked_at) {
+  if (!stored) {
+    throw new AppError(
+      "Refresh token not found. Please login again",
+      HTTP.UNAUTHORIZED,
+    );
+  }
+  if (stored.revoked_at) {
     throw new AppError(
       "Refresh token has been revoked. Please login again",
+      HTTP.UNAUTHORIZED,
+    );
+  }
+  // Check DB-level expiry as a safety net
+  if (stored.expires_at && new Date(stored.expires_at) < new Date()) {
+    throw new AppError(
+      "Refresh token has expired. Please login again",
       HTTP.UNAUTHORIZED,
     );
   }

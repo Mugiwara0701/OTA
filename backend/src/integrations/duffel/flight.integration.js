@@ -247,10 +247,16 @@ async function createOrderChange(selectedOrderChangeOfferID) {
 
 async function confirmOrderChange(orderChangeId) {
   try {
+    // First fetch the order change to get the price info Duffel requires
+    const orderChange = await duffel.orderChanges.get(orderChangeId);
+    const { change_total_amount, change_total_currency } = orderChange.data;
+
     const response = await duffel.orderChanges.confirm(orderChangeId, {
-      payment: { type: "balance" },
-      amount: String(parseFloat(amount).toFixed(2)),
-      currency,
+      payment: {
+        type: "balance",
+        amount: String(parseFloat(change_total_amount || "0").toFixed(2)),
+        currency: change_total_currency || "USD",
+      },
     });
     return response.data;
   } catch (err) {

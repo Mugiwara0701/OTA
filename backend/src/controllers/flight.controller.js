@@ -2,6 +2,7 @@
 
 const flightService = require("../services/flight.services");
 const flightIntegration = require("../integrations/duffel/flight.integration");
+const paymentService = require("../services/payment.services");
 const { asyncHandler } = require("../utils/AppError");
 const { sendSuccess, paginationMeta } = require("../helpers/helper.response");
 const { HTTP, PAGINATION } = require("../constants/index");
@@ -32,17 +33,30 @@ const searchFlights = asyncHandler(async (req, res) => {
     maxConnections,
   });
 
-  return sendSuccess(res, HTTP.OK, "Flight retrieved successfully", result, {
+  return sendSuccess(res, HTTP.OK, "Flights retrieved successfully", result, {
     total: result.totalOffers,
     timestamp: new Date().toISOString(),
   });
+});
+
+// GET /api/v1/flights/offers
+const listOffers = asyncHandler(async (req, res) => {
+  const { offerRequestId, sortBy, maxPrice, maxStops, airlines } = req.query;
+  const result = await flightService.listOffers({
+    offerRequestId,
+    sortBy,
+    maxPrice,
+    maxStops,
+    airlines,
+  });
+  return sendSuccess(res, HTTP.OK, "Offers retrieved successfully", result);
 });
 
 // GET /api/v1/flights/offers/:offerId
 const getOffer = asyncHandler(async (req, res) => {
   const { offerId } = req.params;
   const result = await flightService.getOfferDetails(offerId);
-  return sendSuccess(res, HTTP.OK, "offer details retrieved", result);
+  return sendSuccess(res, HTTP.OK, "Offer details retrieved", result);
 });
 
 // GET /api/v1/flights/offers/:offerId/seat-map
@@ -61,12 +75,9 @@ const getSeatMap = asyncHandler(async (req, res) => {
         "In test mode, only specific Duffel test carriers (e.g. ZZ airlines) support seat maps.";
     }
   } catch (err) {
-    // Duffel 422 seat_map_not_available — degrade gracefully
     reason = err.message || "Seat map not available for this offer.";
   }
 
-  // Shape each seat map so the frontend gets everything it needs to render
-  // the cabin layout and know which seats are available vs taken.
   const shaped = seatMaps.map((sm) => ({
     id: sm.id,
     segment_id: sm.segment_id,
@@ -80,10 +91,7 @@ const getSeatMap = asyncHandler(async (req, res) => {
         row_index: rowIndex,
         sections: (row.sections || []).map((section) => ({
           elements: (section.elements || []).map((el) => {
-            if (el.type !== "seat") {
-              // Non-seat elements: exit_row, lavatory, galley, bassinet, empty
-              return { type: el.type };
-            }
+            if (el.type !== "seat") return { type: el.type };
             const hasServices =
               Array.isArray(el.available_services) &&
               el.available_services.length > 0;
@@ -92,9 +100,7 @@ const getSeatMap = asyncHandler(async (req, res) => {
               designator: el.designator,
               name: el.name || null,
               disclosures: el.disclosures || [],
-              // available = true means the passenger CAN select this seat
               available: hasServices,
-              // services contains the id the frontend must send back at booking time
               services: hasServices
                 ? el.available_services.map((s) => ({
                     id: s.id,
@@ -121,7 +127,6 @@ const getSeatMap = asyncHandler(async (req, res) => {
 const initBooking = asyncHandler(async (req, res) => {
   const { offerId, passengers, tripType } = req.body;
   const userId = req.user.id;
-
   const result = await flightService.initFlightBooking({
     userId,
     offerId,
@@ -137,20 +142,16 @@ const initBooking = asyncHandler(async (req, res) => {
 });
 
 // POST /api/v1/flights/bookings/:bookingId/confirm
-// POST /api/v1/flights/bookings/:bookingId/confirm
 const confirmBooking = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;
   const userId = req.user.id;
   const { paymentProvider, selectedServices } = req.body;
-  // selectedServices shape (optional): [{ id: "ase_xxx", passenger_id: "pas_xxx" }]
-
   const result = await flightService.confirmFlightBooking({
     bookingId,
     userId,
     paymentProvider,
     selectedServices: selectedServices || [],
   });
-
   return sendSuccess(res, HTTP.OK, "Flight booking confirmed", result);
 });
 
@@ -193,6 +194,14 @@ const cancelBooking = asyncHandler(async (req, res) => {
   return sendSuccess(res, HTTP.OK, "Booking cancelled successfully", result);
 });
 
+// GET /api/v1/flights/bookings/:bookingId/refund-status
+const getRefundStatus = asyncHandler(async (req, res) => {
+  const { bookingId } = req.params;
+  const userId = req.user.id;
+  const result = await paymentService.getPaymentStatus(bookingId, userId);
+  return sendSuccess(res, HTTP.OK, "Refund status retrieved", result);
+});
+
 // POST /api/v1/flights/bookings/:bookingId/change-request
 const createChangeRequest = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;
@@ -204,21 +213,6 @@ const createChangeRequest = asyncHandler(async (req, res) => {
     slices,
   });
   return sendSuccess(res, HTTP.CREATED, "Change request created", result);
-});
-
-// GET /api/v1/flights/offers
-const listOffers = asyncHandler(async (req, res) => {
-  const { offerRequestId, sortBy, maxPrice, maxStops, airlines } = req.query;
-
-  const result = await flightService.listOffers({
-    offerRequestId,
-    sortBy,
-    maxPrice,
-    maxStops,
-    airlines,
-  });
-
-  return sendSuccess(res, HTTP.OK, "Offers retrieved successfully", result);
 });
 
 // GET /api/v1/flights/bookings/:bookingId/change-offers
@@ -248,6 +242,7 @@ module.exports = {
   listBookings,
   getBooking,
   cancelBooking,
+  getRefundStatus,
   createChangeRequest,
   listChangeOffers,
   confirmChange,
