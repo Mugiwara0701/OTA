@@ -4,6 +4,7 @@ const authService = require("../services/auth.services");
 const { sendSuccess } = require("../helpers/helper.response");
 const { asyncHandler } = require("../utils/AppError");
 const { HTTP } = require("../constants/index");
+const config = require("../config/app.config"); // ✅ ADD THIS
 
 // POST /api/v1/auth/register
 const register = asyncHandler(async (req, res) => {
@@ -34,13 +35,9 @@ const refresh = asyncHandler(async (req, res) => {
 const verifyEmail = asyncHandler(async (req, res) => {
   try {
     await authService.verifyEmail(req.query.token);
-
-    // Redirect to Flutter app via deep link
-    // Flutter app must register this scheme: otaapp://auth/verified
     const deepLink = `${config.server.appScheme}://auth/verified?status=success`;
     return res.redirect(deepLink);
   } catch (err) {
-    // On failure redirect to app with error
     const deepLink = `${config.server.appScheme}://auth/verified?status=error&message=${encodeURIComponent(err.message)}`;
     return res.redirect(deepLink);
   }
@@ -49,7 +46,6 @@ const verifyEmail = asyncHandler(async (req, res) => {
 // POST /api/v1/auth/forgot-password
 const forgotPassword = asyncHandler(async (req, res) => {
   await authService.forgotPassword(req.body.email);
-  // Always return 200 to prevent email enumeration
   sendSuccess(
     res,
     HTTP.OK,
@@ -64,7 +60,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   sendSuccess(res, HTTP.OK, "Password reset successfully.", result);
 });
 
-// POST /api/v1/auth/me
+// GET /api/v1/auth/me
 const getMe = asyncHandler(async (req, res) => {
   const result = await authService.getMe(req.user.id);
   sendSuccess(res, HTTP.OK, "Profile retrieved", result);

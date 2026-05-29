@@ -30,3 +30,31 @@
 {"details":null,"isOperational":true,"level":"warn","message":"Failed to log password change activity Failed to create new activity_logs record: new row violates row-level security policy for table \"activity_logs\"","stack":"Error: Failed to create new activity_logs record: new row violates row-level security policy for table \"activity_logs\"\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.changePassword (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:556:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:82:3","statusCode":500,"timestamp":"2026-05-29T08:35:15.689Z"}
 {"level":"info","message":"[Auth] Password changed","timestamp":"2026-05-29T08:35:15.689Z","userId":"b8ce9862-9918-4a25-9842-6b0849872680"}
 {"level":"http","message":"POST /api/v1/auth/change-password 200 59 - 2084.084 ms","timestamp":"2026-05-29T08:35:15.690Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T10:21:25.820Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T10:21:25.929Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T10:21:25.986Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T10:21:26.046Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T10:21:29.711Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T10:21:29.778Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T10:21:29.810Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T10:21:29.849Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T10:24:40.509Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T10:24:40.576Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T10:24:40.606Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T10:24:40.645Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T10:25:08.770Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T10:25:08.831Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T10:25:08.859Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T10:25:08.897Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T10:33:05.762Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T10:33:05.836Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T10:33:05.872Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T10:33:05.915Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T10:33:19.974Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T10:33:20.036Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T10:33:20.068Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T10:33:20.109Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T10:33:35.351Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T10:33:35.417Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T10:33:35.449Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T10:33:35.488Z"}

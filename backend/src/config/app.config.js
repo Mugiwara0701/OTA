@@ -28,6 +28,7 @@ const config = {
   server: {
     env: NODE_ENV,
     port: parseInt(optionalEnv("PORT", "5000"), 10),
+    appScheme: process.env.APP_SCHEME || "otaapp",
     apiVersion: optionalEnv("API_VERSION", "v1"),
     isDev: NODE_ENV === "development",
     isProd: NODE_ENV === "production",
