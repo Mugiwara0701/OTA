@@ -150,10 +150,37 @@ const resetPasswordValidator = [
   validate,
 ];
 
+// ── Change Password ────────────────────────────────────────────────────────────
+const changePasswordValidator = [
+  body("currentPassword")
+    .notEmpty()
+    .withMessage("Current password is required."),
+
+  body("newPassword")
+    .isLength({ min: 8 })
+    .withMessage("New password must be at least 8 characters.")
+    .matches(/[A-Z]/)
+    .withMessage("New password must contain at least one uppercase letter.")
+    .matches(/[0-9]/)
+    .withMessage("New password must contain at least one number.")
+    .matches(/[^A-Za-z0-9]/)
+    .withMessage("New password must contain at least one special character."),
+
+  body("confirmNewPassword").custom((value, { req }) => {
+    if (value !== req.body.newPassword) {
+      throw new Error("Passwords do not match.");
+    }
+    return true;
+  }),
+
+  validate,
+];
+
 module.exports = {
   registerValidator,
   loginValidator,
   updateProfileValidator,
   forgotPasswordValidator,
   resetPasswordValidator,
+  changePasswordValidator,
 };

@@ -76,6 +76,13 @@ const updateMe = asyncHandler(async (req, res) => {
   sendSuccess(res, HTTP.OK, "Profile updated successfully.", result);
 });
 
+// POST /api/v1/auth/change-password
+const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  await authService.changePassword(req.user.id, currentPassword, newPassword);
+  sendSuccess(res, HTTP.OK, "Password changed successfully.");
+});
+
 module.exports = {
   register,
   login,
@@ -86,4 +93,5 @@ module.exports = {
   resetPassword,
   getMe,
   updateMe,
+  changePassword,
 };

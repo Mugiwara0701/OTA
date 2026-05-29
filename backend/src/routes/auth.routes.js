@@ -12,6 +12,7 @@ const {
   updateProfileValidator,
   forgotPasswordValidator,
   resetPasswordValidator,
+  changePasswordValidator,
 } = require("../validators/auth.validators");
 
 // ── PUBLIC ────────────────────────────────────────────────────────────────────
@@ -40,6 +41,12 @@ router.patch(
   authenticate,
   updateProfileValidator,
   authController.updateMe,
+);
+router.post(
+  "/change-password",
+  authenticate,
+  changePasswordValidator,
+  authController.changePassword,
 );
 
 module.exports = router;

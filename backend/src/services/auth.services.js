@@ -513,6 +513,61 @@ async function updateProfile(userId, body) {
   return sanitizeUser(updated[0]);
 }
 
+// ── CHANGE PASSWORD ───────────────────────────────────────────────────────────
+// Authenticated user supplies currentPassword + newPassword.
+// We re-verify the current password via Supabase signInWithPassword before
+// updating, so the user can't just swap a password with a stolen access token.
+async function changePassword(userId, currentPassword, newPassword) {
+  // 1. Load the user's profile to get their email
+  const userProfile = await db.findOne(
+    "users",
+    { id: userId },
+    { throwIfNotFound: true },
+  );
+
+  // 2. Re-authenticate with the current password to confirm identity
+  const { error: signInError } = await supabaseAdmin.auth.signInWithPassword({
+    email: userProfile.email,
+    password: currentPassword,
+  });
+
+  if (signInError) {
+    throw new AppError("Current password is incorrect.", HTTP.BAD_REQUEST);
+  }
+
+  // 3. Update the password in Supabase Auth
+  await supabaseAdmin.auth.admin.updateUserById(userProfile.auth_user_id, {
+    password: newPassword,
+  });
+
+  // 4. Revoke all existing refresh tokens so other sessions are invalidated
+  try {
+    await supabaseAdmin
+      .from("refresh_tokens")
+      .update({ revoked_at: new Date().toISOString() })
+      .eq("user_id", userId)
+      .is("revoked_at", null);
+  } catch (err) {
+    logger.warn("Failed to revoke refresh tokens on password change", err);
+  }
+
+  // 5. Log the activity
+  try {
+    await db.insert("activity_logs", {
+      user_id: userId,
+      action: ACTIVITY_LOGS.USER_LOGGED_IN, // closest available constant
+      entity_type: "user",
+      entity_id: userId,
+      meta_data: { event: "password_changed" },
+    });
+  } catch (err) {
+    logger.warn("Failed to log password change activity", err);
+  }
+
+  logger.info(`[Auth] Password changed`, { userId });
+  return { changed: true };
+}
+
 module.exports = {
   register,
   verifyEmail,
@@ -523,4 +578,5 @@ module.exports = {
   resetPassword,
   getMe,
   updateProfile,
+  changePassword,
 };

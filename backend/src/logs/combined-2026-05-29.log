@@ -1,0 +1,32 @@
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T07:04:30.404Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T07:04:30.541Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T07:04:30.632Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T07:04:30.705Z"}
+{"ip":"::1","level":"error","message":"[GET] /api/v1/meta/countries?q=united (json || []).map is not a function","statusCode":502,"timestamp":"2026-05-29T07:05:29.656Z","userId":"unauthenticated"}
+{"level":"http","message":"GET /api/v1/meta/countries?q=united 502 741 - 844.294 ms","timestamp":"2026-05-29T07:05:29.661Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T07:05:42.500Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T07:05:42.565Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T07:05:42.611Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T07:05:42.657Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T08:31:21.251Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T08:31:21.355Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T08:31:21.412Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T08:31:21.468Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/login Invalid email or password","statusCode":401,"timestamp":"2026-05-29T08:32:23.159Z","userId":"unauthenticated"}
+{"level":"http","message":"POST /api/v1/auth/login 401 388 - 1289.788 ms","timestamp":"2026-05-29T08:32:23.163Z"}
+{"error":"new row violates row-level security policy for table \"activity_logs\"","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-29T08:32:42.707Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log activity Failed to create new activity_logs record: new row violates row-level security policy for table \"activity_logs\"","stack":"Error: Failed to create new activity_logs record: new row violates row-level security policy for table \"activity_logs\"\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.login (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:283:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:16:18","statusCode":500,"timestamp":"2026-05-29T08:32:42.708Z"}
+{"email":"akshatnautiyal81@gmail.com","level":"info","message":"[Auth] User logged in","timestamp":"2026-05-29T08:32:42.708Z","userId":"b8ce9862-9918-4a25-9842-6b0849872680"}
+{"level":"http","message":"POST /api/v1/auth/login 200 - - 1776.506 ms","timestamp":"2026-05-29T08:32:42.717Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/change-password supabaseAdmin.from(...).update(...).eq(...).is(...).catch is not a function","timestamp":"2026-05-29T08:33:47.639Z","userId":"b8ce9862-9918-4a25-9842-6b0849872680"}
+{"level":"http","message":"POST /api/v1/auth/change-password 500 500 - 950.356 ms","timestamp":"2026-05-29T08:33:47.640Z"}
+{"level":"info","message":"[SUPABASE] client initilaized","project":"https://optmuucjztmopaskriyo.supabase.co","timestamp":"2026-05-29T08:34:47.314Z"}
+{"level":"info","message":"[Duffel] Client initalized - mode: TEST 🟡","timestamp":"2026-05-29T08:34:47.389Z"}
+{"level":"info","message":"[Payment] Provider: Stripe (Development Mode)","timestamp":"2026-05-29T08:34:47.423Z"}
+{"api":"/api/v1","env":"development","level":"info","message":"OTA Server running on port 5000","timestamp":"2026-05-29T08:34:47.464Z"}
+{"ip":"::1","level":"error","message":"[POST] /api/v1/auth/change-password Current password is incorrect.","statusCode":400,"timestamp":"2026-05-29T08:34:52.520Z","userId":"b8ce9862-9918-4a25-9842-6b0849872680"}
+{"level":"http","message":"POST /api/v1/auth/change-password 400 406 - 901.711 ms","timestamp":"2026-05-29T08:34:52.523Z"}
+{"error":"new row violates row-level security policy for table \"activity_logs\"","level":"error","message":"[DB] insert error on activity_logs","timestamp":"2026-05-29T08:35:15.687Z"}
+{"details":null,"isOperational":true,"level":"warn","message":"Failed to log password change activity Failed to create new activity_logs record: new row violates row-level security policy for table \"activity_logs\"","stack":"Error: Failed to create new activity_logs record: new row violates row-level security policy for table \"activity_logs\"\n    at Object.insert (E:\\git clone\\OTA\\backend\\src\\database\\db.js:76:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Object.changePassword (E:\\git clone\\OTA\\backend\\src\\services\\auth.services.js:556:5)\n    at async E:\\git clone\\OTA\\backend\\src\\controllers\\auth.controller.js:82:3","statusCode":500,"timestamp":"2026-05-29T08:35:15.688Z"}
+{"level":"info","message":"[Auth] Password changed","timestamp":"2026-05-29T08:35:15.689Z","userId":"b8ce9862-9918-4a25-9842-6b0849872680"}
+{"level":"http","message":"POST /api/v1/auth/change-password 200 59 - 2084.084 ms","timestamp":"2026-05-29T08:35:15.690Z"}
