@@ -4,7 +4,7 @@ const authService = require("../services/auth.services");
 const { sendSuccess } = require("../helpers/helper.response");
 const { asyncHandler } = require("../utils/AppError");
 const { HTTP } = require("../constants/index");
-const config = require("../config/app.config"); // ✅ ADD THIS
+const config = require("../config/app.config");
 
 // POST /api/v1/auth/register
 const register = asyncHandler(async (req, res) => {
@@ -35,12 +35,21 @@ const refresh = asyncHandler(async (req, res) => {
 const verifyEmail = asyncHandler(async (req, res) => {
   try {
     await authService.verifyEmail(req.query.token);
-    const deepLink = `${config.server.appScheme}://auth/verified?status=success`;
-    return res.redirect(deepLink);
+    return res.redirect(
+      `${config.server.appScheme}://auth/verified?status=success`,
+    );
   } catch (err) {
-    const deepLink = `${config.server.appScheme}://auth/verified?status=error&message=${encodeURIComponent(err.message)}`;
-    return res.redirect(deepLink);
+    return res.redirect(
+      `${config.server.appScheme}://auth/verified?status=error&message=${encodeURIComponent(err.message)}`,
+    );
   }
+});
+
+// POST /api/v1/auth/verify-email-token
+const verifyEmailToken = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+  await authService.verifyEmail(token);
+  sendSuccess(res, HTTP.OK, "Email verified successfully");
 });
 
 // POST /api/v1/auth/forgot-password
@@ -79,23 +88,16 @@ const changePassword = asyncHandler(async (req, res) => {
   sendSuccess(res, HTTP.OK, "Password changed successfully.");
 });
 
-// POST /api/v1/auth/verify-email-token
-const verifyEmailToken = asyncHandler(async (req, res) => {
-  const { token } = req.body;
-  await authService.verifyEmail(token);
-  sendSuccess(res, HTTP.OK, "Email verified successfully");
-});
-
 module.exports = {
   register,
   login,
   logout,
   refresh,
   verifyEmail,
+  verifyEmailToken,
   forgotPassword,
   resetPassword,
   getMe,
   updateMe,
   changePassword,
-  verifyEmailToken,
 };

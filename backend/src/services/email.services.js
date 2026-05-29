@@ -137,7 +137,7 @@ async function sendPasswordReset({ email, firstName, resetToken }) {
 async function sendEmailVerification({ email, firstName, verifyToken }) {
   try {
     const config = require("../config/app.config");
-    const verifyUrl = `${config.server.appScheme}://auth/verify?token=${verifyToken}`;
+    const verifyUrl = `${config.server.apiUrl}/auth/verify-email?token=${verifyToken}`;
     const tpl = templates.emailVerification({ firstName, verifyUrl });
     await sendEmail({ to: email, ...tpl });
   } catch (err) {
