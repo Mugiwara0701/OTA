@@ -49,6 +49,6 @@ router.post(
   authController.changePassword,
 );
 
-router.post("/verify-email-token", verifyEmailToken);
+router.post("/verify-email-token", authController.verifyEmailToken);
 
 module.exports = router;
