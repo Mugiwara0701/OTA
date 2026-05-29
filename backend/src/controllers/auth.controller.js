@@ -79,6 +79,13 @@ const changePassword = asyncHandler(async (req, res) => {
   sendSuccess(res, HTTP.OK, "Password changed successfully.");
 });
 
+// POST /api/v1/auth/verify-email-token
+const verifyEmailToken = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+  await authService.verifyEmail(token);
+  sendSuccess(res, HTTP.OK, "Email verified successfully");
+});
+
 module.exports = {
   register,
   login,
@@ -90,4 +97,5 @@ module.exports = {
   getMe,
   updateMe,
   changePassword,
+  verifyEmailToken,
 };
