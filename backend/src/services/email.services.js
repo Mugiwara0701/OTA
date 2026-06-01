@@ -122,7 +122,8 @@ async function sendRefundInitiated({
 async function sendPasswordReset({ email, firstName, resetToken }) {
   try {
     const config = require("../config/app.config");
-    const resetUrl = `${config.server.appScheme}://auth/reset-password?token=${resetToken}`;
+    // https link that email clients will allow clicking
+    const resetUrl = `${config.server.apiUrl}/auth/reset-password?token=${resetToken}`;
     const tpl = templates.passwordReset({ firstName, resetUrl });
     await sendEmail({ to: email, ...tpl });
   } catch (err) {

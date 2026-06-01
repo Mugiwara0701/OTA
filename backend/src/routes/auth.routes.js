@@ -26,6 +26,7 @@ router.post(
   forgotPasswordValidator,
   authController.forgotPassword,
 );
+router.get("/reset-password", authController.resetPasswordRedirect);
 router.post(
   "/reset-password",
   authLimiter,

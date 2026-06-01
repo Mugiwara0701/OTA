@@ -69,6 +69,20 @@ const resetPassword = asyncHandler(async (req, res) => {
   sendSuccess(res, HTTP.OK, "Password reset successfully.", result);
 });
 
+// GET /api/v1/auth/reset-password?token=...
+// Clicked from email → redirects into the app via deep link
+const resetPasswordRedirect = asyncHandler(async (req, res) => {
+  const { token } = req.query;
+  if (!token) {
+    return res.redirect(
+      `${config.server.appScheme}://auth/reset-password?token=&error=missing`,
+    );
+  }
+  return res.redirect(
+    `${config.server.appScheme}://auth/reset-password?token=${encodeURIComponent(token)}`,
+  );
+});
+
 // GET /api/v1/auth/me
 const getMe = asyncHandler(async (req, res) => {
   const result = await authService.getMe(req.user.id);
@@ -100,4 +114,5 @@ module.exports = {
   getMe,
   updateMe,
   changePassword,
+  resetPasswordRedirect,
 };
