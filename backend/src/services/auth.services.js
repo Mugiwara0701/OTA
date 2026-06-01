@@ -397,14 +397,16 @@ async function refreshToken(token) {
 }
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
+// ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
 async function forgotPassword(email) {
   const userProfile = await db.findOne("users", { email });
   if (!userProfile) return { send: true };
 
   const resetToken = crypto.randomBytes(32).toString("hex");
-  const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString(); // 30 minutes
+  const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
 
-  await supabaseAdmin
+  // ✅ FIX: await the query and handle the error via destructuring
+  const { error: upsertError } = await supabaseAdmin
     .from("password_reset_tokens")
     .upsert(
       {
@@ -417,8 +419,11 @@ async function forgotPassword(email) {
         used_at: null,
       },
       { onConflict: "user_id" },
-    )
-    .catch(() => {});
+    );
+
+  if (upsertError) {
+    logger.warn("Failed to upsert password reset token", upsertError);
+  }
 
   const emailService = require("./email.services");
   await emailService.sendPasswordReset({
@@ -460,19 +465,21 @@ async function resetPassword(token, newPassword) {
   });
 
   // Mark the reset token as consumed
-  await supabaseAdmin
+  const { error: markUsedError } = await supabaseAdmin
     .from("password_reset_tokens")
     .update({ used_at: new Date().toISOString() })
-    .eq("id", record.id)
-    .catch(() => {});
+    .eq("id", record.id);
+  if (markUsedError)
+    logger.warn("Failed to mark reset token as used", markUsedError);
 
   // Revoke all active refresh tokens for this user
-  await supabaseAdmin
+  const { error: revokeError } = await supabaseAdmin
     .from("refresh_tokens")
     .update({ revoked_at: new Date().toISOString() })
     .eq("user_id", record.user_id)
-    .is("revoked_at", null)
-    .catch(() => {});
+    .is("revoked_at", null);
+  if (revokeError)
+    logger.warn("Failed to revoke refresh tokens after reset", revokeError);
 
   logger.info(`[Auth] Password reset completed`, { userId: record.user_id });
   return { reset: true };
