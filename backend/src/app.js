@@ -15,6 +15,7 @@ const {
 } = require("./middleware/errorHandler.middleware");
 
 const app = express();
+app.set("trust proxy", 1);
 
 // use to to automatically set the security headers in the response and also prevent from XSS attacks
 app.use(helmet());
