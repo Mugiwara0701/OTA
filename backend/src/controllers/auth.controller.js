@@ -74,8 +74,9 @@ const resetPasswordRedirect = asyncHandler(async (req, res) => {
       `${config.server.appScheme}://auth/reset-password?error=missing_token`,
     );
   }
+  // ✅ No encodeURIComponent — token is plain hex, no special chars to encode
   return res.redirect(
-    `${config.server.appScheme}://auth/reset-password?token=${encodeURIComponent(token)}`,
+    `${config.server.appScheme}://auth/reset-password?token=${token}`,
   );
 });
 

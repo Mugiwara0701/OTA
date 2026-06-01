@@ -397,32 +397,44 @@ async function refreshToken(token) {
 }
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
-// ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
 async function forgotPassword(email) {
   const userProfile = await db.findOne("users", { email });
   if (!userProfile) return { send: true };
 
   const resetToken = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
 
-  // ✅ FIX: await the query and handle the error via destructuring
-  const { error: upsertError } = await supabaseAdmin
+  // Delete any existing reset token for this user first.
+  // This replaces the previous upsert approach which could leave a stale
+  // used_at value behind, causing the new token to appear "already used".
+  const { error: deleteError } = await supabaseAdmin
     .from("password_reset_tokens")
-    .upsert(
-      {
-        user_id: userProfile.id,
-        token_hash: crypto
-          .createHash("sha256")
-          .update(resetToken)
-          .digest("hex"),
-        expires_at: expiresAt,
-        used_at: null,
-      },
-      { onConflict: "user_id" },
-    );
+    .delete()
+    .eq("user_id", userProfile.id);
 
-  if (upsertError) {
-    logger.warn("Failed to upsert password reset token", upsertError);
+  if (deleteError) {
+    logger.warn("Failed to delete old reset token", deleteError);
+  }
+
+  // Insert a fresh token row — no stale used_at, no conflict issues.
+  const { error: insertError } = await supabaseAdmin
+    .from("password_reset_tokens")
+    .insert({
+      user_id: userProfile.id,
+      token_hash: tokenHash,
+      expires_at: expiresAt,
+    });
+
+  if (insertError) {
+    logger.warn("Failed to insert password reset token", insertError);
+    throw new AppError(
+      "Failed to generate reset token. Please try again.",
+      HTTP.INTERNAL_ERROR,
+    );
   }
 
   const emailService = require("./email.services");
@@ -438,7 +450,10 @@ async function forgotPassword(email) {
 
 // ── RESET PASSWORD ────────────────────────────────────────────────────────────
 async function resetPassword(token, newPassword) {
-  const hash = crypto.createHash("sha256").update(token).digest("hex");
+  // Trim whitespace and decode any URI encoding that may have survived
+  // the deep-link → Flutter → API round-trip.
+  const cleanToken = decodeURIComponent(token).trim();
+  const hash = crypto.createHash("sha256").update(cleanToken).digest("hex");
   const { data: record } = await supabaseAdmin
     .from("password_reset_tokens")
     .select("*")
