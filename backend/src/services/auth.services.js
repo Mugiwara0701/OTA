@@ -408,31 +408,20 @@ async function forgotPassword(email) {
     .update(resetToken)
     .digest("hex");
 
-  // Step 1: delete any existing token row for this user.
-  // We do NOT use upsert because Supabase upsert silently skips null values
-  // on conflict — meaning a stale used_at timestamp survives into the new row
-  // and the fresh token is instantly treated as "already used".
-  await supabaseAdmin
+  const { error: upsertError } = await supabaseAdmin
     .from("password_reset_tokens")
-    .delete()
-    .eq("user_id", userProfile.id);
-
-  // Step 2: insert a completely fresh row with no used_at column at all.
-  const { error: insertError } = await supabaseAdmin
-    .from("password_reset_tokens")
-    .insert({
-      user_id: userProfile.id,
-      token_hash: tokenHash,
-      expires_at: expiresAt,
-      // used_at intentionally omitted — defaults to null in the DB
-    });
-
-  if (insertError) {
-    logger.error("[Auth] Failed to insert password reset token", insertError);
-    throw new AppError(
-      "Failed to generate reset token. Please try again.",
-      HTTP.INTERNAL_ERROR,
+    .upsert(
+      {
+        user_id: userProfile.id,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+        used_at: null,
+      },
+      { onConflict: "user_id" },
     );
+
+  if (upsertError) {
+    logger.warn("Failed to upsert password reset token", upsertError);
   }
 
   const emailService = require("./email.services");
