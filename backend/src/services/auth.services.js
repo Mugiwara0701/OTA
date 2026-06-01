@@ -408,29 +408,26 @@ async function forgotPassword(email) {
     .update(resetToken)
     .digest("hex");
 
-  // Delete any existing reset token for this user first.
-  // This replaces the previous upsert approach which could leave a stale
-  // used_at value behind, causing the new token to appear "already used".
-  const { error: deleteError } = await supabaseAdmin
+  // Use upsert with explicit column list so every column is always overwritten,
+  // including used_at (reset to null) and token_hash (new token).
+  // ignoreDuplicates:false ensures the update always fires on conflict.
+  const { error: upsertError } = await supabaseAdmin
     .from("password_reset_tokens")
-    .delete()
-    .eq("user_id", userProfile.id);
+    .upsert(
+      {
+        user_id: userProfile.id,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+        used_at: null,
+      },
+      {
+        onConflict: "user_id",
+        ignoreDuplicates: false,
+      },
+    );
 
-  if (deleteError) {
-    logger.warn("Failed to delete old reset token", deleteError);
-  }
-
-  // Insert a fresh token row — no stale used_at, no conflict issues.
-  const { error: insertError } = await supabaseAdmin
-    .from("password_reset_tokens")
-    .insert({
-      user_id: userProfile.id,
-      token_hash: tokenHash,
-      expires_at: expiresAt,
-    });
-
-  if (insertError) {
-    logger.warn("Failed to insert password reset token", insertError);
+  if (upsertError) {
+    logger.error("Failed to upsert password reset token", upsertError);
     throw new AppError(
       "Failed to generate reset token. Please try again.",
       HTTP.INTERNAL_ERROR,
