@@ -122,7 +122,8 @@ async function sendRefundInitiated({
 async function sendPasswordReset({ email, firstName, resetToken }) {
   try {
     const config = require("../config/app.config");
-    // https link that email clients will allow clicking
+    // Use an https:// API URL — email clients block custom-scheme (otaapp://) links.
+    // The backend GET handler will redirect to the deep link after receiving this request.
     const resetUrl = `${config.server.apiUrl}/auth/reset-password?token=${resetToken}`;
     const tpl = templates.passwordReset({ firstName, resetUrl });
     await sendEmail({ to: email, ...tpl });

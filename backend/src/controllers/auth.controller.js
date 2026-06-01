@@ -32,6 +32,7 @@ const refresh = asyncHandler(async (req, res) => {
 });
 
 // GET /api/v1/auth/verify-email?token=...
+// Clicked from email → verifies the token then redirects into the app via deep link
 const verifyEmail = asyncHandler(async (req, res) => {
   try {
     await authService.verifyEmail(req.query.token);
@@ -62,25 +63,27 @@ const forgotPassword = asyncHandler(async (req, res) => {
   );
 });
 
-// POST /api/v1/auth/reset-password
-const resetPassword = asyncHandler(async (req, res) => {
-  const { token, newPassword } = req.body;
-  const result = await authService.resetPassword(token, newPassword);
-  sendSuccess(res, HTTP.OK, "Password reset successfully.", result);
-});
-
 // GET /api/v1/auth/reset-password?token=...
-// Clicked from email → redirects into the app via deep link
+// Clicked from email → redirects into the app via deep link carrying the token.
+// Email clients block otaapp:// links directly, so we send an https:// link here
+// and do the scheme redirect server-side — identical pattern to verifyEmail above.
 const resetPasswordRedirect = asyncHandler(async (req, res) => {
   const { token } = req.query;
   if (!token) {
     return res.redirect(
-      `${config.server.appScheme}://auth/reset-password?token=&error=missing`,
+      `${config.server.appScheme}://auth/reset-password?error=missing_token`,
     );
   }
   return res.redirect(
     `${config.server.appScheme}://auth/reset-password?token=${encodeURIComponent(token)}`,
   );
+});
+
+// POST /api/v1/auth/reset-password
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, newPassword } = req.body;
+  const result = await authService.resetPassword(token, newPassword);
+  sendSuccess(res, HTTP.OK, "Password reset successfully.", result);
 });
 
 // GET /api/v1/auth/me
@@ -110,9 +113,9 @@ module.exports = {
   verifyEmail,
   verifyEmailToken,
   forgotPassword,
+  resetPasswordRedirect,
   resetPassword,
   getMe,
   updateMe,
   changePassword,
-  resetPasswordRedirect,
 };

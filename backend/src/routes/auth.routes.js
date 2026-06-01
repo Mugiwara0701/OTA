@@ -26,6 +26,9 @@ router.post(
   forgotPasswordValidator,
   authController.forgotPassword,
 );
+
+// GET: link clicked in the reset password email → redirects to otaapp:// deep link
+// POST: the Flutter app submits the new password after the deep link opens the screen
 router.get("/reset-password", authController.resetPasswordRedirect);
 router.post(
   "/reset-password",
@@ -34,7 +37,7 @@ router.post(
   authController.resetPassword,
 );
 
-// ── PROTECTED ────────────────────────────────────────────────────────────────────
+// ── PROTECTED ─────────────────────────────────────────────────────────────────
 router.post("/logout", authenticate, authController.logout);
 router.get("/me", authenticate, authController.getMe);
 router.patch(
