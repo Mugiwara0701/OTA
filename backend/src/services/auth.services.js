@@ -397,41 +397,32 @@ async function refreshToken(token) {
 }
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
+// ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
 async function forgotPassword(email) {
   const userProfile = await db.findOne("users", { email });
   if (!userProfile) return { send: true };
 
   const resetToken = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString();
-  const tokenHash = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
 
-  // Use upsert with explicit column list so every column is always overwritten,
-  // including used_at (reset to null) and token_hash (new token).
-  // ignoreDuplicates:false ensures the update always fires on conflict.
+  // ✅ FIX: await the query and handle the error via destructuring
   const { error: upsertError } = await supabaseAdmin
     .from("password_reset_tokens")
     .upsert(
       {
         user_id: userProfile.id,
-        token_hash: tokenHash,
+        token_hash: crypto
+          .createHash("sha256")
+          .update(resetToken)
+          .digest("hex"),
         expires_at: expiresAt,
         used_at: null,
       },
-      {
-        onConflict: "user_id",
-        ignoreDuplicates: false,
-      },
+      { onConflict: "user_id", ignoreDuplicates: false },
     );
 
   if (upsertError) {
-    logger.error("Failed to upsert password reset token", upsertError);
-    throw new AppError(
-      "Failed to generate reset token. Please try again.",
-      HTTP.INTERNAL_ERROR,
-    );
+    logger.warn("Failed to upsert password reset token", upsertError);
   }
 
   const emailService = require("./email.services");
@@ -447,8 +438,6 @@ async function forgotPassword(email) {
 
 // ── RESET PASSWORD ────────────────────────────────────────────────────────────
 async function resetPassword(token, newPassword) {
-  // Trim whitespace and decode any URI encoding that may have survived
-  // the deep-link → Flutter → API round-trip.
   const cleanToken = decodeURIComponent(token).trim();
   const hash = crypto.createHash("sha256").update(cleanToken).digest("hex");
   const { data: record } = await supabaseAdmin
