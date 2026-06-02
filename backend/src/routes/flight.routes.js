@@ -13,6 +13,11 @@ const {
   changeRequestRules,
   listOffersRules,
 } = require("../validators/flight.validators");
+const { getETicketData } = require("../controllers/eticket.data.controller");
+const {
+  downloadETicket,
+  emailETicket,
+} = require("../controllers/eticket.controller");
 
 // ── PUBLIC ─────────────────────────────────────────────────────────────────────
 router.post(
@@ -51,8 +56,7 @@ router.post(
   controller.cancelBooking,
 );
 
-// ── Refund status — also available at GET /payments/:bookingId/status ────────
-// Convenience alias so flight consumers don't need to know the payments route
+// ── Refund status ─────────────────────────────────────────────────────────────
 router.get(
   "/bookings/:bookingId/refund-status",
   authenticate,
@@ -78,6 +82,32 @@ router.post(
   "/bookings/:bookingId/change/confirm",
   authenticate,
   controller.confirmChange,
+);
+
+// ── E-Ticket ──────────────────────────────────────────────────────────────────
+
+// JSON data for the app to render a native ticket UI
+router.get(
+  "/bookings/:bookingId/eticket/data",
+  authenticate,
+  bookingIdParamRules,
+  getETicketData,
+);
+
+// Stream the branded PDF (for "Save / Share" button)
+router.get(
+  "/bookings/:bookingId/eticket",
+  authenticate,
+  bookingIdParamRules,
+  downloadETicket,
+);
+
+// Resend the PDF to the user's registered email
+router.post(
+  "/bookings/:bookingId/eticket/email",
+  authenticate,
+  bookingIdParamRules,
+  emailETicket,
 );
 
 module.exports = router;

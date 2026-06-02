@@ -7,10 +7,14 @@ const { HTTP } = require("../constants/index");
 
 // POST /api/v1/payments/initiate
 const initiatePayment = asyncHandler(async (req, res) => {
-  const { bookingId } = req.body;
+  const { bookingId, selectedServices } = req.body; // ← add selectedServices
   const userId = req.user.id;
 
-  const result = await paymentService.initiatePayment({ bookingId, userId });
+  const result = await paymentService.initiatePayment({
+    bookingId,
+    userId,
+    selectedServices: selectedServices || [], // ← pass it through
+  });
   return sendSuccess(res, HTTP.CREATED, "Payment initiated", result);
 });
 

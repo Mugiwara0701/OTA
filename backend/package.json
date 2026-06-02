@@ -31,6 +31,8 @@
     "morgan": "^1.10.0",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.3",
+    "pdfkit": "^0.18.0",
+    "qrcode": "^1.5.4",
     "stripe": "^14.5.0",
     "uuid": "^9.0.0",
     "winston": "^3.11.0",

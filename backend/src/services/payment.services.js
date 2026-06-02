@@ -15,10 +15,10 @@ const {
 const { Duffel } = require("@duffel/api");
 
 // ── INITIATE PAYMENT  ─────────────────────────────────────────────────────────────
-async function initiatePayment({ bookingId, userId }) {
+async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
-    .select("*")
+    .select("*, flight_booking(*)")
     .eq("id", bookingId)
     .single();
   if (error || !booking)
@@ -29,6 +29,7 @@ async function initiatePayment({ bookingId, userId }) {
       HTTP.UNPROCESSABLE,
     );
   }
+
   const { data: existingPayment } = await supabaseAdmin
     .from("payments")
     .select("*")
@@ -41,6 +42,40 @@ async function initiatePayment({ bookingId, userId }) {
     );
   }
 
+  // ── Calculate final amount including seat upgrades ──────────────────────────
+  let finalAmount = parseFloat(booking.total_amount); // base fare
+  let seatUpgradeAmount = 0;
+
+  if (selectedServices.length > 0) {
+    // Each service must have { id, total_amount, total_currency }
+    // Validate all services belong to same currency as booking
+    for (const svc of selectedServices) {
+      if (!svc.id || !svc.total_amount) {
+        throw new AppError(
+          "Each selected service must have id and total_amount",
+          HTTP.BAD_REQUEST,
+        );
+      }
+      seatUpgradeAmount += parseFloat(svc.total_amount);
+    }
+    finalAmount = parseFloat((finalAmount + seatUpgradeAmount).toFixed(2));
+
+    // Persist selected services and update total_amount BEFORE charging
+    const flightBooking = booking.flight_booking?.[0];
+    if (flightBooking) {
+      await supabaseAdmin
+        .from("flight_booking")
+        .update({ selected_services: selectedServices })
+        .eq("booking_id", bookingId);
+    }
+
+    // Update master booking total so payment record and Duffel order match
+    await supabaseAdmin
+      .from("bookings")
+      .update({ total_amount: finalAmount })
+      .eq("id", bookingId);
+  }
+
   await supabaseAdmin
     .from("bookings")
     .update({ status: BOOKINGS.PAYMENT_PROCESSING })
@@ -49,7 +84,6 @@ async function initiatePayment({ bookingId, userId }) {
   let paymentRecord = {};
   let clientResponse = {};
 
-  // FOR DEVELOPMENT AND TESTING DURING DEVELOPMENT
   if (provider === PAYMENT_PROVIDER.STRIPE) {
     const session = await client.checkout.sessions.create({
       mode: "payment",
@@ -58,10 +92,13 @@ async function initiatePayment({ bookingId, userId }) {
         {
           price_data: {
             currency: booking.currency.toLowerCase(),
-            unit_amount: Math.round(parseFloat(booking.total_amount) * 100),
+            unit_amount: Math.round(finalAmount * 100), // ← finalAmount not booking.total_amount
             product_data: {
               name: `OTA Booking: ${booking.booking_ref}`,
-              description: `${booking.booking_type} booking`,
+              description:
+                seatUpgradeAmount > 0
+                  ? `Flight + Seat selection (${booking.currency} ${seatUpgradeAmount.toFixed(2)} upgrade)`
+                  : `${booking.booking_type} booking`,
             },
           },
           quantity: 1,
@@ -71,43 +108,53 @@ async function initiatePayment({ bookingId, userId }) {
       cancel_url: `${config.server.frontendUrl}/booking/cancel?bookingId=${bookingId}`,
       metadata: { bookingId, userId, bookingRef: booking.booking_ref },
     });
+
     paymentRecord = {
       booking_id: bookingId,
       user_id: userId,
       stripe_session_id: session.id,
-      amount: parseFloat(booking.total_amount),
+      amount: finalAmount, // ← finalAmount
       currency: booking.currency,
       status: PAYMENT_STATUS.PENDING,
       payment_provider: PAYMENT_PROVIDER.STRIPE,
     };
-
     clientResponse = {
       provider: "stripe",
       sessionId: session.id,
       sessionUrl: session.url,
       publishableKey: config.payment.stripe.publishableKey,
+      pricing: {
+        baseFare: parseFloat(booking.total_amount), // original before seats
+        seatUpgrade: seatUpgradeAmount,
+        total: finalAmount,
+        currency: booking.currency,
+      },
     };
   } else {
     const intent = await client.payments.intents.create({
-      amount: parseFloat(booking.total_amount).toFixed(2),
+      amount: finalAmount.toFixed(2), // ← finalAmount
       currency: booking.currency,
     });
-
     paymentRecord = {
       booking_id: bookingId,
       user_id: userId,
       duffel_payment_intent_id: intent.id,
       duffel_client_key: intent.client_key,
-      amount: parseFloat(booking.total_amount),
+      amount: finalAmount,
       currency: booking.currency,
       status: PAYMENT_STATUS.PENDING,
       payment_provider: PAYMENT_PROVIDER.DUFFEL,
     };
-
     clientResponse = {
       provider: "duffel",
       PaymentIntentId: intent.id,
       clientKey: intent.client_key,
+      pricing: {
+        baseFare: parseFloat(booking.total_amount),
+        seatUpgrade: seatUpgradeAmount,
+        total: finalAmount,
+        currency: booking.currency,
+      },
     };
   }
 
@@ -132,12 +179,20 @@ async function initiatePayment({ bookingId, userId }) {
     action: ACTIVITY_LOGS.PAYMENT_INITIALIZED,
     old_status: BOOKINGS.PENDING_PAYMENT,
     new_status: BOOKINGS.PAYMENT_PROCESSING,
-    meta_data: { provider, bookingRef: booking.booking_ref },
+    meta_data: {
+      provider,
+      bookingRef: booking.booking_ref,
+      baseFare: parseFloat(booking.total_amount),
+      seatUpgrade: seatUpgradeAmount,
+      finalAmount,
+      servicesCount: selectedServices.length,
+    },
     performed_by: userId,
   });
 
   logger.info(
-    `[PaymentService] Payment initiated for ${booking.booking_ref} via ${provider}`,
+    `[PaymentService] Payment initiated for ${booking.booking_ref} via ${provider}. ` +
+      `Base: ${booking.currency} ${booking.total_amount}, Seats: +${seatUpgradeAmount}, Total: ${finalAmount}`,
   );
   return clientResponse;
 }
@@ -236,12 +291,23 @@ async function confirmPayment({
 // ── INTERNAL: CONFIRM DUFFEL ORDER AFTER PAYMENT ─────────────────────────────────────────────────────────────
 async function confirmProviderBooking(booking, paymentProvider) {
   const { BOOKING_TYPE } = require("../constants/index");
+
   if (booking.booking_type === BOOKING_TYPE.FLIGHT) {
+    // Retrieve selected seat services that were saved at payment initiation
+    const { data: flightBooking } = await supabaseAdmin
+      .from("flight_booking")
+      .select("selected_services")
+      .eq("booking_id", booking.id)
+      .single();
+
+    const selectedServices = flightBooking?.selected_services || [];
+
     const flightService = require("./flight.services");
     await flightService.confirmFlightBooking({
       bookingId: booking.id,
       userId: booking.user_id,
       paymentProvider,
+      selectedServices, // ← now passed correctly
     });
   } else if (booking.booking_type === BOOKING_TYPE.HOTEL) {
     const staysService = require("./stays.services");

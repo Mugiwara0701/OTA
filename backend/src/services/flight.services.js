@@ -327,8 +327,13 @@ async function confirmFlightBooking({
       HTTP.UNPROCESSABLE,
     );
 
-  const liveAmount = String(parseFloat(offer.total_amount).toFixed(2));
+  const liveBaseFare = parseFloat(offer.total_amount);
+  const storedTotal = parseFloat(booking.total_amount); // already includes seats
   const liveCurrency = offer.total_currency;
+
+  if (liveBaseFare !== parseFloat(booking.total_amount - /* seat costs */ 0)) {
+    logger.warn(`[FlightService] Price drift for ${booking.booking_ref}`);
+  }
 
   if (parseFloat(offer.total_amount) !== parseFloat(booking.total_amount)) {
     logger.warn(
@@ -361,12 +366,16 @@ async function confirmFlightBooking({
     },
   }));
 
+  const finalAmount = String(storedTotal.toFixed(2));
+
   const order = await flightIntegration.createOrder({
     selectedOfferId: flightBooking.duffel_offer_id,
     passengers: duffelPassengers,
-    payments: [{ type: "balance", currency: liveCurrency, amount: liveAmount }],
+    payments: [
+      { type: "balance", currency: liveCurrency, amount: finalAmount },
+    ], // ← correct
     metadata: { booking_id: bookingId, booking_ref: booking.booking_ref },
-    services: selectedServices,
+    services: selectedServices, // ← already flowing through correctly
   });
 
   await supabaseAdmin
