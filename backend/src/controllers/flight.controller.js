@@ -87,22 +87,29 @@ const getSeatMap = asyncHandler(async (req, res) => {
       deck: cabin.deck,
       aisles: cabin.aisles,
       wings: cabin.wings || null,
+      cabin_class: cabin.cabin_class || null,
       rows: (cabin.rows || []).map((row, rowIndex) => ({
-        row_index: rowIndex,
+        row_index: row.row_index ?? rowIndex,
         sections: (row.sections || []).map((section) => ({
           elements: (section.elements || []).map((el) => {
+            // Non-seat elements (lavatory, galley, bassinet, exit_row, empty)
+            // pass through as-is so the client can render spacers correctly.
             if (el.type !== "seat") return { type: el.type };
-            const hasServices =
-              Array.isArray(el.available_services) &&
-              el.available_services.length > 0;
+
+            // Duffel's actual field is `services`, NOT `available_services`.
+            // `available` is also sent directly by Duffel as a boolean.
+            const rawServices = Array.isArray(el.services) ? el.services : [];
+            const isAvailable = el.available === true && rawServices.length > 0;
+
             return {
               type: "seat",
               designator: el.designator,
               name: el.name || null,
               disclosures: el.disclosures || [],
-              available: hasServices,
-              services: hasServices
-                ? el.available_services.map((s) => ({
+              available: isAvailable,
+              // Renamed to available_services for consistency with Flutter model
+              available_services: isAvailable
+                ? rawServices.map((s) => ({
                     id: s.id,
                     passenger_id: s.passenger_id,
                     total_amount: s.total_amount,
@@ -125,13 +132,15 @@ const getSeatMap = asyncHandler(async (req, res) => {
 
 // POST /api/v1/flights/book
 const initBooking = asyncHandler(async (req, res) => {
-  const { offerId, passengers, tripType } = req.body;
+  const { offerId, passengers, tripType, selectedSeatServiceIds } = req.body;
   const userId = req.user.id;
   const result = await flightService.initFlightBooking({
     userId,
     offerId,
     passengers,
     tripType,
+    // Persist seat service IDs to DB so they survive the Stripe redirect
+    selectedSeatServiceIds: selectedSeatServiceIds || [],
   });
   return sendSuccess(
     res,

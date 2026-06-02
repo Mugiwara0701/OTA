@@ -163,6 +163,7 @@ async function initFlightBooking({
   offerId,
   passengers,
   tripType = "ONE_WAY",
+  selectedSeatServiceIds = [],
 }) {
   const offer = await flightIntegration.getOffer(offerId);
   if (new Date(offer.expires_at) < new Date())
@@ -240,6 +241,10 @@ async function initFlightBooking({
       carrier: firstSlice.segments?.[0]?.carrier || "XX",
       offer_date: new Date().toISOString(),
       provider: "duffel",
+      // Persist the seat service IDs chosen on the seat map so they survive
+      // the Stripe redirect and are available when the Duffel order is created.
+      selected_seat_service_ids:
+        selectedSeatServiceIds.length > 0 ? selectedSeatServiceIds : null,
     });
 
   if (flightError) {
@@ -301,7 +306,7 @@ async function confirmFlightBooking({
   bookingId,
   userId,
   paymentProvider = "stripe",
-  selectedServices = [],
+  selectedServices = [], // fallback: may be passed directly from the frontend
 }) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
@@ -319,6 +324,20 @@ async function confirmFlightBooking({
   const flightBooking = booking.flight_booking?.[0];
   if (!flightBooking?.duffel_offer_id)
     throw new AppError("Flight booking data missing", HTTP.INTERNAL_ERROR);
+
+  // ── Resolve seat services ─────────────────────────────────────────────────
+  // Priority: DB-persisted IDs (saved at init time) → frontend fallback.
+  // Using DB as the source of truth ensures the correct seats are booked even
+  // when the user returns from a Stripe redirect in a fresh app session.
+  const dbSeatServiceIds = flightBooking.selected_seat_service_ids || [];
+  const resolvedServices =
+    dbSeatServiceIds.length > 0 ? dbSeatServiceIds : selectedServices;
+
+  if (resolvedServices.length > 0) {
+    logger.info(
+      `[FlightService] Booking ${bookingId}: attaching ${resolvedServices.length} seat service(s): ${resolvedServices.join(", ")}`,
+    );
+  }
 
   const offer = await flightIntegration.getOffer(flightBooking.duffel_offer_id);
   if (new Date(offer.expires_at) < new Date())
@@ -366,7 +385,7 @@ async function confirmFlightBooking({
     passengers: duffelPassengers,
     payments: [{ type: "balance", currency: liveCurrency, amount: liveAmount }],
     metadata: { booking_id: bookingId, booking_ref: booking.booking_ref },
-    services: selectedServices,
+    services: resolvedServices,
   });
 
   await supabaseAdmin

@@ -148,6 +148,7 @@ async function confirmPayment({
   sessionId,
   PaymentIntentId,
   userId,
+  selectedServices = [], // frontend fallback (DB is the primary source)
 }) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
@@ -238,10 +239,23 @@ async function confirmProviderBooking(booking, paymentProvider) {
   const { BOOKING_TYPE } = require("../constants/index");
   if (booking.booking_type === BOOKING_TYPE.FLIGHT) {
     const flightService = require("./flight.services");
+
+    // Load seat service IDs from DB — they were saved at initBooking time and
+    // must be forwarded to Duffel when creating the order so the user gets the
+    // seat they selected and paid for.
+    const { data: flightBooking } = await supabaseAdmin
+      .from("flight_booking")
+      .select("selected_seat_service_ids")
+      .eq("booking_id", booking.id)
+      .single();
+
+    const selectedServices = flightBooking?.selected_seat_service_ids || [];
+
     await flightService.confirmFlightBooking({
       bookingId: booking.id,
       userId: booking.user_id,
       paymentProvider,
+      selectedServices,
     });
   } else if (booking.booking_type === BOOKING_TYPE.HOTEL) {
     const staysService = require("./stays.services");
