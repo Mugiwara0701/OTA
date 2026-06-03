@@ -407,7 +407,7 @@ async function confirmFlightBooking({
 }
 
 // ── CANCEL BOOKING ─────────────────────────────────────────────────────────────
-async function cancelFlightBooking(bookingId, userId) {
+async function cancelFlightBooking(bookingId, userId, reason) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
     .select("*, flight_booking(*)")
@@ -452,7 +452,7 @@ async function cancelFlightBooking(bookingId, userId) {
     .update({
       status: BOOKINGS.CANCELLED,
       cancelled_at: new Date().toISOString(),
-      cancellation_reason: reason || "Customer requested cancellation", // ← use it here
+      cancellation_reason: reason || "Customer requested cancellation",
     })
     .eq("id", bookingId);
 

@@ -190,7 +190,7 @@ const getBooking = asyncHandler(async (req, res) => {
 const cancelBooking = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;
   const userId = req.user.id;
-  const { reason } = req.body; // ← add this
+  const { reason } = req.body;
   const result = await flightService.cancelFlightBooking(
     bookingId,
     userId,
@@ -198,7 +198,6 @@ const cancelBooking = asyncHandler(async (req, res) => {
   );
   return sendSuccess(res, HTTP.OK, "Booking cancelled successfully", result);
 });
-
 // GET /api/v1/flights/bookings/:bookingId/refund-status
 const getRefundStatus = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;
