@@ -190,7 +190,12 @@ const getBooking = asyncHandler(async (req, res) => {
 const cancelBooking = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;
   const userId = req.user.id;
-  const result = await flightService.cancelFlightBooking(bookingId, userId);
+  const { reason } = req.body; // ← add this
+  const result = await flightService.cancelFlightBooking(
+    bookingId,
+    userId,
+    reason,
+  );
   return sendSuccess(res, HTTP.OK, "Booking cancelled successfully", result);
 });
 

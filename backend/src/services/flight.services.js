@@ -452,7 +452,7 @@ async function cancelFlightBooking(bookingId, userId) {
     .update({
       status: BOOKINGS.CANCELLED,
       cancelled_at: new Date().toISOString(),
-      cancellation_reason: "Customer requested cancellation",
+      cancellation_reason: reason || "Customer requested cancellation", // ← use it here
     })
     .eq("id", bookingId);
 
