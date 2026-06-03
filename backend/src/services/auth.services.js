@@ -270,6 +270,20 @@ async function login({ email, password }, ip_address) {
   const token = generateAccessToken(userProfile, roles);
   const refreshToken = generateRefreshToken(userProfile.id);
 
+  // Revoke any existing active tokens for this user, then insert the new one.
+  // Without this, old tokens accumulate in the DB and calling /refresh with a
+  // stale token (e.g. from a previous Postman session or device) hits the
+  // "revoked" error after the first rotation.
+  try {
+    await supabaseAdmin
+      .from("refresh_tokens")
+      .update({ revoked_at: new Date().toISOString() })
+      .eq("user_id", userProfile.id)
+      .is("revoked_at", null);
+  } catch (err) {
+    logger.warn("Failed to revoke old refresh tokens on login", err);
+  }
+
   try {
     await supabaseAdmin.from("refresh_tokens").insert({
       user_id: userProfile.id,
@@ -352,11 +366,48 @@ async function refreshToken(token) {
     );
   }
   if (stored.revoked_at) {
+    // Grace window: if this token was rotated very recently (within 30 seconds),
+    // a concurrent request may have already refreshed it. Look up the newest
+    // active token for this user and return that instead of forcing a re-login.
+    const revokedAt = new Date(stored.revoked_at);
+    const secondsSinceRevoke = (Date.now() - revokedAt.getTime()) / 1000;
+
+    if (secondsSinceRevoke <= 30) {
+      const { data: latest } = await supabaseAdmin
+        .from("refresh_tokens")
+        .select("*")
+        .eq("user_id", stored.user_id)
+        .is("revoked_at", null)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (latest) {
+        // Return a fresh access token using the already-rotated refresh token
+        const userProfile = await db.findOne(
+          "users",
+          { id: stored.user_id },
+          { throwIfNotFound: true },
+        );
+        const roles = await loadUserRole(userProfile.id);
+        const newToken = generateAccessToken(userProfile, roles);
+        logger.info(
+          "[Auth] Concurrent refresh detected — reusing rotated token",
+          {
+            userId: stored.user_id,
+            secondsSinceRevoke,
+          },
+        );
+        return { token: newToken, refreshToken: null }; // null = Flutter keeps its current refresh token
+      }
+    }
+
     throw new AppError(
       "Refresh token has been revoked. Please login again",
       HTTP.UNAUTHORIZED,
     );
   }
+
   // Check DB-level expiry as a safety net
   if (stored.expires_at && new Date(stored.expires_at) < new Date()) {
     throw new AppError(
@@ -375,28 +426,31 @@ async function refreshToken(token) {
   const newToken = generateAccessToken(userProfile, roles);
   const newRefreshToken = generateRefreshToken(userProfile.id);
 
-  // Rotate: revoke old, store new
-  try {
-    await supabaseAdmin
+  // Rotate: revoke old, insert new (both in parallel for speed)
+  await Promise.all([
+    supabaseAdmin
       .from("refresh_tokens")
       .update({ revoked_at: new Date().toISOString() })
-      .eq("token_hash", hash);
-  } catch (err) {
-    logger.warn("Failed to revoke old refresh token", err);
-  }
-
-  try {
-    await supabaseAdmin.from("refresh_tokens").insert({
-      user_id: userProfile.id,
-      token_hash: crypto
-        .createHash("sha256")
-        .update(newRefreshToken)
-        .digest("hex"),
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    });
-  } catch (err) {
-    logger.warn("Failed to store new refresh token", err);
-  }
+      .eq("token_hash", hash)
+      .then(({ error }) => {
+        if (error) logger.warn("Failed to revoke old refresh token", error);
+      }),
+    supabaseAdmin
+      .from("refresh_tokens")
+      .insert({
+        user_id: userProfile.id,
+        token_hash: crypto
+          .createHash("sha256")
+          .update(newRefreshToken)
+          .digest("hex"),
+        expires_at: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
+      })
+      .then(({ error }) => {
+        if (error) logger.warn("Failed to store new refresh token", error);
+      }),
+  ]);
 
   return { token: newToken, refreshToken: newRefreshToken };
 }
