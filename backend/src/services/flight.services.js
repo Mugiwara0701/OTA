@@ -697,14 +697,33 @@ async function listUserBookings(userId, { page, limit, status } = {}) {
   if (status) {
     query = query.eq("status", status);
   } else {
-    // Exclude FAILED bookings (includes offer-expired ones marked by the expiry job)
+    // Exclude FAILED bookings
     query = query.neq("status", BOOKINGS.FAILED);
+    // Also exclude PENDING_PAYMENT bookings whose offer has already expired.
+    // This is a safety net for the gap between cron runs — the cron job hard-deletes
+    // them, but until it fires we don't want to show stale offers to the user.
+    query = query.not(
+      "and(status.eq.PENDING_PAYMENT,flight_booking.offer_expires_at.lt." +
+        new Date().toISOString() +
+        ")",
+    );
   }
 
   const { data, error, count } = await query;
-  if (error) throw new AppError("...", HTTP.INTERNAL_ERROR, error);
+  if (error)
+    throw new AppError("Failed to fetch bookings", HTTP.INTERNAL_ERROR, error);
 
-  return { bookings: data || [], total: count, page, limit };
+  // Post-filter: belt-and-suspenders in case the Supabase join filter above
+  // doesn't cover all edge cases (e.g. null offer_expires_at = treat as expired)
+  const now = new Date();
+  const filtered = (data || []).filter((b) => {
+    if (b.status !== BOOKINGS.PENDING_PAYMENT) return true;
+    const expiresAt = b.flight_booking?.[0]?.offer_expires_at;
+    if (!expiresAt) return false; // no expiry info = treat as expired, hide it
+    return new Date(expiresAt) > now;
+  });
+
+  return { bookings: filtered, total: count, page, limit };
 }
 
 // ── ORDER CHANGE REQUEST ───────────────────────────────────────────────────────
