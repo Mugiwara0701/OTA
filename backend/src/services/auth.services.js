@@ -270,22 +270,28 @@ async function login({ email, password }, ip_address) {
   const token = generateAccessToken(userProfile, roles);
   const refreshToken = generateRefreshToken(userProfile.id);
 
-  // Revoke any existing active tokens for this user, then insert the new one.
-  // Without this, old tokens accumulate in the DB and calling /refresh with a
-  // stale token (e.g. from a previous Postman session or device) hits the
-  // "revoked" error after the first rotation.
+  // Sign out of the Supabase Auth session — we use our own JWT system,
+  // so we don't need Supabase's session. Leaving it open causes auth.refresh_tokens
+  // to accumulate and can interfere with our public.refresh_tokens inserts.
   try {
-    await supabaseAdmin
-      .from("refresh_tokens")
-      .update({ revoked_at: new Date().toISOString() })
-      .eq("user_id", userProfile.id)
-      .is("revoked_at", null);
-  } catch (err) {
-    logger.warn("Failed to revoke old refresh tokens on login", err);
+    await supabaseAdmin.auth.signOut();
+  } catch (_) {}
+
+  // Revoke any existing active tokens for this user first
+  const { error: revokeError } = await supabaseAdmin
+    .from("refresh_tokens")
+    .update({ revoked_at: new Date().toISOString() })
+    .eq("user_id", userProfile.id)
+    .is("revoked_at", null);
+
+  if (revokeError) {
+    logger.warn("Failed to revoke old refresh tokens on login", revokeError);
   }
 
-  try {
-    await supabaseAdmin.from("refresh_tokens").insert({
+  // Insert new refresh token — log the full error if it fails so we can debug
+  const { error: insertError } = await supabaseAdmin
+    .from("refresh_tokens")
+    .insert({
       user_id: userProfile.id,
       token_hash: crypto
         .createHash("sha256")
@@ -293,8 +299,15 @@ async function login({ email, password }, ip_address) {
         .digest("hex"),
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     });
-  } catch (err) {
-    logger.warn("Failed to store refresh token", err);
+
+  if (insertError) {
+    logger.error("[Auth] CRITICAL — failed to store refresh token on login", {
+      error: insertError.message,
+      code: insertError.code,
+      details: insertError.details,
+      hint: insertError.hint,
+      userId: userProfile.id,
+    });
   }
 
   // Log activity
