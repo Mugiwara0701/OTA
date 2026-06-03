@@ -11,8 +11,7 @@
  * Add this to eticket.controller.js alongside downloadETicket & emailETicket.
  */
 
-const { asyncHandler } = require("../utils/AppError");
-const AppError = require("../utils/AppError");
+const { asyncHandler, AppError } = require("../utils/AppError");
 const { supabaseAdmin } = require("../config/supabase");
 const flightIntegration = require("../integrations/duffel/flight.integration");
 const { mapDuffelOrder } = require("../helpers/booking.helper");
