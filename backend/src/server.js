@@ -3,6 +3,7 @@
 const app = require("./app");
 const config = require("./config/app.config");
 const logger = require("./config/logger");
+const { startExpireBookingsJob } = require("./jobs/expireBookings.job");
 
 const PORT = config.server.port || 5000;
 
@@ -11,6 +12,9 @@ const server = app.listen(PORT, () => {
     env: config.server.env,
     api: `/api/${config.server.apiVersion}`,
   });
+
+  // Start background jobs
+  startExpireBookingsJob();
 });
 
 process.on("SIGTERM", () => {

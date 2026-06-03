@@ -697,23 +697,14 @@ async function listUserBookings(userId, { page, limit, status } = {}) {
   if (status) {
     query = query.eq("status", status);
   } else {
-    // Exclude PENDING_PAYMENT bookings whose Duffel offer has expired
-    // This requires a PostgREST workaround — see note below
+    // Exclude FAILED bookings (includes offer-expired ones marked by the expiry job)
+    query = query.neq("status", BOOKINGS.FAILED);
   }
 
   const { data, error, count } = await query;
   if (error) throw new AppError("...", HTTP.INTERNAL_ERROR, error);
 
-  // Filter in JS: drop PENDING_PAYMENT rows where offer has expired
-  const now = new Date();
-  const bookings = (data || []).filter((b) => {
-    if (b.status !== "PENDING_PAYMENT") return true;
-    const fb = b.flight_booking?.[0];
-    if (!fb?.offer_expires_at) return true; // no expiry info → keep (legacy rows)
-    return new Date(fb.offer_expires_at) > now; // only keep if still valid
-  });
-
-  return { bookings, total: count, page, limit };
+  return { bookings: data || [], total: count, page, limit };
 }
 
 // ── ORDER CHANGE REQUEST ───────────────────────────────────────────────────────
