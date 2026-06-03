@@ -8,7 +8,9 @@
  * Returns a single, flat JSON object shaped for the mobile/web app
  * to render the e-ticket natively — no PDF processing required on the client.
  *
- * Add this to eticket.controller.js alongside downloadETicket & emailETicket.
+ * Two modes:
+ *   • Full mode   — booking has a duffel_order_id → fetch live data from Duffel
+ *   • Local mode  — no duffel_order_id (test / manual inserts) → build from DB only
  */
 
 const { asyncHandler, AppError } = require("../utils/AppError");
@@ -59,7 +61,6 @@ function fmtDuration(dur) {
 
 // Build a lookup: duffel passenger id → traveler row (for name/passport data)
 function buildPassengerLookup(orderPassengers = [], travelers = []) {
-  // Duffel passengers come back in the same order they were submitted
   return orderPassengers.reduce((map, p, idx) => {
     map[p.id] = {
       ...p,
@@ -68,6 +69,173 @@ function buildPassengerLookup(orderPassengers = [], travelers = []) {
     };
     return map;
   }, {});
+}
+
+// ── Safe decrypt: returns plaintext if the value isn't encrypted ──────────────
+function safeDecrypt(value) {
+  if (!value) return null;
+  try {
+    return decrypt(value) ?? value;
+  } catch {
+    return value; // plaintext test data — return as-is
+  }
+}
+
+// ── Build a minimal journey from local DB flight_booking row ──────────────────
+// Used when there is no duffel_order_id (test / manually-inserted bookings).
+function buildLocalJourneys(flightBooking) {
+  const origin = flightBooking.origin ?? null;
+  const destination = flightBooking.destination ?? null;
+  const carrier = flightBooking.carrier ?? null;
+  const cabinClass = flightBooking.cabin_class ?? null;
+  const departureTime = flightBooking.departure_time ?? null;
+  const returnDate = flightBooking.return_date ?? null;
+  const tripType = (flightBooking.trip_type ?? "ONE_WAY").toUpperCase();
+
+  const outbound = {
+    journeyIndex: 0,
+    journeyLabel: tripType === "ROUND_TRIP" ? "Outbound" : "Flight",
+    origin: { iataCode: origin, cityName: null, airportName: null },
+    destination: { iataCode: destination, cityName: null, airportName: null },
+    departure: fmtDate(departureTime),
+    departureIso: fmt(departureTime),
+    arrival: null,
+    arrivalIso: null,
+    totalDuration: null,
+    connections: 0,
+    segments: [
+      {
+        segmentId: "local-seg-0",
+        flightNumber: carrier ?? "--",
+        operatingFlightNumber: carrier ?? "--",
+        airline: {
+          iataCode: carrier,
+          name: carrier,
+          logoUrl: null,
+          logoLockup: null,
+        },
+        operatingAirline: null,
+        aircraft: null,
+        origin: {
+          iataCode: origin,
+          cityName: null,
+          airportName: null,
+          terminal: null,
+          countryCode: null,
+          timeZone: null,
+        },
+        destination: {
+          iataCode: destination,
+          cityName: null,
+          airportName: null,
+          terminal: null,
+          countryCode: null,
+          timeZone: null,
+        },
+        departure: {
+          isoUtc: fmt(departureTime),
+          time: fmtTime(departureTime),
+          date: fmtDate(departureTime),
+          timestamp: departureTime,
+        },
+        arrival: {
+          isoUtc: null,
+          time: null,
+          date: null,
+          timestamp: null,
+        },
+        duration: null,
+        durationRaw: null,
+        stops: [],
+        passengerInfo: [],
+        cabinClass: cabinClass,
+      },
+    ],
+  };
+
+  const journeys = [outbound];
+
+  if (tripType === "ROUND_TRIP" && returnDate) {
+    journeys.push({
+      journeyIndex: 1,
+      journeyLabel: "Return",
+      origin: { iataCode: destination, cityName: null, airportName: null },
+      destination: { iataCode: origin, cityName: null, airportName: null },
+      departure: fmtDate(returnDate),
+      departureIso: fmt(returnDate),
+      arrival: null,
+      arrivalIso: null,
+      totalDuration: null,
+      connections: 0,
+      segments: [
+        {
+          segmentId: "local-seg-1",
+          flightNumber: carrier ?? "--",
+          operatingFlightNumber: carrier ?? "--",
+          airline: {
+            iataCode: carrier,
+            name: carrier,
+            logoUrl: null,
+            logoLockup: null,
+          },
+          operatingAirline: null,
+          aircraft: null,
+          origin: {
+            iataCode: destination,
+            cityName: null,
+            airportName: null,
+            terminal: null,
+            countryCode: null,
+            timeZone: null,
+          },
+          destination: {
+            iataCode: origin,
+            cityName: null,
+            airportName: null,
+            terminal: null,
+            countryCode: null,
+            timeZone: null,
+          },
+          departure: {
+            isoUtc: fmt(returnDate),
+            time: fmtTime(returnDate),
+            date: fmtDate(returnDate),
+            timestamp: returnDate,
+          },
+          arrival: {
+            isoUtc: null,
+            time: null,
+            date: null,
+            timestamp: null,
+          },
+          duration: null,
+          durationRaw: null,
+          stops: [],
+          passengerInfo: [],
+          cabinClass: cabinClass,
+        },
+      ],
+    });
+  }
+
+  return journeys;
+}
+
+// ── Build passenger list from local travelers rows ────────────────────────────
+function buildLocalPassengers(travelers = []) {
+  return travelers.map((t, idx) => ({
+    passengerId: `local-pax-${idx}`,
+    type: (t.travel_type ?? "ADULT").toLowerCase(),
+    title: null,
+    firstName: t.first_name ?? null,
+    lastName: t.last_name ?? null,
+    dateOfBirth: t.date_of_birth ?? null,
+    gender: t.gender ?? null,
+    passportNumber: safeDecrypt(t.passport_number),
+    nationality: t.nationality ?? null,
+    email: t.email ?? null,
+    ticketNumbers: [],
+  }));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -97,18 +265,12 @@ const getETicketData = asyncHandler(async (req, res) => {
   }
 
   const flightBooking = booking.flight_booking?.[0];
-  if (!flightBooking?.duffel_order_id) {
+  if (!flightBooking) {
     throw new AppError(
-      "Flight order not found for this booking",
+      "Flight details not found for this booking",
       HTTP.NOT_FOUND,
     );
   }
-
-  // ── 2. Fetch live Duffel order ────────────────────────────────────────────
-  const rawOrder = await flightIntegration.getOrder(
-    flightBooking.duffel_order_id,
-  );
-  const order = mapDuffelOrder(rawOrder);
 
   // ── 3. Load user profile ──────────────────────────────────────────────────
   const { data: user } = await supabaseAdmin
@@ -117,171 +279,169 @@ const getETicketData = asyncHandler(async (req, res) => {
     .eq("id", booking.user_id)
     .single();
 
-  // ── 4. Build passenger lookup ─────────────────────────────────────────────
-  const passengerLookup = buildPassengerLookup(
-    order.passengers || [],
-    booking.travelers || [],
-  );
+  // ── 4. Payment info ───────────────────────────────────────────────────────
+  const payment = booking.payments?.[0] ?? null;
 
-  // ── 5. Build per-segment ticket sections ─────────────────────────────────
-  // Each slice = one directional journey (outbound / return / leg N)
-  // Each segment = one actual flight within that journey
-  const journeys = (order.slices || []).map((slice, sliceIdx) => {
-    const segments = (slice.segments || []).map((seg) => {
-      // Seat assignments per passenger for this segment
-      const seats = (seg.passengers || []).map((sp) => {
-        const pax = passengerLookup[sp.passengerId] || {};
+  let journeys, passengers, order;
+
+  if (flightBooking.duffel_order_id) {
+    // ── FULL MODE: fetch live data from Duffel ──────────────────────────────
+    const rawOrder = await flightIntegration.getOrder(
+      flightBooking.duffel_order_id,
+    );
+    order = mapDuffelOrder(rawOrder);
+
+    const passengerLookup = buildPassengerLookup(
+      order.passengers || [],
+      booking.travelers || [],
+    );
+
+    journeys = (order.slices || []).map((slice, sliceIdx) => {
+      const segments = (slice.segments || []).map((seg) => {
+        const seats = (seg.passengers || []).map((sp) => {
+          const pax = passengerLookup[sp.passengerId] || {};
+          return {
+            passengerId: sp.passengerId,
+            passengerName:
+              pax.givenName && pax.familyName
+                ? `${pax.givenName} ${pax.familyName}`
+                : null,
+            seat: sp.seat?.designator ?? null,
+            seatName: sp.seat?.name ?? null,
+            cabinClass: sp.cabinClass ?? null,
+            cabinClassName: sp.cabinClassMarketingName ?? null,
+            baggages: sp.baggages ?? [],
+          };
+        });
+
         return {
-          passengerId: sp.passengerId,
-          passengerName:
-            pax.givenName && pax.familyName
-              ? `${pax.givenName} ${pax.familyName}`
+          segmentId: seg.id,
+          flightNumber: `${seg.marketingCarrier?.iataCode ?? ""}${seg.marketingCarrierFlightNumber ?? ""}`,
+          operatingFlightNumber: `${seg.operatingCarrier?.iataCode ?? ""}${seg.operatingCarrierFlightNumber ?? ""}`,
+          airline: {
+            iataCode: seg.marketingCarrier?.iataCode ?? null,
+            name: seg.marketingCarrier?.name ?? null,
+            logoUrl: seg.marketingCarrier?.logoUrl ?? null,
+            logoLockup: seg.marketingCarrier?.logoLockupUrl ?? null,
+          },
+          operatingAirline:
+            seg.operatingCarrier?.iataCode !== seg.marketingCarrier?.iataCode
+              ? {
+                  iataCode: seg.operatingCarrier?.iataCode ?? null,
+                  name: seg.operatingCarrier?.name ?? null,
+                }
               : null,
-          seat: sp.seat?.designator ?? null,
-          seatName: sp.seat?.name ?? null,
-          cabinClass: sp.cabinClass ?? null,
-          cabinClassName: sp.cabinClassMarketingName ?? null,
-          baggages: sp.baggages ?? [],
+          aircraft: seg.aircraft?.name ?? null,
+          origin: {
+            iataCode: seg.origin?.iataCode ?? null,
+            cityName: seg.origin?.cityName ?? null,
+            airportName: seg.origin?.name ?? null,
+            terminal: seg.originTerminal ?? null,
+            countryCode: seg.origin?.countryCode ?? null,
+            timeZone: seg.origin?.timeZone ?? null,
+          },
+          destination: {
+            iataCode: seg.destination?.iataCode ?? null,
+            cityName: seg.destination?.cityName ?? null,
+            airportName: seg.destination?.name ?? null,
+            terminal: seg.destinationTerminal ?? null,
+            countryCode: seg.destination?.countryCode ?? null,
+            timeZone: seg.destination?.timeZone ?? null,
+          },
+          departure: {
+            isoUtc: fmt(seg.departingAt),
+            time: fmtTime(seg.departingAt),
+            date: fmtDate(seg.departingAt),
+            timestamp: seg.departingAt,
+          },
+          arrival: {
+            isoUtc: fmt(seg.arrivingAt),
+            time: fmtTime(seg.arrivingAt),
+            date: fmtDate(seg.arrivingAt),
+            timestamp: seg.arrivingAt,
+          },
+          duration: fmtDuration(seg.duration),
+          durationRaw: seg.duration,
+          stops: (seg.stops || []).map((st) => ({
+            airport: { iataCode: st.airport?.iataCode, name: st.airport?.name },
+            arrivingAt: fmt(st.arrivingAt),
+            departingAt: fmt(st.departingAt),
+            duration: fmtDuration(st.duration),
+          })),
+          passengerInfo: seats,
         };
       });
 
       return {
-        segmentId: seg.id,
-        // Flight identification
-        flightNumber: `${seg.marketingCarrier?.iataCode ?? ""}${seg.marketingCarrierFlightNumber ?? ""}`,
-        operatingFlightNumber: `${seg.operatingCarrier?.iataCode ?? ""}${seg.operatingCarrierFlightNumber ?? ""}`,
-        airline: {
-          iataCode: seg.marketingCarrier?.iataCode ?? null,
-          name: seg.marketingCarrier?.name ?? null,
-          logoUrl: seg.marketingCarrier?.logoUrl ?? null,
-          logoLockup: seg.marketingCarrier?.logoLockupUrl ?? null,
-        },
-        operatingAirline:
-          seg.operatingCarrier?.iataCode !== seg.marketingCarrier?.iataCode
-            ? {
-                iataCode: seg.operatingCarrier?.iataCode ?? null,
-                name: seg.operatingCarrier?.name ?? null,
-              }
-            : null,
-        aircraft: seg.aircraft?.name ?? null,
-        // Origin
+        journeyIndex: sliceIdx,
+        journeyLabel:
+          sliceIdx === 0
+            ? "Outbound"
+            : sliceIdx === 1
+              ? "Return"
+              : `Leg ${sliceIdx + 1}`,
         origin: {
-          iataCode: seg.origin?.iataCode ?? null,
-          cityName: seg.origin?.cityName ?? null,
-          airportName: seg.origin?.name ?? null,
-          terminal: seg.originTerminal ?? null,
-          countryCode: seg.origin?.countryCode ?? null,
-          timeZone: seg.origin?.timeZone ?? null,
+          iataCode: slice.origin?.iataCode ?? null,
+          cityName: slice.origin?.cityName ?? null,
+          airportName: slice.origin?.name ?? null,
         },
-        // Destination
         destination: {
-          iataCode: seg.destination?.iataCode ?? null,
-          cityName: seg.destination?.cityName ?? null,
-          airportName: seg.destination?.name ?? null,
-          terminal: seg.destinationTerminal ?? null,
-          countryCode: seg.destination?.countryCode ?? null,
-          timeZone: seg.destination?.timeZone ?? null,
+          iataCode: slice.destination?.iataCode ?? null,
+          cityName: slice.destination?.cityName ?? null,
+          airportName: slice.destination?.name ?? null,
         },
-        // Times — raw ISO for the app to localize, plus pre-formatted strings
-        departure: {
-          isoUtc: fmt(seg.departingAt),
-          time: fmtTime(seg.departingAt),
-          date: fmtDate(seg.departingAt),
-          timestamp: seg.departingAt,
-        },
-        arrival: {
-          isoUtc: fmt(seg.arrivingAt),
-          time: fmtTime(seg.arrivingAt),
-          date: fmtDate(seg.arrivingAt),
-          timestamp: seg.arrivingAt,
-        },
-        duration: fmtDuration(seg.duration),
-        durationRaw: seg.duration,
-        // Intermediate stops (technical stops within one segment)
-        stops: (seg.stops || []).map((st) => ({
-          airport: { iataCode: st.airport?.iataCode, name: st.airport?.name },
-          arrivingAt: fmt(st.arrivingAt),
-          departingAt: fmt(st.departingAt),
-          duration: fmtDuration(st.duration),
-        })),
-        // Passenger seat data
-        passengerInfo: seats,
+        departure: fmtDate(slice.departureAt),
+        departureIso: fmt(slice.departureAt),
+        arrival: fmtDate(slice.arrivalAt),
+        arrivalIso: fmt(slice.arrivalAt),
+        totalDuration: fmtDuration(slice.duration),
+        connections: slice.connections ?? 0,
+        segments,
       };
     });
 
-    return {
-      journeyIndex: sliceIdx,
-      journeyLabel:
-        sliceIdx === 0
-          ? "Outbound"
-          : sliceIdx === 1
-            ? "Return"
-            : `Leg ${sliceIdx + 1}`,
-      origin: {
-        iataCode: slice.origin?.iataCode ?? null,
-        cityName: slice.origin?.cityName ?? null,
-        airportName: slice.origin?.name ?? null,
-      },
-      destination: {
-        iataCode: slice.destination?.iataCode ?? null,
-        cityName: slice.destination?.cityName ?? null,
-        airportName: slice.destination?.name ?? null,
-      },
-      departure: fmtDate(slice.departureAt),
-      departureIso: fmt(slice.departureAt),
-      arrival: fmtDate(slice.arrivalAt),
-      arrivalIso: fmt(slice.arrivalAt),
-      totalDuration: fmtDuration(slice.duration),
-      connections: slice.connections ?? 0,
-      segments,
-    };
-  });
-
-  // ── 6. Passenger list ─────────────────────────────────────────────────────
-  const passengers = (order.passengers || []).map((p, idx) => {
-    const traveler = booking.travelers?.[idx] ?? {};
-    return {
-      passengerId: p.id,
-      type: p.type, // "adult" | "child" | "infant_without_seat"
-      title: p.title ?? null,
-      firstName: p.givenName,
-      lastName: p.familyName,
-      dateOfBirth: p.bornOn ?? traveler.date_of_birth ?? null,
-      gender: p.gender ?? traveler.gender ?? null,
-      passportNumber: decrypt(traveler.passport_number) ?? null,
-      nationality: traveler.nationality ?? null,
-      email: p.email ?? traveler.email ?? null,
-      // e-ticket number(s) for this passenger
-      ticketNumbers: (order.documents || [])
-        .filter(
-          (d) =>
-            d.type === "electronic_ticket" && d.passengerIds.includes(p.id),
-        )
-        .map((d) => d.uniqueIdentifier),
-    };
-  });
-
-  // ── 7. Payment info ───────────────────────────────────────────────────────
-  const payment = booking.payments?.[0] ?? null;
+    passengers = (order.passengers || []).map((p, idx) => {
+      const traveler = booking.travelers?.[idx] ?? {};
+      return {
+        passengerId: p.id,
+        type: p.type,
+        title: p.title ?? null,
+        firstName: p.givenName,
+        lastName: p.familyName,
+        dateOfBirth: p.bornOn ?? traveler.date_of_birth ?? null,
+        gender: p.gender ?? traveler.gender ?? null,
+        passportNumber: safeDecrypt(traveler.passport_number),
+        nationality: traveler.nationality ?? null,
+        email: p.email ?? traveler.email ?? null,
+        ticketNumbers: (order.documents || [])
+          .filter(
+            (d) =>
+              d.type === "electronic_ticket" && d.passengerIds.includes(p.id),
+          )
+          .map((d) => d.uniqueIdentifier),
+      };
+    });
+  } else {
+    // ── LOCAL MODE: build from DB only (test / manual bookings) ────────────
+    order = { bookingReferences: [], conditions: null };
+    journeys = buildLocalJourneys(flightBooking);
+    passengers = buildLocalPassengers(booking.travelers || []);
+  }
 
   // ── 8. Compose final response ─────────────────────────────────────────────
   const eticket = {
-    // ── Ticket meta ─────────────────────────────────────────────────────────
     bookingId: booking.id,
     bookingRef: booking.booking_ref,
     status: booking.status,
     issuedAt: fmt(booking.created_at),
 
-    // ── Airline PNR ──────────────────────────────────────────────────────────
     pnr: flightBooking.pnr ?? order.bookingReference ?? null,
-    // Some itineraries have per-carrier PNRs
     allReferences: (order.bookingReferences || []).map((br) => ({
       reference: br.reference,
       airlineName: br.carrier?.name ?? null,
       airlineCode: br.carrier?.iataCode ?? null,
     })),
 
-    // ── Booker info ──────────────────────────────────────────────────────────
     booker: {
       firstName: user?.first_name ?? null,
       lastName: user?.last_name ?? null,
@@ -289,13 +449,9 @@ const getETicketData = asyncHandler(async (req, res) => {
       phone: user?.phone ?? null,
     },
 
-    // ── Journey segments ─────────────────────────────────────────────────────
     journeys,
-
-    // ── Passenger details ─────────────────────────────────────────────────────
     passengers,
 
-    // ── Pricing ───────────────────────────────────────────────────────────────
     payment: {
       totalAmount: parseFloat(booking.total_amount).toFixed(2),
       currency: booking.currency,
@@ -305,18 +461,14 @@ const getETicketData = asyncHandler(async (req, res) => {
       provider: payment?.payment_provider ?? null,
     },
 
-    // ── Policies ─────────────────────────────────────────────────────────────
     conditions: order.conditions ?? null,
 
-    // ── QR payload (app can generate/display its own QR from this) ───────────
     qrPayload: JSON.stringify({
       ref: booking.booking_ref,
       pnr: flightBooking.pnr ?? order.bookingReference ?? null,
       id: booking.id,
     }),
 
-    // ── Download link (for "Save PDF" button) ────────────────────────────────
-    // The app constructs this URL from bookingId — included here for convenience
     pdfDownloadPath: `/api/v1/flights/bookings/${bookingId}/eticket`,
     emailResendPath: `/api/v1/flights/bookings/${bookingId}/eticket/email`,
   };
