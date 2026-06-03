@@ -10,13 +10,12 @@
  *   → regenerates the e-ticket and sends it to the passenger's email
  */
 
-const { asyncHandler } = require("../utils/AppError");
 const { supabaseAdmin } = require("../config/supabase");
 const flightIntegration = require("../integrations/duffel/flight.integration");
 const { mapDuffelOrder } = require("../helpers/booking.helper");
 const { generateETicketPDF } = require("../services/eticket.service");
 const { sendETicketEmail } = require("../services/email.services"); // added below
-const AppError = require("../utils/AppError");
+const { AppError, asyncHandler } = require("../utils/AppError");
 const { HTTP, BOOKINGS } = require("../constants/index");
 
 // ── Shared: load all data needed to build the ticket ─────────────────────────
