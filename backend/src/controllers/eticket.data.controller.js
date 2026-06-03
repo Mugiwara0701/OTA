@@ -18,6 +18,7 @@ const flightIntegration = require("../integrations/duffel/flight.integration");
 const { mapDuffelOrder } = require("../helpers/booking.helper");
 const { HTTP, BOOKINGS } = require("../constants/index");
 const { sendSuccess } = require("../helpers/helper.response");
+const { decrypt } = require("../config/crypto.config");
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -63,7 +64,7 @@ function buildPassengerLookup(orderPassengers = [], travelers = []) {
   return orderPassengers.reduce((map, p, idx) => {
     map[p.id] = {
       ...p,
-      passportNumber: travelers[idx]?.passport_number ?? null,
+      passportNumber: decrypt(travelers[idx]?.passport_number) ?? null,
       nationality: travelers[idx]?.nationality ?? null,
     };
     return map;
@@ -182,7 +183,7 @@ const getETicketData = asyncHandler(async (req, res) => {
           countryCode: seg.destination?.countryCode ?? null,
           timeZone: seg.destination?.timeZone ?? null,
         },
-        // Times — raw ISO for the app to localise, plus pre-formatted strings
+        // Times — raw ISO for the app to localize, plus pre-formatted strings
         departure: {
           isoUtc: fmt(seg.departingAt),
           time: fmtTime(seg.departingAt),
@@ -248,7 +249,7 @@ const getETicketData = asyncHandler(async (req, res) => {
       lastName: p.familyName,
       dateOfBirth: p.bornOn ?? traveler.date_of_birth ?? null,
       gender: p.gender ?? traveler.gender ?? null,
-      passportNumber: traveler.passport_number ?? null,
+      passportNumber: decrypt(traveler.passport_number) ?? null,
       nationality: traveler.nationality ?? null,
       email: p.email ?? traveler.email ?? null,
       // e-ticket number(s) for this passenger

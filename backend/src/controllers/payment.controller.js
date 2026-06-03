@@ -7,13 +7,13 @@ const { HTTP } = require("../constants/index");
 
 // POST /api/v1/payments/initiate
 const initiatePayment = asyncHandler(async (req, res) => {
-  const { bookingId, selectedServices } = req.body; // ← add selectedServices
+  const { bookingId, selectedServices } = req.body;
   const userId = req.user.id;
 
   const result = await paymentService.initiatePayment({
     bookingId,
     userId,
-    selectedServices: selectedServices || [], // ← pass it through
+    selectedServices: selectedServices || [],
   });
   return sendSuccess(res, HTTP.CREATED, "Payment initiated", result);
 });
@@ -21,15 +21,17 @@ const initiatePayment = asyncHandler(async (req, res) => {
 // POST /api/v1/payments/confirm
 const confirmPayment = asyncHandler(async (req, res) => {
   const { bookingId, sessionId, paymentIntentId } = req.body;
+  // FIX #3: was passing `paymentIntentId` but service expected `PaymentIntentId`
+  // Now both sides use consistent camelCase `paymentIntentId`
   const userId = req.user.id;
 
   const result = await paymentService.confirmPayment({
     bookingId,
     sessionId,
-    paymentIntentId,
+    paymentIntentId, // consistent camelCase
     userId,
   });
-  return sendSuccess(res, HTTP.OK, "payment confirmed", result);
+  return sendSuccess(res, HTTP.OK, "Payment confirmed", result);
 });
 
 // POST /api/v1/payments/:bookingId/refund

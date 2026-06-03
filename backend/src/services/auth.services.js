@@ -6,7 +6,7 @@ const { supabaseAdmin } = require("../config/supabase");
 const db = require("../database/db");
 const config = require("../config/app.config");
 const logger = require("../config/logger");
-const { encrypt } = require("../config/crypto.config");
+const { encrypt, decrypt } = require("../config/crypto.config");
 const { AppError } = require("../utils/AppError");
 const { ROLES, HTTP, ACTIVITY_LOGS } = require("../constants/index");
 
@@ -39,7 +39,12 @@ async function loadUserRole(userId) {
 
 // ───── STRIPE INTERNAL FIELDS BEFORE SENDING TO CLIENT ─────────────────────────────────────────────────────────
 function sanitizeUser(user) {
-  const { auth_user_id, ...safe } = user;
+  const { auth_user_id, passport_number, ...safe } = user;
+  // Decrypt passport so the frontend always receives the plaintext value.
+  // The encrypted blob is never sent to the client.
+  if (passport_number) {
+    safe.passport_number = decrypt(passport_number) ?? null;
+  }
   return safe;
 }
 

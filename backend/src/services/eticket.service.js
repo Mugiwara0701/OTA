@@ -12,6 +12,7 @@
 
 const PDFDocument = require("pdfkit");
 const QRCode = require("qrcode");
+const { decrypt } = require("../config/crypto.config");
 
 // ─── Brand colours (matches your dark theme in email templates) ───────────────
 const BRAND = {
@@ -495,11 +496,13 @@ async function generateETicketPDF({
           .fillColor(BRAND.white)
           .text(`${idx + 1}.  ${t.first_name} ${t.last_name}`, MARGIN + 12, y);
         if (t.passport_number) {
+          const passportDisplay =
+            decrypt(t.passport_number) ?? t.passport_number;
           doc
             .font("Helvetica")
             .fontSize(8)
             .fillColor(BRAND.muted)
-            .text(`Passport: ${t.passport_number}`, MARGIN + 200, y + 2);
+            .text(`Passport: ${passportDisplay}`, MARGIN + 200, y + 2);
         }
         if (dob) {
           doc

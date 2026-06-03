@@ -9,16 +9,13 @@ const { asyncHandler } = require("../utils/AppError");
 const { supabaseAdmin } = require("../config/supabase");
 
 // ── STRIPE WEBHOOK ─────────────────────────────────────────────────────────────
-
-// POST /api/v1/webhooks/stripe
 const handleStripeWebHook = asyncHandler(async (req, res) => {
   const sig = req.headers["stripe-signature"];
   if (!config.payment.stripe.webhookSecret) {
     logger.warn(`[Webhook] Stripe webhook secret not configured`);
-    return res.status(400).json({
-      success: false,
-      message: "Webhook not configured",
-    });
+    return res
+      .status(400)
+      .json({ success: false, message: "Webhook not configured" });
   }
   let event;
   try {
@@ -41,7 +38,6 @@ const handleStripeWebHook = asyncHandler(async (req, res) => {
 
   try {
     const { bookingId, userId } = event.data.object?.metadata || {};
-
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object;
@@ -49,11 +45,11 @@ const handleStripeWebHook = asyncHandler(async (req, res) => {
           await paymentService.confirmPayment({
             bookingId,
             sessionId: session.id,
-            PaymentIntentId: session.payment_intent,
+            paymentIntentId: session.payment_intent,
             userId: userId || "webhook",
           });
           logger.info(
-            `[webhook] Stripe payment confirmed for booking: ${bookingId}`,
+            `[Webhook] Stripe payment confirmed for booking: ${bookingId}`,
           );
         }
         break;
@@ -73,12 +69,11 @@ const handleStripeWebHook = asyncHandler(async (req, res) => {
         }
         break;
       }
-      case "charge.refunded": {
+      case "charge.refunded":
         logger.info(`[Webhook] Stripe charge refunded`, {
           chargeId: event.data.object.id,
         });
         break;
-      }
       default:
         logger.debug(`[Webhook] Unhandled Stripe event: ${event.type}`);
     }
@@ -91,66 +86,126 @@ const handleStripeWebHook = asyncHandler(async (req, res) => {
 });
 
 // ── DUFFEL WEBHOOK ─────────────────────────────────────────────────────────────
-
-// POST /api/v1/webhooks/duffel
 const handleDuffelWebhook = asyncHandler(async (req, res) => {
   const signature = req.headers["duffel-signature"];
-  if (config.duffel.webhookSecret && signature) {
+
+  // FIX #6: enforce HMAC verification — never accept unsigned webhooks
+  // In production, DUFFEL_WEBHOOK_SECRET is required (enforced in app.config.js).
+  // In development, if the secret is set we verify; if not, we warn and allow through.
+  if (config.duffel.webhookSecret) {
+    if (!signature) {
+      logger.error(
+        `[Webhook] Duffel webhook received without signature header`,
+      );
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing Duffel-Signature header" });
+    }
     const expectedSig = crypto
       .createHmac("sha256", config.duffel.webhookSecret)
       .update(req.rawBody)
       .digest("hex");
-
-    if (`sha256=${expectedSig}` !== signature) {
+    // timingSafeEqual prevents timing attacks
+    const expected = Buffer.from(`sha256=${expectedSig}`);
+    const received = Buffer.from(signature);
+    const valid =
+      expected.length === received.length &&
+      crypto.timingSafeEqual(expected, received);
+    if (!valid) {
       logger.error(`[Webhook] Duffel signature verification failed`);
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Duffel webhook signature",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Duffel webhook signature" });
     }
+  } else {
+    logger.warn(
+      `[Webhook] DUFFEL_WEBHOOK_SECRET not set — skipping HMAC check (dev only)`,
+    );
   }
+
   res.status(200).json({ received: true });
+
   let payload;
   try {
     payload = JSON.parse(req.rawBody.toString());
-  } catch (err) {
-    logger.error(`[Webhook] Invalid duffel webhook payload`);
+  } catch {
+    logger.error(`[Webhook] Invalid Duffel webhook payload — not valid JSON`);
     return;
   }
+
   const { type, data } = payload;
   logger.info(`[Webhook] Duffel event received: ${type}`);
 
   try {
     switch (type) {
       case "payment_intent.succeeded": {
-        const bookingId = data?.metadata?.booking_id;
-        if (bookingId) {
-          await paymentService.confirmPayment({ bookingId, userId: "webhook" });
-          logger.info(
-            `[Webhook] Duffel payment confirmed for booking: ${bookingId}`,
+        // FIX #2 alternative: Since paymentIntents.create() doesn't support metadata,
+        // we correlate using the intent ID → look it up in the payments table.
+        // The payments table has duffel_payment_intent_id stored from initiatePayment.
+        const intentId = data?.id;
+        if (!intentId) {
+          logger.error(`[Webhook] payment_intent.succeeded missing data.id`);
+          break;
+        }
+
+        // Look up booking via the stored intent ID
+        const { data: paymentRecord, error } = await supabaseAdmin
+          .from("payments")
+          .select("booking_id")
+          .eq("duffel_payment_intent_id", intentId)
+          .single();
+
+        if (error || !paymentRecord?.booking_id) {
+          logger.error(
+            `[Webhook] payment_intent.succeeded: no booking found for intent ${intentId}`,
+          );
+          break;
+        }
+
+        await paymentService.confirmPayment({
+          bookingId: paymentRecord.booking_id,
+          paymentIntentId: intentId, // pass through so confirmPayment skips DB re-fetch
+          userId: "webhook",
+        });
+        logger.info(
+          `[Webhook] Duffel payment confirmed for booking: ${paymentRecord.booking_id}`,
+        );
+        break;
+      }
+
+      case "payment_intent.payment_failed": {
+        const intentId = data?.id;
+        if (!intentId) break;
+
+        const { data: paymentRecord } = await supabaseAdmin
+          .from("payments")
+          .select("booking_id")
+          .eq("duffel_payment_intent_id", intentId)
+          .single();
+
+        if (paymentRecord?.booking_id) {
+          await paymentService.failPayment({
+            bookingId: paymentRecord.booking_id,
+            reason: `Duffel payment intent failed (intent: ${intentId})`,
+          });
+          logger.warn(
+            `[Webhook] Duffel payment failed for booking: ${paymentRecord.booking_id}`,
+          );
+        } else {
+          logger.error(
+            `[Webhook] payment_intent.payment_failed: no booking found for intent ${intentId}`,
           );
         }
         break;
       }
-      case "payment_intent.payment_failed": {
-        const bookingId = data?.metadata?.booking_id;
-        if (bookingId) {
-          await paymentService.failPayment({
-            bookingId,
-            reason: "Duffel payment intent failed",
-          });
-        }
-        break;
-      }
-      case "order.updated": {
+
+      case "order.updated":
         logger.info(`[Webhook] Duffel order updated`, { orderId: data?.id });
         break;
-      }
+
       case "order.airline_initiated_change": {
         const orderId = data?.id;
-        logger.warn(`[Webhook] Airline-initiated change received`, {
-          orderId,
-        });
+        logger.warn(`[Webhook] Airline-initiated change received`, { orderId });
         if (orderId) {
           const { data: flightBooking } = await supabaseAdmin
             .from("flight_booking")
@@ -166,7 +221,6 @@ const handleDuffelWebhook = asyncHandler(async (req, res) => {
                 orderId,
               })
               .catch(() => {});
-
             await supabaseAdmin.from("booking_logs").insert({
               booking_id: flightBooking.booking_id,
               action: "AIRLINE_INITIATED_CHANGE",
@@ -177,12 +231,13 @@ const handleDuffelWebhook = asyncHandler(async (req, res) => {
         }
         break;
       }
-      case "stays.booking.updated": {
+
+      case "stays.booking.updated":
         logger.info(`[Webhook] Duffel stay booking updated`, {
           bookingId: data?.id,
         });
         break;
-      }
+
       default:
         logger.debug(`[Webhook] Unhandled Duffel event: ${type}`);
     }
@@ -190,6 +245,7 @@ const handleDuffelWebhook = asyncHandler(async (req, res) => {
     logger.error(`[Webhook] Error processing Duffel event`, {
       type,
       error: err.message,
+      stack: err.stack,
     });
   }
 });

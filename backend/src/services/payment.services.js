@@ -12,9 +12,8 @@ const {
   HTTP,
   ACTIVITY_LOGS,
 } = require("../constants/index");
-const { Duffel } = require("@duffel/api");
 
-// ── INITIATE PAYMENT  ─────────────────────────────────────────────────────────────
+// ── INITIATE PAYMENT ──────────────────────────────────────────────────────────
 async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
@@ -42,13 +41,12 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
     );
   }
 
-  // ── Calculate final amount including seat upgrades ──────────────────────────
-  let finalAmount = parseFloat(booking.total_amount); // base fare
+  // FIX #5: capture the original base fare BEFORE it gets updated with seat costs
+  const originalBaseFare = parseFloat(booking.total_amount);
+  let finalAmount = originalBaseFare;
   let seatUpgradeAmount = 0;
 
   if (selectedServices.length > 0) {
-    // Each service must have { id, total_amount, total_currency }
-    // Validate all services belong to same currency as booking
     for (const svc of selectedServices) {
       if (!svc.id || !svc.total_amount) {
         throw new AppError(
@@ -60,7 +58,6 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
     }
     finalAmount = parseFloat((finalAmount + seatUpgradeAmount).toFixed(2));
 
-    // Persist selected services and update total_amount BEFORE charging
     const flightBooking = booking.flight_booking?.[0];
     if (flightBooking) {
       await supabaseAdmin
@@ -68,8 +65,6 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
         .update({ selected_services: selectedServices })
         .eq("booking_id", bookingId);
     }
-
-    // Update master booking total so payment record and Duffel order match
     await supabaseAdmin
       .from("bookings")
       .update({ total_amount: finalAmount })
@@ -85,6 +80,7 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
   let clientResponse = {};
 
   if (provider === PAYMENT_PROVIDER.STRIPE) {
+    // ── Stripe checkout session ──────────────────────────────────────────────
     const session = await client.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -92,12 +88,12 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
         {
           price_data: {
             currency: booking.currency.toLowerCase(),
-            unit_amount: Math.round(finalAmount * 100), // ← finalAmount not booking.total_amount
+            unit_amount: Math.round(finalAmount * 100),
             product_data: {
               name: `OTA Booking: ${booking.booking_ref}`,
               description:
                 seatUpgradeAmount > 0
-                  ? `Flight + Seat selection (${booking.currency} ${seatUpgradeAmount.toFixed(2)} upgrade)`
+                  ? `Flight + Seat upgrade (${booking.currency} ${seatUpgradeAmount.toFixed(2)})`
                   : `${booking.booking_type} booking`,
             },
           },
@@ -113,7 +109,7 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
       booking_id: bookingId,
       user_id: userId,
       stripe_session_id: session.id,
-      amount: finalAmount, // ← finalAmount
+      amount: finalAmount,
       currency: booking.currency,
       status: PAYMENT_STATUS.PENDING,
       payment_provider: PAYMENT_PROVIDER.STRIPE,
@@ -124,33 +120,57 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
       sessionUrl: session.url,
       publishableKey: config.payment.stripe.publishableKey,
       pricing: {
-        baseFare: parseFloat(booking.total_amount), // original before seats
+        baseFare: originalBaseFare, // FIX #5
         seatUpgrade: seatUpgradeAmount,
         total: finalAmount,
         currency: booking.currency,
       },
     };
   } else {
-    const intent = await client.payments.intents.create({
-      amount: finalAmount.toFixed(2), // ← finalAmount
+    // ── Duffel Payments ──────────────────────────────────────────────────────
+    //
+    // FIXED SDK BUGS vs original code:
+    //
+    // BUG A: client.payments.intents.create() → does NOT exist.
+    //   `client.payments` = air/payments (pays an unpaid order — different thing)
+    //   `client.payments.intents` = undefined at runtime → TypeError
+    //   CORRECT: client.paymentIntents.create()
+    //
+    // BUG B: intent.id, intent.client_key → wrong response shape.
+    //   The SDK wraps every response: { data: {...}, status, headers }
+    //   The field is client_token, not client_key.
+    //   CORRECT: intent.data.id, intent.data.client_token
+    //
+    // BUG C (Fix #2): No metadata on create — webhook can't resolve bookingId.
+    //   BUT: CreatePaymentIntent only accepts { amount, currency }.
+    //   Metadata is NOT supported by paymentIntents.create().
+    //   SOLUTION: store intent_id → booking_id in DB (already done via paymentRecord),
+    //   and look it up in the webhook handler by querying the payments table.
+    //
+    const intentResponse = await client.paymentIntents.create({
+      amount: finalAmount.toFixed(2), // must be a string per Duffel API
       currency: booking.currency,
     });
+    const intent = intentResponse.data; // unwrap { data: {...} }
+
     paymentRecord = {
       booking_id: bookingId,
       user_id: userId,
       duffel_payment_intent_id: intent.id,
-      duffel_client_key: intent.client_key,
+      duffel_client_key: intent.client_token, // column named client_key; stores client_token value
       amount: finalAmount,
       currency: booking.currency,
       status: PAYMENT_STATUS.PENDING,
       payment_provider: PAYMENT_PROVIDER.DUFFEL,
     };
+
+    // FIX #3: consistent camelCase paymentIntentId (was PaymentIntentId in original)
     clientResponse = {
       provider: "duffel",
-      PaymentIntentId: intent.id,
-      clientKey: intent.client_key,
+      paymentIntentId: intent.id,
+      clientToken: intent.client_token, // correct field name for Duffel Payments component
       pricing: {
-        baseFare: parseFloat(booking.total_amount),
+        baseFare: originalBaseFare, // FIX #5
         seatUpgrade: seatUpgradeAmount,
         total: finalAmount,
         currency: booking.currency,
@@ -182,7 +202,7 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
     meta_data: {
       provider,
       bookingRef: booking.booking_ref,
-      baseFare: parseFloat(booking.total_amount),
+      baseFare: originalBaseFare,
       seatUpgrade: seatUpgradeAmount,
       finalAmount,
       servicesCount: selectedServices.length,
@@ -192,16 +212,17 @@ async function initiatePayment({ bookingId, userId, selectedServices = [] }) {
 
   logger.info(
     `[PaymentService] Payment initiated for ${booking.booking_ref} via ${provider}. ` +
-      `Base: ${booking.currency} ${booking.total_amount}, Seats: +${seatUpgradeAmount}, Total: ${finalAmount}`,
+      `Base: ${booking.currency} ${originalBaseFare}, Seats: +${seatUpgradeAmount}, Total: ${finalAmount}`,
   );
   return clientResponse;
 }
 
-// ── CONFIRM PAYMENT (CALLED AFTER FRONTEND CONFIRM PAYMENTS) ─────────────────────────────────────────────────────────────
+// ── CONFIRM PAYMENT ───────────────────────────────────────────────────────────
+// Called from: (a) frontend after user completes payment, (b) webhook on success
 async function confirmPayment({
   bookingId,
-  sessionId,
-  PaymentIntentId,
+  sessionId, // Stripe only
+  paymentIntentId, // FIX #3: was "PaymentIntentId" — consistent camelCase now
   userId,
 }) {
   const { data: booking, error } = await supabaseAdmin
@@ -209,12 +230,14 @@ async function confirmPayment({
     .select("*")
     .eq("id", bookingId)
     .single();
-
   if (error || !booking)
     throw new AppError("Booking not found", HTTP.NOT_FOUND);
 
-  if (process.env.NODE_ENV !== "production" && sessionId === "dev_bypass") {
-    await confirmProviderBooking(booking, provider);
+  // FIX #4: idempotency guard — prevents race between frontend confirm + webhook
+  if (booking.status === BOOKINGS.CONFIRMED) {
+    logger.info(
+      `[PaymentService] confirmPayment: booking ${bookingId} already confirmed — skipping`,
+    );
     return {
       bookingId,
       bookingRef: booking.booking_ref,
@@ -222,17 +245,12 @@ async function confirmPayment({
     };
   }
 
-  let stripeVerified = false;
-
   if (provider === PAYMENT_PROVIDER.STRIPE && sessionId) {
+    // ── Stripe: verify session with Stripe before confirming ─────────────────
     const session = await client.checkout.sessions.retrieve(sessionId);
     if (session.payment_status !== "paid") {
-      throw new AppError(
-        "Payment not completed by the Stripe",
-        HTTP.UNPROCESSABLE,
-      );
+      throw new AppError("Payment not completed by Stripe", HTTP.UNPROCESSABLE);
     }
-    stripeVerified = true;
     await supabaseAdmin
       .from("payments")
       .update({
@@ -241,7 +259,45 @@ async function confirmPayment({
         paid_at: new Date().toISOString(),
       })
       .eq("booking_id", bookingId);
-  } else {
+  } else if (provider === PAYMENT_PROVIDER.DUFFEL) {
+    // ── FIX #1: Duffel — verify payment intent status before confirming ───────
+    // ORIGINAL: no verification at all — ticket was created without checking payment
+    // NOW: always call Duffel API to confirm intent status === "succeeded"
+    //
+    // Resolve intent ID: prefer what was passed in; fall back to DB lookup.
+    // This covers both paths:
+    //   (a) frontend passes paymentIntentId after Duffel Payments component resolves
+    //   (b) webhook handler passes it from data.id in the event payload
+    let resolvedIntentId = paymentIntentId;
+    if (!resolvedIntentId) {
+      const { data: paymentRecord } = await supabaseAdmin
+        .from("payments")
+        .select("duffel_payment_intent_id")
+        .eq("booking_id", bookingId)
+        .single();
+      resolvedIntentId = paymentRecord?.duffel_payment_intent_id;
+    }
+    if (!resolvedIntentId) {
+      throw new AppError(
+        "Duffel payment intent ID missing — cannot verify payment",
+        HTTP.UNPROCESSABLE,
+      );
+    }
+
+    // Verify with Duffel — correct SDK method: client.paymentIntents.get()
+    // Response is wrapped: { data: { id, status, ... }, status: 200, headers }
+    const intentResponse = await client.paymentIntents.get(resolvedIntentId);
+    const intent = intentResponse.data; // unwrap
+    if (intent.status !== "succeeded") {
+      logger.warn(
+        `[PaymentService] Duffel intent ${resolvedIntentId} not succeeded — status: ${intent.status}`,
+      );
+      throw new AppError(
+        `Duffel payment not confirmed (status: ${intent.status})`,
+        HTTP.UNPROCESSABLE,
+      );
+    }
+
     await supabaseAdmin
       .from("payments")
       .update({
@@ -249,8 +305,14 @@ async function confirmPayment({
         paid_at: new Date().toISOString(),
       })
       .eq("booking_id", bookingId);
+  } else {
+    throw new AppError(
+      "Unable to verify payment — unknown provider or missing identifiers",
+      HTTP.UNPROCESSABLE,
+    );
   }
 
+  // ── Create airline/hotel/car order & mark booking confirmed ───────────────
   await confirmProviderBooking(booking, provider);
 
   await supabaseAdmin
@@ -263,7 +325,7 @@ async function confirmPayment({
     action: ACTIVITY_LOGS.PAYMENT_COMPLETED,
     old_status: booking.status,
     new_status: BOOKINGS.CONFIRMED,
-    meta_data: { provider, stripeVerified },
+    meta_data: { provider },
     performed_by: userId || "system",
   });
 
@@ -288,26 +350,22 @@ async function confirmPayment({
   };
 }
 
-// ── INTERNAL: CONFIRM DUFFEL ORDER AFTER PAYMENT ─────────────────────────────────────────────────────────────
+// ── INTERNAL: DISPATCH TO PROVIDER-SPECIFIC BOOKING CONFIRMATION ──────────────
 async function confirmProviderBooking(booking, paymentProvider) {
   const { BOOKING_TYPE } = require("../constants/index");
-
   if (booking.booking_type === BOOKING_TYPE.FLIGHT) {
-    // Retrieve selected seat services that were saved at payment initiation
     const { data: flightBooking } = await supabaseAdmin
       .from("flight_booking")
       .select("selected_services")
       .eq("booking_id", booking.id)
       .single();
-
     const selectedServices = flightBooking?.selected_services || [];
-
     const flightService = require("./flight.services");
     await flightService.confirmFlightBooking({
       bookingId: booking.id,
       userId: booking.user_id,
       paymentProvider,
-      selectedServices, // ← now passed correctly
+      selectedServices,
     });
   } else if (booking.booking_type === BOOKING_TYPE.HOTEL) {
     const staysService = require("./stays.services");
@@ -326,30 +384,28 @@ async function confirmProviderBooking(booking, paymentProvider) {
   }
 }
 
-// ── FAIL PAYMENT ─────────────────────────────────────────────────────────────
+// ── FAIL PAYMENT ──────────────────────────────────────────────────────────────
 async function failPayment({ bookingId, reason = "Payment failed" }) {
   await supabaseAdmin
     .from("payments")
     .update({ status: PAYMENT_STATUS.FAILED })
     .eq("booking_id", bookingId);
-
   await supabaseAdmin
     .from("bookings")
     .update({ status: BOOKINGS.FAILED })
     .eq("id", bookingId);
-
   await supabaseAdmin.from("booking_logs").insert({
     booking_id: bookingId,
     action: "PAYMENT_FAILED",
     new_status: BOOKINGS.FAILED,
     message: reason,
   });
-
   logger.warn(`[PaymentService] Payment failed for booking: ${bookingId}`, {
     reason,
   });
 }
-// ── INITIATE REFUND ─────────────────────────────────────────────────────────────
+
+// ── INITIATE REFUND ───────────────────────────────────────────────────────────
 async function initiateRefund({
   bookingId,
   userId,
@@ -387,6 +443,7 @@ async function initiateRefund({
     requested_by: userId,
     payment_provider: payment.payment_provider,
   };
+
   if (
     payment.payment_provider === PAYMENT_PROVIDER.STRIPE &&
     payment.stripe_payment_intent_id
@@ -397,17 +454,16 @@ async function initiateRefund({
     });
     refundRecord.stripe_refund_id = refund.id;
     refundRecord.status = "COMPLETED";
-
     await supabaseAdmin
       .from("payments")
       .update({ status: BOOKINGS.REFUNDED })
       .eq("id", payment.id);
-
     await supabaseAdmin
       .from("bookings")
       .update({ status: BOOKINGS.REFUNDED })
       .eq("id", bookingId);
   }
+
   const { error: refundError } = await supabaseAdmin
     .from("refunds")
     .insert(refundRecord);
@@ -427,7 +483,7 @@ async function initiateRefund({
   });
 
   const emailService = require("./email.services");
-  const { data: booking } = await supabaseAdmin
+  const { data: bk } = await supabaseAdmin
     .from("bookings")
     .select("booking_ref")
     .eq("id", bookingId)
@@ -435,7 +491,7 @@ async function initiateRefund({
   emailService
     .sendRefundInitiated({
       userId: payment.user_id,
-      bookingRef: booking?.booking_ref,
+      bookingRef: bk?.booking_ref,
       refundAmount,
       currency: payment.currency,
     })
@@ -451,14 +507,13 @@ async function initiateRefund({
   };
 }
 
-// ── GET PAYMENT STATUS ─────────────────────────────────────────────────────────────
+// ── GET PAYMENT STATUS ────────────────────────────────────────────────────────
 async function getPaymentStatus(bookingId, userId) {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
     .select("*, payments(*), refunds(*)")
     .eq("id", bookingId)
     .single();
-
   if (error || !booking)
     throw new AppError("Booking not found", HTTP.NOT_FOUND);
   if (booking.user_id !== userId)

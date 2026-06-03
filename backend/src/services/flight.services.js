@@ -3,6 +3,7 @@
 const { supabaseAdmin } = require("../config/supabase");
 const logger = require("../config/logger");
 const flightIntegration = require("../integrations/duffel/flight.integration");
+const { encrypt, decrypt } = require("../config/crypto.config");
 const {
   generateBookingRef,
   mapDuffelOffer,
@@ -202,8 +203,9 @@ async function initFlightBooking({
     last_name: p.lastName || p.family_name,
     date_of_birth: p.bornOn || p.date_of_birth,
     nationality: p.nationality || "XX",
-    passport_number:
+    passport_number: encrypt(
       p.passportNumber || p.passport_number || `TEMP-${Date.now()}`,
+    ), // always store encrypted
     passport_expiry: p.passportExpiry || "2030-01-01",
     gender: (p.gender || "OTHERS").toUpperCase(),
     travel_type: (p.passengerType || p.type || "ADULT")
@@ -239,6 +241,7 @@ async function initFlightBooking({
       cabin_class: (mapped.cabinClass || "ECONOMY").toUpperCase(),
       carrier: firstSlice.segments?.[0]?.carrier || "XX",
       offer_date: new Date().toISOString(),
+      offer_expires_at: offer.expires_at,
       provider: "duffel",
     });
 
@@ -360,7 +363,7 @@ async function confirmFlightBooking({
     email: t.email || `traveler${idx}@placeholder.com`,
     phone_number: t.phone || "+10000000000",
     passport: {
-      unique_identifier: t.passport_number,
+      unique_identifier: decrypt(t.passport_number), // decrypt before sending to Duffel
       expires_on: t.passport_expiry,
       issuing_country_code: t.nationality.substring(0, 2).toUpperCase(),
     },
@@ -612,7 +615,13 @@ async function getBooking(bookingId, userId) {
     slices: duffelData?.slices ?? [],
 
     // ── Passengers with seats and baggage ────────────────────────────────────
-    passengers: duffelData?.passengers ?? booking.travelers ?? [],
+    passengers:
+      duffelData?.passengers ??
+      (booking.travelers ?? []).map((t) => ({
+        ...t,
+        passport_number: decrypt(t.passport_number), // decrypt for frontend display
+      })) ??
+      [],
 
     // ── Add-on services (seats, bags) ─────────────────────────────────────────
     services: duffelData?.services ?? [],
@@ -674,14 +683,7 @@ async function getBooking(bookingId, userId) {
 }
 
 // ── LIST USER BOOKINGS ─────────────────────────────────────────────────────────
-async function listUserBookings(
-  userId,
-  {
-    page = PAGINATION.DEFAULT_PAGE,
-    limit = PAGINATION.DEFAULT_LIMIT,
-    status,
-  } = {},
-) {
+async function listUserBookings(userId, { page, limit, status } = {}) {
   const offset = (page - 1) * limit;
 
   let query = supabaseAdmin
@@ -692,13 +694,26 @@ async function listUserBookings(
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
-  if (status) query = query.eq("status", status);
+  if (status) {
+    query = query.eq("status", status);
+  } else {
+    // Exclude PENDING_PAYMENT bookings whose Duffel offer has expired
+    // This requires a PostgREST workaround — see note below
+  }
 
   const { data, error, count } = await query;
-  if (error)
-    throw new AppError("Failed to fetch bookings", HTTP.INTERNAL_ERROR, error);
+  if (error) throw new AppError("...", HTTP.INTERNAL_ERROR, error);
 
-  return { bookings: data, total: count, page, limit };
+  // Filter in JS: drop PENDING_PAYMENT rows where offer has expired
+  const now = new Date();
+  const bookings = (data || []).filter((b) => {
+    if (b.status !== "PENDING_PAYMENT") return true;
+    const fb = b.flight_booking?.[0];
+    if (!fb?.offer_expires_at) return true; // no expiry info → keep (legacy rows)
+    return new Date(fb.offer_expires_at) > now; // only keep if still valid
+  });
+
+  return { bookings, total: count, page, limit };
 }
 
 // ── ORDER CHANGE REQUEST ───────────────────────────────────────────────────────
