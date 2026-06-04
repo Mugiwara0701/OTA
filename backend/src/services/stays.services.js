@@ -236,12 +236,10 @@ async function getHotelRates(resultId) {
     expiresAt: data.expires_at,
     checkInDate: data.check_in_date,
     checkOutDate: data.check_out_date,
-    rooms: data.rooms,
+    numRooms: data.rooms, // ← rename to numRooms (the integer count)
     guests: data.guests ?? [],
     accommodation: _buildAccommodationBlock(acc),
-    // Flatten rooms with rates for easy frontend consumption
-    roomRates: rooms,
-    // Business details required pre-booking
+    roomRates: rooms, // ← the full mapped array stays as roomRates
     business: _buildBusinessBlock(),
   };
 }
@@ -434,6 +432,7 @@ async function confirmHotelBooking({
         provider_order_id: duffelBooking.id,
         duffel_reference: duffelBooking.reference,
         confirmed_at: duffelBooking.confirmed_at,
+        confirmed_booking_data: duffelBooking,
       })
       .eq("booking_id", bookingId),
 
@@ -651,7 +650,8 @@ async function getBooking(bookingId, userId) {
   if (data.user_id !== userId) throw new AppError("Forbidden", HTTP.FORBIDDEN);
 
   const hotelBooking = data.hotel_booking?.[0];
-  const offer = hotelBooking?.offer_data;
+  const offer =
+    hotelBooking?.confirmed_booking_data ?? hotelBooking?.offer_data; // ← CHANGE THIS LINE
   const acc = offer?.accommodation;
   const { room, rate } = _extractRate(acc);
   const payment = data.payments;

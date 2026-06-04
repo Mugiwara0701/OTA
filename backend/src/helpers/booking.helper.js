@@ -651,6 +651,12 @@ function mapDuffelHotelResult(result) {
         }
       : null,
     roomRates: [],
+    keyCollection: result.key_collection?.instructions
+      ? { instructions: result.key_collection.instructions }
+      : {
+          instructions:
+            "Please contact the property directly for key collection instructions.",
+        },
   };
 }
 
