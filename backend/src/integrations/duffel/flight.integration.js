@@ -264,6 +264,18 @@ async function confirmOrderChange(orderChangeId) {
   }
 }
 
+// ── AIRLINE INITIATED CHANGES ──────────────────────────────────────────────────
+async function acceptAirlineInitiatedChange(airlineInitiatedChangeId) {
+  try {
+    const response = await duffel.airlineInitiatedChanges.accept(
+      airlineInitiatedChangeId,
+    );
+    return response.data;
+  } catch (err) {
+    throw normalizeDuffelError(err);
+  }
+}
+
 module.exports = {
   createOfferRequest,
   getOfferRequest,
@@ -282,4 +294,5 @@ module.exports = {
   getOrderChangeOffer,
   createOrderChange,
   confirmOrderChange,
+  acceptAirlineInitiatedChange,
 };

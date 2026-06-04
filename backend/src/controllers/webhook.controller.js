@@ -212,7 +212,31 @@ const handleDuffelWebhook = asyncHandler(async (req, res) => {
             .select("booking_id, bookings(user_id, booking_ref)")
             .eq("duffel_order_id", orderId)
             .maybeSingle();
+
           if (flightBooking?.bookings) {
+            // Acknowledge the change back to Duffel so it doesn't stay pending.
+            // We auto-accept — if your business needs manual review, change to
+            // a queue/task and call this after a support agent reviews.
+            try {
+              const flightIntegration = require("../integrations/duffel/flight.integration");
+              const order = await flightIntegration.getOrder(orderId);
+              const airlineChanges = order.airline_initiated_changes || [];
+              for (const change of airlineChanges) {
+                if (change.available_actions?.includes("accept")) {
+                  await flightIntegration.acceptAirlineInitiatedChange(
+                    change.id,
+                  );
+                  logger.info(
+                    `[Webhook] Airline-initiated change accepted: ${change.id}`,
+                  );
+                }
+              }
+            } catch (ackErr) {
+              logger.error(
+                `[Webhook] Failed to acknowledge airline change for order ${orderId}: ${ackErr.message}`,
+              );
+            }
+
             const emailService = require("../services/email.services");
             emailService
               .sendAirlineChangeAlert({

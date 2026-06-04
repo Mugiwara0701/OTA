@@ -221,18 +221,27 @@ const createChangeRequest = asyncHandler(async (req, res) => {
 
 // GET /api/v1/flights/bookings/:bookingId/change-offers
 const listChangeOffers = asyncHandler(async (req, res) => {
+  const { bookingId } = req.params;
+  const userId = req.user.id;
   const { orderChangeRequestId } = req.query;
-  const offers =
-    await flightIntegration.listOrderChangeOffers(orderChangeRequestId);
+  const offers = await flightService.listChangeOffers({
+    bookingId,
+    userId,
+    orderChangeRequestId,
+  });
   return sendSuccess(res, HTTP.OK, "Change offers retrieved", offers);
 });
 
 // POST /api/v1/flights/bookings/:bookingId/change/confirm
 const confirmChange = asyncHandler(async (req, res) => {
+  const { bookingId } = req.params;
+  const userId = req.user.id;
   const { orderChangeOfferId } = req.body;
-  const orderChange =
-    await flightIntegration.createOrderChange(orderChangeOfferId);
-  const confirmed = await flightIntegration.confirmOrderChange(orderChange.id);
+  const confirmed = await flightService.confirmChange({
+    bookingId,
+    userId,
+    orderChangeOfferId,
+  });
   return sendSuccess(res, HTTP.OK, "Flight change confirmed", confirmed);
 });
 

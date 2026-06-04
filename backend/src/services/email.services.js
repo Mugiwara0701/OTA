@@ -170,6 +170,39 @@ async function sendAirlineChangeAlert({ userId, bookingRef, orderId }) {
   }
 }
 
+async function sendFlightChangeConfirmation({
+  userId,
+  bookingRef,
+  changeTotalAmount,
+  changeTotalCurrency,
+}) {
+  try {
+    const user = await getUserEmailData(userId);
+    if (!user?.email) return;
+    // Reuse the airline change alert template — it communicates a schedule change.
+    // Replace with a dedicated template if you create one.
+    const subject = `Your flight change is confirmed — Booking ${bookingRef}`;
+    const hasCharge = changeTotalAmount && parseFloat(changeTotalAmount) > 0;
+    const body = `
+      <p>Hi ${user.first_name},</p>
+      <p>Your flight change for booking <strong>${bookingRef}</strong> has been confirmed.</p>
+      ${hasCharge ? `<p>An additional charge of <strong>${changeTotalCurrency} ${changeTotalAmount}</strong> has been applied.</p>` : ""}
+      <p>Please check your booking details for your updated itinerary.</p>
+    `;
+    await sendEmail({
+      to: user.email,
+      subject,
+      html: body,
+    });
+  } catch (err) {
+    logger.error("[EmailService] sendFlightChangeConfirmation failed", {
+      err: err.message,
+      userId,
+      bookingRef,
+    });
+  }
+}
+
 // ── E-Ticket Email ────────────────────────────────────────────────────────────
 async function sendETicketEmail({ userId, bookingRef, pdfBuffer }) {
   const { supabaseAdmin } = require("../config/supabase");
@@ -281,5 +314,6 @@ module.exports = {
   sendPasswordReset,
   sendEmailVerification,
   sendAirlineChangeAlert,
+  sendFlightChangeConfirmation,
   sendETicketEmail,
 };

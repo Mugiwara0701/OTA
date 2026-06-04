@@ -730,6 +730,11 @@ async function createChangeRequest({ bookingId, userId, slices }) {
   if (!booking) throw new AppError("Booking not found", HTTP.NOT_FOUND);
   if (booking.user_id !== userId)
     throw new AppError("Forbidden", HTTP.FORBIDDEN);
+  if (booking.status !== BOOKINGS.CONFIRMED)
+    throw new AppError(
+      "Only confirmed bookings can be changed",
+      HTTP.UNPROCESSABLE,
+    );
 
   const orderId = booking.flight_booking?.[0]?.duffel_order_id;
   if (!orderId)
@@ -740,18 +745,144 @@ async function createChangeRequest({ bookingId, userId, slices }) {
 
   const duffelSlices = {
     add: slices.map((s) => ({
-      origin: { iata_code: s.origin },
-      destination: { iata_code: s.destination },
+      origin: s.origin,
+      destination: s.destination,
       departure_date: s.departure_date,
       cabin_class: s.cabin_class || "economy",
     })),
     remove: slices.map((s) => ({ slice_id: s.slice_id })),
   };
 
-  return flightIntegration.createOrderChangeRequest({
+  const changeRequest = await flightIntegration.createOrderChangeRequest({
     orderId,
     slices: duffelSlices,
   });
+
+  await supabaseAdmin.from("booking_logs").insert({
+    booking_id: bookingId,
+    action: ACTIVITY_LOGS.BOOKING_CHANGE_REQUESTED,
+    message: `Order change request created: ${changeRequest.id}`,
+    meta_data: { changeRequestId: changeRequest.id, slices },
+    performed_by: userId,
+  });
+
+  logger.info(
+    `[FlightService] Change request created for booking ${bookingId}`,
+    { changeRequestId: changeRequest.id },
+  );
+
+  return changeRequest;
+}
+
+// ── LIST CHANGE OFFERS ─────────────────────────────────────────────────────────
+async function listChangeOffers({ bookingId, userId, orderChangeRequestId }) {
+  const { data: booking } = await supabaseAdmin
+    .from("bookings")
+    .select("id, user_id")
+    .eq("id", bookingId)
+    .single();
+
+  if (!booking) throw new AppError("Booking not found", HTTP.NOT_FOUND);
+  if (booking.user_id !== userId)
+    throw new AppError("Forbidden", HTTP.FORBIDDEN);
+
+  return flightIntegration.listOrderChangeOffers(orderChangeRequestId);
+}
+
+// ── CONFIRM CHANGE ─────────────────────────────────────────────────────────────
+async function confirmChange({ bookingId, userId, orderChangeOfferId }) {
+  // 1. Ownership + status check
+  const { data: booking } = await supabaseAdmin
+    .from("bookings")
+    .select("*, flight_booking(*)")
+    .eq("id", bookingId)
+    .single();
+
+  if (!booking) throw new AppError("Booking not found", HTTP.NOT_FOUND);
+  if (booking.user_id !== userId)
+    throw new AppError("Forbidden", HTTP.FORBIDDEN);
+  if (booking.status !== BOOKINGS.CONFIRMED)
+    throw new AppError(
+      "Only confirmed bookings can be changed",
+      HTTP.UNPROCESSABLE,
+    );
+
+  // 2. Create + confirm the order change with Duffel — this is what reaches the airline
+  const orderChange =
+    await flightIntegration.createOrderChange(orderChangeOfferId);
+  const confirmed = await flightIntegration.confirmOrderChange(orderChange.id);
+
+  // 3. Fetch the updated order from Duffel so we have the new slice/segment details
+  const updatedOrder = await flightIntegration.getOrder(
+    booking.flight_booking[0].duffel_order_id,
+  );
+  const firstSlice = updatedOrder.slices?.[0];
+  const firstSegment = firstSlice?.segments?.[0];
+
+  // 4. Update flight_booking with new flight details
+  if (firstSegment) {
+    await supabaseAdmin
+      .from("flight_booking")
+      .update({
+        origin:
+          firstSegment.origin?.iata_code ?? booking.flight_booking[0].origin,
+        destination:
+          firstSegment.destination?.iata_code ??
+          booking.flight_booking[0].destination,
+        departure_time:
+          firstSegment.departing_at ?? booking.flight_booking[0].departure_time,
+        carrier:
+          firstSegment.operating_carrier?.iata_code ??
+          booking.flight_booking[0].carrier,
+        pnr: updatedOrder.booking_reference ?? booking.flight_booking[0].pnr,
+      })
+      .eq("booking_id", bookingId);
+  }
+
+  // 5. Add change cost to booking total if applicable
+  const changeCost = parseFloat(confirmed.change_total_amount || "0");
+  if (changeCost > 0) {
+    await supabaseAdmin
+      .from("bookings")
+      .update({
+        total_amount: parseFloat(booking.total_amount) + changeCost,
+      })
+      .eq("id", bookingId);
+  }
+
+  // 6. Audit log
+  await supabaseAdmin.from("booking_logs").insert({
+    booking_id: bookingId,
+    action: ACTIVITY_LOGS.BOOKING_CHANGED,
+    old_status: booking.status,
+    new_status: BOOKINGS.CONFIRMED,
+    message: `Flight change confirmed. Order change ID: ${orderChange.id}`,
+    meta_data: {
+      orderChangeId: orderChange.id,
+      orderChangeOfferId,
+      changeTotalAmount: confirmed.change_total_amount,
+      changeTotalCurrency: confirmed.change_total_currency,
+    },
+    performed_by: userId,
+  });
+
+  // 7. Email user
+  const emailService = require("./email.services");
+  emailService
+    .sendFlightChangeConfirmation({
+      userId,
+      bookingRef: booking.booking_ref,
+      changeTotalAmount: confirmed.change_total_amount,
+      changeTotalCurrency: confirmed.change_total_currency,
+    })
+    .catch(() => {});
+
+  logger.info(
+    `[FlightService] Flight change confirmed for booking ${bookingId}`,
+    { orderChangeId: orderChange.id },
+  );
+
+  return confirmed;
 }
 
 module.exports = {
@@ -764,4 +895,6 @@ module.exports = {
   getBooking,
   listUserBookings,
   createChangeRequest,
+  listChangeOffers,
+  confirmChange,
 };
