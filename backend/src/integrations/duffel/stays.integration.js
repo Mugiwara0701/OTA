@@ -141,9 +141,7 @@ async function getPaymentInstructions(bookingId) {
 
 async function getAccommodationReviews(accommodationId) {
   try {
-    const response = await duffel.stays.accommodation.reviews.list({
-      accommodation_id: accommodationId,
-    });
+    const response = await duffel.stays.accommodation.reviews(accommodationId);
     return response.data;
   } catch (err) {
     throw normalizeDuffelError(err);

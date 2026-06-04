@@ -24,6 +24,11 @@
             "date": 1780038342435,
             "name": "E:\\git clone\\OTA\\backend\\src\\logs\\error-2026-05-29.log",
             "hash": "589177b951ade1c03ab983e5d317ef9d583488fbfeeb3c2802d05e49ab04cd38"
+        },
+        {
+            "date": 1780565264810,
+            "name": "E:\\git clone\\OTA\\backend\\src\\logs\\error-2026-06-04.log",
+            "hash": "91bdb59f38eb7fdaec45476c52860c2630a5f570d04835a81b2dd19b8c8347bb"
         }
     ],
     "hashType": "sha256"
