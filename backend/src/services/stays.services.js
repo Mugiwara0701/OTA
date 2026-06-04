@@ -369,7 +369,7 @@ async function initHotelBooking({
     status: BOOKINGS.PENDING_PAYMENT,
 
     // ── Stay details ──
-    numGuests: guests,
+    numGuests: Array.isArray(guests) ? guests.length : 1,
     numRooms: rooms,
     numNights: nights,
     checkInDate,
@@ -656,15 +656,7 @@ async function getBooking(bookingId, userId) {
   const { room, rate } = _extractRate(acc);
   const payment = data.payments;
 
-  let duffelGuests = [];
-  try {
-    const duffelBooking = await staysIntegration.getBooking(
-      hotelBooking?.duffel_order_id,
-    );
-    duffelGuests = duffelBooking?.guests ?? [];
-  } catch (_) {
-    /* ignore if not found */
-  }
+  const duffelGuests = hotelBooking?.guests_data ?? [];
 
   const nights = Math.round(
     (new Date(hotelBooking?.check_out_date) -
