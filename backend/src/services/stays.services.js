@@ -737,6 +737,18 @@ async function listUserBookings(
   return { bookings: data, total: count, page, limit };
 }
 
+// ── Full accommodation reviews list ─────────────────────────────────────────────────────────────
+async function getAccommodationReviews(accommodationId) {
+  try {
+    const response = await duffel.stays.accommodationReviews.list({
+      accommodation_id: accommodationId,
+    });
+    return response.data;
+  } catch (err) {
+    throw normalizeDuffelError(err);
+  }
+}
+
 module.exports = {
   searchHotels,
   getHotelDetails,
@@ -748,4 +760,5 @@ module.exports = {
   listUserBookings,
   getHotelRates,
   confirmStaysBooking: confirmHotelBooking,
+  getAccommodationReviews,
 };

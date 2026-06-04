@@ -16,6 +16,10 @@ const {
 router.post("/search", searchHotelRules, controller.searchHotels);
 router.get("/results/:resultId/rates", controller.getHotelRates);
 router.get("/accommodations/:accommodationId", controller.getAccommodation);
+router.get(
+  "/accommodations/:accommodationId/reviews",
+  controller.getAccommodationReviews,
+);
 
 // ── AUTHENTICATED ─────────────────────────────────────────────────────────────
 router.post("/quotes", authenticate, createQuoteRules, controller.createQuote);
