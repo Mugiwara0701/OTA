@@ -57,7 +57,7 @@ async function getSearchResult(searchResultId) {
 // the "Field 'rate_id' is invalid" 502 error seen in the logs.
 async function createQuote(rateId) {
   try {
-    const response = await duffel.stays.quotes.create({ rate_id: rateId });
+    const response = await duffel.stays.quotes.create(RATE_ID);
     return response.data;
   } catch (err) {
     throw normalizeDuffelError(err);
