@@ -426,35 +426,47 @@ async function confirmHotelBooking({
     paymentType: "balance",
   });
 
-  await supabaseAdmin
-    .from("hotel_booking")
-    .update({
-      duffel_order_id: duffelBooking.id,
-      provider_order_id: duffelBooking.id,
-      // Go-live: reference is the property's booking reference from Duffel (e.g. "JIUA32")
-      duffel_reference: duffelBooking.reference,
-      confirmed_at: duffelBooking.confirmed_at,
+  await Promise.all([
+    supabaseAdmin
+      .from("hotel_booking")
+      .update({
+        duffel_order_id: duffelBooking.id,
+        provider_order_id: duffelBooking.id,
+        duffel_reference: duffelBooking.reference,
+        confirmed_at: duffelBooking.confirmed_at,
+      })
+      .eq("booking_id", bookingId),
+
+    supabaseAdmin
+      .from("bookings")
+      .update({ status: BOOKINGS.CONFIRMED })
+      .eq("id", bookingId),
+
+    supabaseAdmin
+      .from("payments")
+      .update({ status: "COMPLETED", paid_at: new Date().toISOString() })
+      .eq("booking_id", bookingId),
+
+    supabaseAdmin.from("booking_logs").insert({
+      booking_id: bookingId,
+      action: ACTIVITY_LOGS.BOOKING_CONFIRMED,
+      old_status: booking.status,
+      new_status: BOOKINGS.CONFIRMED,
+      message: `Duffel stays booking: ${duffelBooking.id}`,
+      performed_by: userId,
+    }),
+  ]);
+
+  staysIntegration
+    .getPaymentInstructions(duffelBooking.id)
+    .then((instructions) => {
+      supabaseAdmin
+        .from("hotel_booking")
+        .update({ payment_instructions: instructions })
+        .eq("booking_id", bookingId)
+        .then(() => {});
     })
-    .eq("booking_id", bookingId);
-
-  await supabaseAdmin
-    .from("bookings")
-    .update({ status: BOOKINGS.CONFIRMED })
-    .eq("id", bookingId);
-
-  await supabaseAdmin
-    .from("payments")
-    .update({ status: "COMPLETED", paid_at: new Date().toISOString() })
-    .eq("booking_id", bookingId);
-
-  await supabaseAdmin.from("booking_logs").insert({
-    booking_id: bookingId,
-    action: ACTIVITY_LOGS.BOOKING_CONFIRMED,
-    old_status: booking.status,
-    new_status: BOOKINGS.CONFIRMED,
-    message: `Duffel stays booking: ${duffelBooking.id}`,
-    performed_by: userId,
-  });
+    .catch(() => {});
 
   logger.info(`[StayServices] Booking confirmed: ${booking.booking_ref}`);
 
@@ -507,9 +519,6 @@ async function confirmHotelBooking({
 
     // ── Go-live: accommodation with all required fields including key_collection ──
     accommodation: _buildAccommodationBlock(acc),
-
-    // ── Payment instructions (if applicable) ──
-    paymentInstructions,
 
     // ── Go-live: business details must be visible post-booking ──
     business: _buildBusinessBlock(),

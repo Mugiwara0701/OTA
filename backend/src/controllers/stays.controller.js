@@ -99,8 +99,8 @@ const confirmBooking = asyncHandler(async (req, res) => {
     bookingId,
     userId,
     paymentProvider,
-    // guests will be read from DB, not from request
   });
+  return sendSuccess(res, HTTP.OK, "Hotel booking confirmed", result);
 });
 
 // GET /api/v1/stays/bookings
