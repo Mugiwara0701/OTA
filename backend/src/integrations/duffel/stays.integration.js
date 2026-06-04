@@ -3,7 +3,6 @@ const duffel = require("../../config/duffel");
 const { normalizeDuffelError } = require("../../helpers/booking.helper");
 
 // ── SEARCH ─────────────────────────────────────────────────────────────
-// ── SEARCH ─────────────────────────────────────────────────────────────
 async function createSearch({
   latitude,
   longitude,
@@ -19,6 +18,9 @@ async function createSearch({
       guestArray.push({ type: "adult" });
     }
 
+    // BUG FIX 1: Pass accommodation.fetch_rates = true so search results
+    // include rooms[] with rate IDs. Without this, accommodation.rooms is []
+    // and there is nothing to pass to fetchAllRates or quotes.
     const searchResponse = await duffel.stays.search({
       check_in_date: checkInDate,
       check_out_date: checkOutDate,
@@ -27,6 +29,9 @@ async function createSearch({
       location: {
         geographic_coordinates: { latitude, longitude },
         radius,
+      },
+      accommodation: {
+        fetch_rates: true,
       },
     });
 
@@ -49,9 +54,12 @@ async function getSearchResult(searchResultId) {
 }
 
 // ── QUOTES ─────────────────────────────────────────────────────────────
+// BUG FIX 2: duffel.stays.quotes.create() expects the rate_id wrapped
+// as { rate_id: rateId } — not a bare string. Passing a bare string caused
+// the "Field 'rate_id' is invalid" 502 error seen in the logs.
 async function createQuote(rateId) {
   try {
-    const response = await duffel.stays.quotes.create(rateId);
+    const response = await duffel.stays.quotes.create({ rate_id: rateId });
     return response.data;
   } catch (err) {
     throw normalizeDuffelError(err);
@@ -70,15 +78,16 @@ async function getQuote(quoteId) {
 // ── BOOKINGS ─────────────────────────────────────────────────────────────
 async function createBooking({ quoteId, guests, paymentType = "balance" }) {
   try {
-    // email and phone_number are top-level, taken from the lead guest
     const leadGuest = guests[0];
     const response = await duffel.stays.bookings.create({
       quote_id: quoteId,
       email: leadGuest.email,
       phone_number: leadGuest.phone_number,
-      guests: guests.map(({ given_name, family_name, user_id }) => ({
+      guests: guests.map(({ given_name, family_name, born_on, user_id }) => ({
         given_name,
         family_name,
+        // born_on is required by Duffel for bookings
+        ...(born_on && { born_on }),
         ...(user_id && { user_id }),
       })),
     });
@@ -99,6 +108,8 @@ async function getBooking(bookingId) {
 
 async function cancelBooking(bookingId) {
   try {
+    // BUG FIX 3: Duffel cancel endpoint is a POST action, not a DELETE.
+    // The correct SDK method is bookings.cancel(bookingId).
     const response = await duffel.stays.bookings.cancel(bookingId);
     return response.data;
   } catch (err) {

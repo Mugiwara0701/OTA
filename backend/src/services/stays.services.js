@@ -6,7 +6,6 @@ const staysIntegration = require("../integrations/duffel/stays.integration");
 const {
   generateBookingRef,
   mapDuffelHotelResult,
-  mapDuffelRatePlan,
 } = require("../helpers/booking.helper");
 const { AppError } = require("../utils/AppError");
 const {
@@ -17,10 +16,118 @@ const {
   PAGINATION,
 } = require("../constants/index");
 
-const POLL_INTERNAL_MS = 2000;
-const POLL_MAX_ATTEMPTS = 15;
+// ── HELPERS ─────────────────────────────────────────────────────────────────
 
-// ── SEARCH HOTELS WITH POLLING  ─────────────────────────────────────────────────────────────
+/**
+ * Extract the full rate object from an accommodation's rooms array.
+ * Duffel nests rates under accommodation.rooms[n].rates[n].
+ * We return the first matching rate for a given rateId, or fall back to [0][0].
+ */
+function _extractRate(acc, rateId) {
+  for (const room of acc?.rooms || []) {
+    for (const rate of room?.rates || []) {
+      if (!rateId || rate.id === rateId) return { room, rate };
+    }
+  }
+  const room = acc?.rooms?.[0] ?? null;
+  const rate = room?.rates?.[0] ?? null;
+  return { room, rate };
+}
+
+/**
+ * Build the go-live required price block directly from the rate object.
+ * All values are returned as-is from Duffel — no modifications.
+ */
+function _buildPriceBlock(rate) {
+  return {
+    totalAmount: rate?.total_amount ?? null,
+    totalCurrency: rate?.total_currency ?? null,
+    baseAmount: rate?.base_amount ?? null,
+    baseCurrency: rate?.base_currency ?? null,
+    // BUG FIX: tax_amount and fee_amount come from rate, NOT from the
+    // top-level quote object. The old code read quote.tax_amount which is
+    // undefined — the quote only has them nested inside accommodation.rooms.rates.
+    taxAmount: rate?.tax_amount ?? "0.00",
+    taxCurrency: rate?.tax_currency ?? null,
+    feeAmount: rate?.fee_amount ?? "0.00",
+    feeCurrency: rate?.fee_currency ?? null,
+    // due_at_accommodation must always be shown even if 0
+    dueAtAccommodation: rate?.due_at_accommodation_amount ?? "0.00",
+    dueAtAccommodationCurrency: rate?.due_at_accommodation_currency ?? null,
+  };
+}
+
+/**
+ * Build the go-live required accommodation block.
+ */
+function _buildAccommodationBlock(acc) {
+  return {
+    id: acc?.id ?? null,
+    name: acc?.name ?? null,
+    description: acc?.description ?? null,
+    starRating: acc?.rating ?? null,
+    reviewScore: acc?.review_score ?? null,
+    brand: acc?.brand?.name ?? null,
+    phone: acc?.phone_number ?? null,
+    email: acc?.email ?? null,
+    address: acc?.location?.address ?? null,
+    coordinates: acc?.location?.geographic_coordinates ?? null,
+    // Go-live: check_in_after_time and check_out_before_time must both be shown
+    checkInInfo: {
+      checkInAfterTime: acc?.check_in_information?.check_in_after_time ?? null,
+      checkOutBeforeTime:
+        acc?.check_in_information?.check_out_before_time ?? null,
+      checkInBeforeTime:
+        acc?.check_in_information?.check_in_before_time ?? null,
+    },
+    // Go-live: key_collection must always be shown; if null, display fallback message
+    keyCollection: acc?.key_collection?.instructions
+      ? { instructions: acc.key_collection.instructions }
+      : {
+          instructions:
+            "Please contact the property directly for key collection instructions.",
+        },
+    amenities: acc?.amenities ?? [],
+    photos: acc?.photos ?? [],
+  };
+}
+
+/**
+ * Build the go-live required rate details block.
+ */
+function _buildRateBlock(rate, room) {
+  return {
+    rateId: rate?.id ?? null,
+    roomName: room?.name ?? null,
+    boardType: rate?.board_type ?? null,
+    paymentType: rate?.payment_type ?? null,
+    availablePaymentMethods: rate?.available_payment_methods ?? [],
+    expiresAt: rate?.expires_at ?? null,
+    // Go-live: cancellation_timeline MUST be shown (select a refundable rate)
+    cancellationTimeline: rate?.cancellation_timeline ?? [],
+    // Go-live: conditions must be shown word-for-word, always visible by default
+    conditions: rate?.conditions ?? [],
+    // Go-live: benefits shown if present
+    benefits: rate?.benefits ?? [],
+  };
+}
+
+/**
+ * Business details block — required pre and post booking per go-live criteria.
+ */
+function _buildBusinessBlock() {
+  return {
+    name: process.env.BUSINESS_NAME || "OTA Travel",
+    address: process.env.BUSINESS_ADDRESS || "Your business address",
+    email: process.env.BUSINESS_EMAIL || "support@yourdomain.com",
+    phone: process.env.BUSINESS_PHONE || "+1-800-000-0000",
+    termsUrl: process.env.BUSINESS_TERMS_URL || "https://yourdomain.com/terms",
+    // Go-live: Booking.com T&C must be shown where applicable
+    bookingComTermsUrl: "https://www.booking.com/content/terms.html",
+  };
+}
+
+// ── SEARCH HOTELS ─────────────────────────────────────────────────────────────
 async function searchHotels({
   latitude,
   longitude,
@@ -30,7 +137,6 @@ async function searchHotels({
   guests = 1,
   radius = 10,
 }) {
-  // search() returns all results directly — no polling needed
   const search = await staysIntegration.createSearch({
     latitude,
     longitude,
@@ -56,115 +162,114 @@ async function searchHotels({
 
 // ── GET HOTEL DETAILS ─────────────────────────────────────────────────────────────
 async function getHotelDetails(accommodationId) {
-  const accommodation =
-    await staysIntegration.getAccommodation(accommodationId);
+  const acc = await staysIntegration.getAccommodation(accommodationId);
   return {
-    id: accommodation.id,
-    name: accommodation.name,
-    starRating: accommodation.rating,
-    reviewScore: accommodation.review_score,
-    address: accommodation.address,
-    location: accommodation.geolocation,
-    photos: accommodation.photos || [],
-    amenities: accommodation.amenities || [],
-    description: accommodation.description,
-    checkInTime: accommodation.check_in_time,
-    checkOutTime: accommodation.check_out_time,
-    policies: accommodation.policies,
-  };
-}
-
-// ── CREATE QUOTE ─────────────────────────────────────────────────────────────
-async function createQuote(rateId) {
-  const quote = await staysIntegration.createQuote(rateId);
-
-  return {
-    quoteId: quote.id,
-    checkInDate: quote.check_in_date,
-    checkOutDate: quote.check_out_date,
-    rooms: quote.rooms,
-    // ── Price breakdown (as-is from Duffel, no modifications) ──
-    totalAmount: quote.total_amount,
-    totalCurrency: quote.total_currency,
-    baseAmount: quote.base_amount ?? null,
-    baseCurrency: quote.base_currency ?? null,
-    taxAmount: quote.tax_amount ?? null,
-    taxCurrency: quote.tax_currency ?? null,
-    feeAmount: quote.fee_amount ?? null,
-    feeCurrency: quote.fee_currency ?? null,
-    dueAtAccommodation: quote.due_at_accommodation_amount ?? null,
-    dueAtAccommodationCurrency: quote.due_at_accommodation_currency ?? null,
-    // ── Rate & accommodation details ──
-    boardType: quote.accommodation?.rooms?.[0]?.rates?.[0]?.board_type ?? null,
-    cancellationTimeline:
-      quote.accommodation?.rooms?.[0]?.rates?.[0]?.cancellation_timeline ?? [],
-    conditions: quote.accommodation?.rooms?.[0]?.rates?.[0]?.conditions ?? [],
-    paymentType:
-      quote.accommodation?.rooms?.[0]?.rates?.[0]?.payment_type ?? null,
-    accommodation: {
-      id: quote.accommodation?.id,
-      name: quote.accommodation?.name,
-      address: quote.accommodation?.location?.address ?? null,
-      coordinates:
-        quote.accommodation?.location?.geographic_coordinates ?? null,
-      checkInInfo: quote.accommodation?.check_in_information ?? null,
+    id: acc.id,
+    name: acc.name,
+    starRating: acc.rating,
+    reviewScore: acc.review_score,
+    reviewCount: acc.review_count ?? null,
+    brand: acc.brand?.name ?? null,
+    phone: acc.phone_number ?? null,
+    email: acc.email ?? null,
+    // BUG FIX: old code used acc.address (undefined) and acc.geolocation (undefined).
+    // Correct paths are acc.location.address and acc.location.geographic_coordinates.
+    address: acc.location?.address ?? null,
+    coordinates: acc.location?.geographic_coordinates ?? null,
+    photos: acc.photos ?? [],
+    amenities: acc.amenities ?? [],
+    description: acc.description ?? null,
+    checkInInfo: {
+      checkInAfterTime: acc.check_in_information?.check_in_after_time ?? null,
+      checkOutBeforeTime:
+        acc.check_in_information?.check_out_before_time ?? null,
     },
+    keyCollection: acc.key_collection?.instructions
+      ? { instructions: acc.key_collection.instructions }
+      : {
+          instructions:
+            "Please contact the property directly for key collection instructions.",
+        },
+    paymentInstructionSupported: acc.payment_instruction_supported ?? false,
   };
 }
 
+// ── GET HOTEL RATES ─────────────────────────────────────────────────────────────
 async function getHotelRates(resultId) {
   const data = await staysIntegration.getSearchResult(resultId);
   const acc = data.accommodation;
 
   const rooms = (acc?.rooms || []).map((room) => ({
     name: room.name,
-    beds: room.beds || [],
-    photos: room.photos || [],
+    beds: room.beds ?? [],
+    photos: room.photos ?? [],
     rates: (room.rates || []).map((rate) => ({
       rateId: rate.id,
       expiresAt: rate.expires_at,
-      // ── Price breakdown (as-is from Duffel, no modifications) ──
+      name: rate.name ?? null,
+      description: rate.description ?? null,
+      boardType: rate.board_type,
+      paymentType: rate.payment_type,
+      availablePaymentMethods: rate.available_payment_methods ?? [],
+      availableQuantity: rate.quantity_available ?? null,
+      // Go-live price fields — all must be present even if 0
       totalAmount: rate.total_amount,
       totalCurrency: rate.total_currency,
       baseAmount: rate.base_amount,
       baseCurrency: rate.base_currency,
-      taxAmount: rate.tax_amount ?? null,
+      taxAmount: rate.tax_amount ?? "0.00",
       taxCurrency: rate.tax_currency ?? null,
-      feeAmount: rate.fee_amount ?? null,
+      feeAmount: rate.fee_amount ?? "0.00",
       feeCurrency: rate.fee_currency ?? null,
-      dueAtAccommodation: rate.due_at_accommodation_amount ?? null,
+      dueAtAccommodation: rate.due_at_accommodation_amount ?? "0.00",
       dueAtAccommodationCurrency: rate.due_at_accommodation_currency ?? null,
-      // ── Rate details ──
-      boardType: rate.board_type,
-      paymentType: rate.payment_type,
-      availablePaymentMethods: rate.available_payment_methods || [],
-      availableQuantity: rate.quantity_available ?? null,
-      cancellationTimeline: rate.cancellation_timeline || [],
-      conditions: rate.conditions || [],
-      paymentInstructionAllowed: rate.payment_instruction_allowed,
+      // Go-live required fields
+      cancellationTimeline: rate.cancellation_timeline ?? [],
+      conditions: rate.conditions ?? [],
+      benefits: rate.benefits ?? [],
+      paymentInstructionAllowed: rate.payment_instruction_allowed ?? false,
     })),
   }));
 
   return {
     resultId: data.id,
     expiresAt: data.expires_at,
-    accommodationsId: acc?.id,
-    name: acc?.name,
-    description: acc?.description || null,
-    starRating: acc?.rating,
-    reviewScore: acc?.review_score,
-    brand: acc?.brand?.name || null,
-    phone: acc?.phone_number || null,
-    email: acc?.email || null,
-    address: acc?.location?.address || null,
-    coordinates: acc?.location?.geographic_coordinates || null,
-    checkInInfo: acc?.check_in_information || null,
-    keyCollection: acc?.key_collection || null,
-    amenities: acc?.amenities || [],
-    photos: acc?.photos || [],
     checkInDate: data.check_in_date,
     checkOutDate: data.check_out_date,
-    rooms,
+    rooms: data.rooms,
+    guests: data.guests ?? [],
+    accommodation: _buildAccommodationBlock(acc),
+    // Flatten rooms with rates for easy frontend consumption
+    roomRates: rooms,
+    // Business details required pre-booking
+    business: _buildBusinessBlock(),
+  };
+}
+
+// ── CREATE QUOTE ─────────────────────────────────────────────────────────────
+async function createQuote(rateId) {
+  const quote = await staysIntegration.createQuote(rateId);
+  const acc = quote.accommodation;
+  const { room, rate } = _extractRate(acc, rateId);
+
+  // Calculate nights
+  const nights = Math.round(
+    (new Date(quote.check_out_date) - new Date(quote.check_in_date)) /
+      (1000 * 60 * 60 * 24),
+  );
+
+  return {
+    quoteId: quote.id,
+    checkInDate: quote.check_in_date,
+    checkOutDate: quote.check_out_date,
+    nights,
+    rooms: quote.rooms,
+    guests: quote.guests ?? [],
+    // Go-live: price must come from accommodation.rooms.rates, not top-level quote
+    price: _buildPriceBlock(rate),
+    rate: _buildRateBlock(rate, room),
+    accommodation: _buildAccommodationBlock(acc),
+    business: _buildBusinessBlock(),
   };
 }
 
@@ -187,6 +292,10 @@ async function initHotelBooking({
       HTTP.UNPROCESSABLE,
     );
   }
+
+  const acc = quote.accommodation;
+  const { room, rate } = _extractRate(acc, rateId);
+
   const bookingRef = generateBookingRef("HTL");
 
   const { data: booking, error: bookingError } = await supabaseAdmin
@@ -195,8 +304,9 @@ async function initHotelBooking({
       user_id: userId,
       booking_type: BOOKING_TYPE.HOTEL,
       status: BOOKINGS.PENDING_PAYMENT,
-      total_amount: parseFloat(quote.total_amount),
-      currency: quote.total_currency,
+      // BUG FIX: total_amount must come from rate.total_amount, not quote.total_amount
+      total_amount: parseFloat(rate?.total_amount ?? quote.total_amount),
+      currency: rate?.total_currency ?? quote.total_currency,
       booking_ref: bookingRef,
     })
     .select()
@@ -208,14 +318,15 @@ async function initHotelBooking({
       HTTP.INTERNAL_ERROR,
       bookingError,
     );
+
   const { error: hotelError } = await supabaseAdmin
     .from("hotel_booking")
     .insert({
       booking_id: booking.id,
       duffel_offer_id: rateId,
       duffel_quote_id: quote.id,
-      hotel_id: hotelId || "unknown",
-      hotel_name: hotelName || "Hotel",
+      hotel_id: hotelId || acc?.id || "unknown",
+      hotel_name: hotelName || acc?.name || "Hotel",
       check_in_date: checkInDate,
       check_out_date: checkOutDate,
       num_rooms: rooms,
@@ -223,6 +334,7 @@ async function initHotelBooking({
       provider: "duffel",
       offer_data: quote,
     });
+
   if (hotelError) {
     await supabaseAdmin.from("bookings").delete().eq("id", booking.id);
     throw new AppError(
@@ -235,9 +347,6 @@ async function initHotelBooking({
   const nights = Math.round(
     (new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24),
   );
-
-  const room = quote.accommodation?.rooms?.[0];
-  const rate = room?.rates?.[0];
 
   await supabaseAdmin.from("booking_logs").insert({
     booking_id: booking.id,
@@ -265,55 +374,20 @@ async function initHotelBooking({
     checkInDate,
     checkOutDate,
 
-    // ── Accommodation ──
-    hotelId: hotelId || quote.accommodation?.id,
-    hotelName: hotelName || quote.accommodation?.name,
-    address: quote.accommodation?.location?.address ?? null,
-    coordinates: quote.accommodation?.location?.geographic_coordinates ?? null,
-    checkInInfo: {
-      checkInAfterTime:
-        quote.accommodation?.check_in_information?.check_in_after_time ?? null,
-      checkOutBeforeTime:
-        quote.accommodation?.check_in_information?.check_out_before_time ??
-        null,
-    },
-    keyCollection: quote.accommodation?.key_collection
-      ? { instructions: quote.accommodation.key_collection.instructions }
-      : {
-          instructions:
-            "Please contact the property directly for key collection instructions.",
-        },
+    // ── Go-live: price from rate, not top-level quote ──
+    price: _buildPriceBlock(rate),
 
-    // ── Price breakdown (as-is from Duffel, no modifications) ──
-    totalAmount: quote.total_amount,
-    currency: quote.total_currency,
-    baseAmount: quote.base_amount ?? null,
-    baseCurrency: quote.base_currency ?? null,
-    taxAmount: quote.tax_amount ?? null,
-    taxCurrency: quote.tax_currency ?? null,
-    feeAmount: quote.fee_amount ?? null,
-    feeCurrency: quote.fee_currency ?? null,
-    dueAtAccommodation: quote.due_at_accommodation_amount ?? null,
-    dueAtAccommodationCurrency: quote.due_at_accommodation_currency ?? null,
+    // ── Go-live: rate/conditions/cancellation ──
+    rate: _buildRateBlock(rate, room),
 
-    // ── Rate details ──
-    boardType: rate?.board_type ?? null,
-    paymentType: rate?.payment_type ?? null,
-    cancellationTimeline: rate?.cancellation_timeline ?? [],
-    conditions: rate?.conditions ?? [],
+    // ── Go-live: accommodation with all required fields ──
+    accommodation: _buildAccommodationBlock(acc),
 
-    // ── Business details ──
-    business: {
-      name: process.env.BUSINESS_NAME || "OTA Travel",
-      address: process.env.BUSINESS_ADDRESS || "Your business address",
-      email: process.env.BUSINESS_EMAIL || "support@yourdomain.com",
-      phone: process.env.BUSINESS_PHONE || "+1-800-000-0000",
-      termsUrl:
-        process.env.BUSINESS_TERMS_URL || "https://yourdomain.com/terms",
-      bookingComTermsUrl: "https://www.booking.com/content/terms.html",
-    },
+    // ── Go-live: business details must be visible pre-booking ──
+    business: _buildBusinessBlock(),
   };
 }
+
 // ── CONFIRM HOTEL BOOKING ─────────────────────────────────────────────────────────────
 async function confirmHotelBooking({
   bookingId,
@@ -340,12 +414,20 @@ async function confirmHotelBooking({
 
   const duffelGuests = guests?.length
     ? guests
-    : [{ given_name: "Primary", family_name: "Guest", born_on: "1990-01-01" }];
+    : [
+        {
+          given_name: "Primary",
+          family_name: "Guest",
+          born_on: "1990-01-01",
+          email: "guest@example.com",
+          phone_number: "+10000000000",
+        },
+      ];
 
   const duffelBooking = await staysIntegration.createBooking({
     quoteId,
     guests: duffelGuests,
-    paymentType: paymentProvider === "duffel" ? "balance" : "balance",
+    paymentType: "balance",
   });
 
   await supabaseAdmin
@@ -353,8 +435,9 @@ async function confirmHotelBooking({
     .update({
       duffel_order_id: duffelBooking.id,
       provider_order_id: duffelBooking.id,
-      duffel_reference: duffelBooking.reference, // ← property's booking reference
-      confirmed_at: duffelBooking.confirmed_at, // ← Duffel confirmation datetime
+      // Go-live: reference is the property's booking reference from Duffel (e.g. "JIUA32")
+      duffel_reference: duffelBooking.reference,
+      confirmed_at: duffelBooking.confirmed_at,
     })
     .eq("booking_id", bookingId);
 
@@ -389,10 +472,8 @@ async function confirmHotelBooking({
   }
 
   const acc = duffelBooking.accommodation;
-  const room = acc?.rooms?.[0];
-  const rate = room?.rates?.[0];
+  const { room, rate } = _extractRate(acc);
 
-  // calculate nights
   const nights = Math.round(
     (new Date(duffelBooking.check_out_date) -
       new Date(duffelBooking.check_in_date)) /
@@ -404,12 +485,14 @@ async function confirmHotelBooking({
     bookingId,
     bookingRef: booking.booking_ref,
     duffelBookingId: duffelBooking.id,
-    duffelReference: duffelBooking.reference, // ← property's reference ✅
-    confirmedAt: duffelBooking.confirmed_at, // property's own reference
+    // Go-live: this is the reference shown to the guest — it comes from Duffel (e.g. "JIUA32")
+    // NOT your internal bookingRef. This is what appears on the hotel's system.
+    duffelReference: duffelBooking.reference,
+    confirmedAt: duffelBooking.confirmed_at,
     status: BOOKINGS.CONFIRMED,
 
     // ── Guest details ──
-    guests: duffelBooking.guests || [],
+    guests: duffelBooking.guests ?? [],
     leadGuestEmail: duffelBooking.email,
     leadGuestPhone: duffelBooking.phone_number,
 
@@ -420,58 +503,25 @@ async function confirmHotelBooking({
     checkInDate: duffelBooking.check_in_date,
     checkOutDate: duffelBooking.check_out_date,
 
-    // ── Accommodation ──
-    hotelName: acc?.name ?? hotelBooking.hotel_name,
-    address: acc?.location?.address ?? null,
-    coordinates: acc?.location?.geographic_coordinates ?? null,
-    checkInInfo: {
-      checkInAfterTime: acc?.check_in_information?.check_in_after_time ?? null,
-      checkOutBeforeTime:
-        acc?.check_in_information?.check_out_before_time ?? null,
-    },
-    keyCollection: acc?.key_collection
-      ? { instructions: acc.key_collection.instructions }
-      : {
-          instructions:
-            "Please contact the property directly for key collection instructions.",
-        },
-    amenities: acc?.amenities || [],
-    photos: acc?.photos || [],
+    // ── Go-live: price from rate ──
+    price: _buildPriceBlock(rate),
 
-    // ── Price breakdown (as-is from Duffel) ──
-    totalAmount: rate?.total_amount ?? null,
-    currency: rate?.total_currency ?? null,
-    baseAmount: rate?.base_amount ?? null,
-    taxAmount: rate?.tax_amount ?? null,
-    feeAmount: rate?.fee_amount ?? null,
-    dueAtAccommodation: rate?.due_at_accommodation_amount ?? null,
-    dueAtAccommodationCurrency: rate?.due_at_accommodation_currency ?? null,
+    // ── Go-live: rate/conditions/cancellation ──
+    rate: _buildRateBlock(rate, room),
 
-    // ── Rate details ──
-    boardType: rate?.board_type ?? null,
-    paymentType: rate?.payment_type ?? null,
-    cancellationTimeline: rate?.cancellation_timeline ?? [],
-    conditions: rate?.conditions ?? [],
+    // ── Go-live: accommodation with all required fields including key_collection ──
+    accommodation: _buildAccommodationBlock(acc),
 
     // ── Payment instructions (if applicable) ──
     paymentInstructions,
 
-    // ── Business details ──
-    business: {
-      name: process.env.BUSINESS_NAME || "OTA Travel",
-      address: process.env.BUSINESS_ADDRESS || "Your business address",
-      email: process.env.BUSINESS_EMAIL || "support@ftechiz.com",
-      phone: process.env.BUSINESS_PHONE || "+91-XXXXXXXXXX",
-      termsUrl:
-        process.env.BUSINESS_TERMS_URL || "https://yourdomain.com/terms",
-      bookingComTermsUrl: "https://www.booking.com/content/terms.html",
-    },
+    // ── Go-live: business details must be visible post-booking ──
+    business: _buildBusinessBlock(),
   };
 }
 
 // ── CANCEL HOTEL BOOKING ─────────────────────────────────────────────────────────────
 async function cancelHotelBooking(bookingId, userId, reason = null) {
-  // ── 1. Fetch booking ──────────────────────────────────────────────
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
     .select("*, hotel_booking(*), payments(*)")
@@ -493,7 +543,6 @@ async function cancelHotelBooking(bookingId, userId, reason = null) {
   const hotelBooking = booking.hotel_booking?.[0];
   const payment = booking.payments;
 
-  // ── 2. Cancel on Duffel ───────────────────────────────────────────
   let duffelCancellation = null;
   if (hotelBooking?.duffel_order_id) {
     duffelCancellation = await staysIntegration.cancelBooking(
@@ -501,25 +550,23 @@ async function cancelHotelBooking(bookingId, userId, reason = null) {
     );
   }
 
-  // ── 3. Calculate refund amount from cancellation timeline ─────────
+  // Calculate refund from cancellation timeline
   const offer = hotelBooking?.offer_data;
-  const rate = offer?.accommodation?.rooms?.[0]?.rates?.[0];
-  const timeline = rate?.cancellation_timeline || [];
+  const acc = offer?.accommodation;
+  const { rate } = _extractRate(acc);
+  const timeline = rate?.cancellation_timeline ?? [];
   const now = new Date();
 
   let refundAmount = 0;
-  // Find applicable refund from timeline — last entry whose `before` is in the future
   for (const entry of timeline) {
     if (new Date(entry.before) > now) {
       refundAmount = parseFloat(entry.refund_amount);
       break;
     }
   }
-  // If no timeline or all entries passed — non-refundable
   const isRefundable = refundAmount > 0;
-  const currency = offer?.total_currency || booking.currency;
+  const currency = rate?.total_currency ?? booking.currency;
 
-  // ── 4. Update bookings table ──────────────────────────────────────
   await supabaseAdmin
     .from("bookings")
     .update({
@@ -529,7 +576,6 @@ async function cancelHotelBooking(bookingId, userId, reason = null) {
     })
     .eq("id", bookingId);
 
-  // ── 5. Update payments table ──────────────────────────────────────
   if (payment) {
     await supabaseAdmin
       .from("payments")
@@ -539,7 +585,6 @@ async function cancelHotelBooking(bookingId, userId, reason = null) {
       .eq("booking_id", bookingId);
   }
 
-  // ── 6. Create refund record ───────────────────────────────────────
   let refundRecord = null;
   if (isRefundable && payment) {
     const { data: refund } = await supabaseAdmin
@@ -559,7 +604,6 @@ async function cancelHotelBooking(bookingId, userId, reason = null) {
     refundRecord = refund;
   }
 
-  // ── 7. Log it ─────────────────────────────────────────────────────
   await supabaseAdmin.from("booking_logs").insert({
     booking_id: bookingId,
     action: ACTIVITY_LOGS.BOOKING_CANCELLED,
@@ -575,22 +619,18 @@ async function cancelHotelBooking(bookingId, userId, reason = null) {
     isRefundable,
   });
 
-  // ── 8. Return ─────────────────────────────────────────────────────
   return {
     bookingId,
     bookingRef: booking.booking_ref,
     status: BOOKINGS.CANCELLED,
     cancelledAt: new Date().toISOString(),
     cancellationReason: reason || null,
-
-    // ── Refund details ──
     refund: {
       eligible: isRefundable,
       amount: isRefundable ? refundAmount.toFixed(2) : "0.00",
       currency,
       status: isRefundable ? "PROCESSING" : "NOT_ELIGIBLE",
       refundId: refundRecord?.id || null,
-      // Show which timeline entry applied
       appliedPolicy:
         timeline.length > 0
           ? timeline.find((e) => new Date(e.before) > now) || null
@@ -599,13 +639,11 @@ async function cancelHotelBooking(bookingId, userId, reason = null) {
         ? `Refund of ${currency} ${refundAmount.toFixed(2)} will be processed within 5-10 business days`
         : "This booking is non-refundable as the cancellation window has passed",
     },
-
-    // ── Full cancellation timeline for reference ──
     cancellationTimeline: timeline,
   };
 }
 
-// ── GET / LIST ─────────────────────────────────────────────────────────────
+// ── GET BOOKING ─────────────────────────────────────────────────────────────────
 async function getBooking(bookingId, userId) {
   const { data, error } = await supabaseAdmin
     .from("bookings")
@@ -619,16 +657,15 @@ async function getBooking(bookingId, userId) {
   const hotelBooking = data.hotel_booking?.[0];
   const offer = hotelBooking?.offer_data;
   const acc = offer?.accommodation;
-  const rate = acc?.rooms?.[0]?.rates?.[0];
+  const { room, rate } = _extractRate(acc);
   const payment = data.payments;
 
-  // fetch guest names from Duffel booking
   let duffelGuests = [];
   try {
     const duffelBooking = await staysIntegration.getBooking(
       hotelBooking?.duffel_order_id,
     );
-    duffelGuests = duffelBooking?.guests || [];
+    duffelGuests = duffelBooking?.guests ?? [];
   } catch (_) {
     /* ignore if not found */
   }
@@ -640,63 +677,29 @@ async function getBooking(bookingId, userId) {
   );
 
   return {
-    // ── Booking identifiers ──
     bookingId: data.id,
     bookingRef: data.booking_ref,
     duffelBookingId: hotelBooking?.duffel_order_id,
     duffelQuoteId: hotelBooking?.duffel_quote_id,
-    duffelReference: hotelBooking?.duffel_reference ?? null, // ← add this
+    // Go-live: duffelReference is the property's reference (e.g. "JIUA32")
+    duffelReference: hotelBooking?.duffel_reference ?? null,
     confirmedAt: hotelBooking?.confirmed_at ?? null,
     status: data.status,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
 
-    // ── Guest details ──
     guests: duffelGuests,
     numGuests: hotelBooking?.num_guests,
     numRooms: hotelBooking?.num_rooms,
     numNights: nights,
 
-    // ── Stay details ──
-    hotelId: hotelBooking?.hotel_id,
-    hotelName: hotelBooking?.hotel_name,
     checkInDate: hotelBooking?.check_in_date,
     checkOutDate: hotelBooking?.check_out_date,
-    address: acc?.location?.address ?? null,
-    coordinates: acc?.location?.geographic_coordinates ?? null,
-    checkInInfo: {
-      checkInAfterTime: acc?.check_in_information?.check_in_after_time ?? null,
-      checkOutBeforeTime:
-        acc?.check_in_information?.check_out_before_time ?? null,
-    },
-    keyCollection: acc?.key_collection
-      ? { instructions: acc.key_collection.instructions }
-      : {
-          instructions:
-            "Please contact the property directly for key collection instructions.",
-        },
-    amenities: acc?.amenities || [],
-    photos: acc?.photos || [],
 
-    // ── Price breakdown (as-is from Duffel) ──
-    totalAmount: offer?.total_amount ?? null,
-    currency: offer?.total_currency ?? null,
-    baseAmount: offer?.base_amount ?? null,
-    taxAmount: rate?.tax_amount ?? null,
-    taxCurrency: rate?.tax_currency ?? null,
-    feeAmount: rate?.fee_amount ?? null,
-    feeCurrency: rate?.fee_currency ?? null,
-    dueAtAccommodation: offer?.due_at_accommodation_amount ?? null,
-    dueAtAccommodationCurrency: offer?.due_at_accommodation_currency ?? null,
-    depositAmount: offer?.deposit_amount ?? null,
+    price: _buildPriceBlock(rate),
+    rate: _buildRateBlock(rate, room),
+    accommodation: _buildAccommodationBlock(acc),
 
-    // ── Rate details ──
-    boardType: rate?.board_type ?? null,
-    paymentType: rate?.payment_type ?? null,
-    cancellationTimeline: rate?.cancellation_timeline ?? [],
-    conditions: rate?.conditions ?? [],
-
-    // ── Payment status ──
     payment: payment
       ? {
           status: payment.status,
@@ -708,19 +711,11 @@ async function getBooking(bookingId, userId) {
         }
       : null,
 
-    // ── Business details ──
-    business: {
-      name: process.env.BUSINESS_NAME || "OTA Travel",
-      address: process.env.BUSINESS_ADDRESS || "Your business address",
-      email: process.env.BUSINESS_EMAIL || "support@ftechiz.com",
-      phone: process.env.BUSINESS_PHONE || "+91-XXXXXXXXXX",
-      termsUrl:
-        process.env.BUSINESS_TERMS_URL || "https://yourdomain.com/terms",
-      bookingComTermsUrl: "https://www.booking.com/content/terms.html",
-    },
+    business: _buildBusinessBlock(),
   };
 }
 
+// ── LIST USER BOOKINGS ─────────────────────────────────────────────────────────────
 async function listUserBookings(
   userId,
   {
