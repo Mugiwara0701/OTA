@@ -74,19 +74,23 @@ async function getQuote(quoteId) {
 }
 
 // ── BOOKINGS ─────────────────────────────────────────────────────────────
-async function createBooking({ quoteId, guests, paymentType = "balance" }) {
+async function createBooking({ quoteId, guests }) {
   try {
     const leadGuest = guests[0];
+
+    // Guard — if lead guest has no email/phone, fail fast with a clear error
+    if (!leadGuest?.email || !leadGuest?.phone_number) {
+      throw new Error("Lead guest must have email and phone_number");
+    }
+
     const response = await duffel.stays.bookings.create({
       quote_id: quoteId,
       email: leadGuest.email,
       phone_number: leadGuest.phone_number,
-      guests: guests.map(({ given_name, family_name, born_on, user_id }) => ({
+      guests: guests.map(({ given_name, family_name, born_on }) => ({
         given_name,
         family_name,
-        // born_on is required by Duffel for bookings
         ...(born_on && { born_on }),
-        ...(user_id && { user_id }),
       })),
     });
     return response.data;
