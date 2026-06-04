@@ -29,9 +29,7 @@ async function createSearch({
       location: {
         geographic_coordinates: { latitude, longitude },
         radius,
-      },
-      accommodation: {
-        fetch_rates: true,
+        fetch_rates: true, // ← move it here, inside location
       },
     });
 
