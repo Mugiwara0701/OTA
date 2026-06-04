@@ -92,16 +92,15 @@ const initBooking = asyncHandler(async (req, res) => {
 // POST /api/v1/stays/bookings/:bookingId/confirm
 const confirmBooking = asyncHandler(async (req, res) => {
   const { bookingId } = req.params;
-  const { guests, paymentProvider } = req.body;
+  const { paymentProvider } = req.body;
   const userId = req.user.id;
 
   const result = await staysService.confirmHotelBooking({
     bookingId,
     userId,
-    guests,
     paymentProvider,
+    // guests will be read from DB, not from request
   });
-  return sendSuccess(res, HTTP.OK, "Hotel booking confirmed", result);
 });
 
 // GET /api/v1/stays/bookings

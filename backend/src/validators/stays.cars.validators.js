@@ -60,33 +60,34 @@ const createQuoteRules = [
 
 const initHotelBookingRules = [
   body("rateId").notEmpty().withMessage("rateId is required"),
-
   body("checkInDate")
     .matches(DATE_REGEX)
     .withMessage("checkInDate must be YYYY-MM-DD"),
-
   body("checkOutDate")
     .matches(DATE_REGEX)
     .withMessage("checkOutDate must be YYYY-MM-DD"),
-
   body("rooms").optional().isInt({ min: 1, max: 10 }),
 
-  body("guests").optional().isInt({ min: 1, max: 20 }),
+  // guests is now an array of guest objects
+  body("guests")
+    .isArray({ min: 1 })
+    .withMessage("guests must be a non-empty array"),
+  body("guests.*.given_name")
+    .notEmpty()
+    .withMessage("Each guest must have given_name"),
+  body("guests.*.family_name")
+    .notEmpty()
+    .withMessage("Each guest must have family_name"),
+  body("guests.*.born_on")
+    .matches(DATE_REGEX)
+    .withMessage("Each guest born_on must be YYYY-MM-DD"),
+  body("guests.*.email").optional().isEmail(),
+  body("guests.*.phone_number").optional().notEmpty(),
 
   validate,
 ];
 
-const confirmHotelBookingRules = [
-  param("bookingId").isUUID(),
-
-  body("guests").optional().isArray().withMessage("guests must be an array"),
-
-  body("guests.*.given_name").optional().notEmpty(),
-
-  body("guests.*.family_name").optional().notEmpty(),
-
-  validate,
-];
+const confirmHotelBookingRules = [param("bookingId").isUUID(), validate];
 
 // ── CARS ─────────────────────────────────────────────────────────────
 

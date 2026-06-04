@@ -330,7 +330,8 @@ async function initHotelBooking({
       check_in_date: checkInDate,
       check_out_date: checkOutDate,
       num_rooms: rooms,
-      num_guests: guests,
+      num_guests: guests.length,
+      guests_data: guests,
       provider: "duffel",
       offer_data: quote,
     });
@@ -412,17 +413,12 @@ async function confirmHotelBooking({
   if (!quoteId)
     throw new AppError("Hotel quote data is missing", HTTP.INTERNAL_ERROR);
 
-  const duffelGuests = guests?.length
-    ? guests
-    : [
-        {
-          given_name: "Primary",
-          family_name: "Guest",
-          born_on: "1990-01-01",
-          email: "guest@example.com",
-          phone_number: "+10000000000",
-        },
-      ];
+  const duffelGuests = hotelBooking?.guests_data;
+  if (!duffelGuests?.length)
+    throw new AppError(
+      "Guest information missing. Cannot confirm booking.",
+      HTTP.UNPROCESSABLE,
+    );
 
   const duffelBooking = await staysIntegration.createBooking({
     quoteId,
@@ -750,4 +746,5 @@ module.exports = {
   getBooking,
   listUserBookings,
   getHotelRates,
+  confirmStaysBooking: confirmHotelBooking,
 };
