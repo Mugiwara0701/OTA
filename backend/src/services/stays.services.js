@@ -282,7 +282,7 @@ async function initHotelBooking({
   checkInDate,
   checkOutDate,
   rooms = 1,
-  guests = 1,
+  guests = [],
 }) {
   const quote = await staysIntegration.createQuote(rateId);
 
@@ -330,7 +330,7 @@ async function initHotelBooking({
       check_in_date: checkInDate,
       check_out_date: checkOutDate,
       num_rooms: rooms,
-      num_guests: guests.length,
+      num_guests: Array.isArray(guests) ? guests.length : 1,
       guests_data: guests,
       provider: "duffel",
       offer_data: quote,
@@ -469,15 +469,6 @@ async function confirmHotelBooking({
     .catch(() => {});
 
   logger.info(`[StayServices] Booking confirmed: ${booking.booking_ref}`);
-
-  let paymentInstructions = null;
-  try {
-    paymentInstructions = await staysIntegration.getPaymentInstructions(
-      duffelBooking.id,
-    );
-  } catch (_) {
-    /* not all bookings have payment instructions */
-  }
 
   const acc = duffelBooking.accommodation;
   const { room, rate } = _extractRate(acc);
@@ -739,14 +730,7 @@ async function listUserBookings(
 
 // ── Full accommodation reviews list ─────────────────────────────────────────────────────────────
 async function getAccommodationReviews(accommodationId) {
-  try {
-    const response = await duffel.stays.accommodationReviews.list({
-      accommodation_id: accommodationId,
-    });
-    return response.data;
-  } catch (err) {
-    throw normalizeDuffelError(err);
-  }
+  return await staysIntegration.getAccommodationReviews(accommodationId);
 }
 
 module.exports = {

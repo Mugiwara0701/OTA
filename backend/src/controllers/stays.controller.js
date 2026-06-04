@@ -103,6 +103,14 @@ const confirmBooking = asyncHandler(async (req, res) => {
   return sendSuccess(res, HTTP.OK, "Hotel booking confirmed", result);
 });
 
+const getAccommodationReviews = asyncHandler(async (req, res) => {
+  const { accommodationId } = req.params;
+
+  const result = await staysService.getAccommodationReviews(accommodationId);
+
+  return sendSuccess(res, HTTP.OK, "Hotel reviews", result);
+});
+
 // GET /api/v1/stays/bookings
 const listBookings = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -154,4 +162,5 @@ module.exports = {
   listBookings,
   getBooking,
   cancelBooking,
+  getAccommodationReviews,
 };

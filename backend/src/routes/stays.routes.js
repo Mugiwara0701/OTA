@@ -49,11 +49,4 @@ router.post(
   controller.cancelBooking,
 );
 
-router.post(
-  "/bookings/:bookingId/cancel",
-  authenticate,
-  bookingIdParamRules,
-  controller.cancelBooking,
-);
-
 module.exports = router;

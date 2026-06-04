@@ -139,6 +139,17 @@ async function getPaymentInstructions(bookingId) {
   }
 }
 
+async function getAccommodationReviews(accommodationId) {
+  try {
+    const response = await duffel.stays.accommodationReviews.list({
+      accommodation_id: accommodationId,
+    });
+    return response.data;
+  } catch (err) {
+    throw normalizeDuffelError(err);
+  }
+}
+
 module.exports = {
   createSearch,
   getSearchResult,
@@ -149,4 +160,5 @@ module.exports = {
   cancelBooking,
   getAccommodation,
   getPaymentInstructions,
+  getAccommodationReviews,
 };
