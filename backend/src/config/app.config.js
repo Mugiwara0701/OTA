@@ -34,7 +34,7 @@ const config = {
     isProd: NODE_ENV === "production",
     apiUrl: optionalEnv("API_URL", "http://localhost:5000/api/v1"),
     appScheme: optionalEnv("APP_SCHEME", "otaapp"),
-    frontendUrl: optionalEnv("FRONTEND_URL", "http://localhost:3000"),
+    frontendUrl: optionalEnv("FRONTEND_URL", "http://localhost:1573"),
   },
   // ── SUPABASE ──────────────────────
   supabase: {
@@ -74,7 +74,7 @@ const config = {
   cors: {
     allowedOrigins: optionalEnv(
       "CORS_ALLOWED_ORIGINS",
-      NODE_ENV === "production" ? "" : "http://localhost:3000",
+      NODE_ENV === "production" ? "" : "http://localhost:5173",
     )
       .split(",")
       .map((o) => o.trim())
